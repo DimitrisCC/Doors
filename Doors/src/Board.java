@@ -12,6 +12,9 @@ import java.util.Stack;
  * ------> alla ta poulia se ka8e 8esi
  * For more extensibility we could create a class for the data structure and not just use ArrayList<Stack<Piece>>.
  * It looks kinda ugly.
+ * ------> nomizw enas pinakas einai arketos kai grigoros gia tis leitourgies pou 8eloume...xwro den pianei poli...
+ * ------> parola auta auto voleuei gia to grafiko kommati.....as skeftoume kai an ginetai alliws gia na diaxwrisoume
+ * ------> ilopoiisi me grafiki diepafi
  */
 public class Board {
 
