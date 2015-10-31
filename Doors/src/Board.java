@@ -7,7 +7,9 @@ import java.util.Stack;
  *
  * **HashMap-like implementation for speed.
  * **Could be done more easily by having a "position" field in each piece but would hurt the speed.
- * 
+ * ------> oxi den 8a itan pio eukolo giati 8a diskoleue i anazitisi tou "posa poulia einai se mia 8esi"
+ * ------> outws i allws ta poulia dn exoun "noumero" opote dn se noiazei i 8esi enos sigkekrimenou pouliou
+ * ------> alla ta poulia se ka8e 8esi
  * For more extensibility we could create a class for the data structure and not just use ArrayList<Stack<Piece>>.
  * It looks kinda ugly.
  */
