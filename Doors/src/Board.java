@@ -128,7 +128,7 @@ public class Board {
 		if(signp != n || signp != 0) return false; //this position does not contain any of the player's pieces
 		
 		int signm = (int) Math.signum(table[pos+move]);
-		if(signm == n || table[pos+move]+1 == 0 || table[pos+move] == 0)
+		if(signm == n || table[pos+move]+n == 0 || table[pos+move] == 0)
 			return true; //this position either contains player's pieces, either is empty, or it contains just one of opponent's pieces
 		return false;
 	}
