@@ -35,8 +35,16 @@ public class Board {
 	}
 	
 	public void setTable(int[] t){ 
-		for(int i = 0; i < table.length; ++i)
-			table[i] = t[i];
+		//for(int i = 0; i < table.length; ++i)
+		//	table[i] = t[i];
+		try
+		  {
+		  System.arraycopy(t, 0, table, 0, t.length);//----->na to pw sta paidia
+		  }
+		catch(Exception ex)
+		{
+			ex.getMessage();
+		}
 	}
 	
 	public int[] getTable() { return table; }
@@ -133,7 +141,8 @@ public class Board {
 	protected void move(int pos, int move, int n){
 		//validity of the move is already checked
 		table[pos] -= n; //decrease the absolute value
-		table[pos+move] = n; //increase it
+		
+		table[pos+move] += n; //increase it
 		//move done
 		//izzy pizzy
 	}
