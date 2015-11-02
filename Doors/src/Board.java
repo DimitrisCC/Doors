@@ -80,7 +80,7 @@ public class Board {
 			//second move
 			for(int j = 0; j < 24 - move[0]; ++j){ //not taking into account the children states where moves lead out of board
 												//at this moment
-				sMove += n; //increasing when reds, decreasing when greens
+				sMove -= n; //increasing when reds, decreasing when greens
 				if(!isValidMove(sMove, move[1], n)) continue;
 			
 				if(sMove != fMove){
