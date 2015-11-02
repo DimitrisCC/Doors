@@ -1,4 +1,3 @@
-
 /**
  * The game piece class.
  */

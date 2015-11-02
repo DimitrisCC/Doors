@@ -5,6 +5,6 @@
 
 public enum PieceEnum {
 
-    RED, GREEN;
+    RED, GREEN, CHANCE;
 
 }

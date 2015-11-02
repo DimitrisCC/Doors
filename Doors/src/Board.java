@@ -151,6 +151,7 @@ public class Board {
      * Checks if there is a red door in that position.
      */
     public boolean isRedDoor(short position){ //--> xreiazetai elegxo an einai entos oriwn t pinaka
+    										//--------> apla ti tha petaei tote? false? kalitera na mas vgazei outofbounds
         return table[position] < -1; 
     }
 
