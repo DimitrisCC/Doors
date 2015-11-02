@@ -38,9 +38,9 @@ public class Board {
 		//for(int i = 0; i < table.length; ++i)
 		//	table[i] = t[i];
 		try
-		  {
-		  System.arraycopy(t, 0, table, 0, t.length);//----->na to pw sta paidia
-		  }
+		{
+		    System.arraycopy(t, 0, table, 0, t.length);//----->na to pw sta paidia
+		}
 		catch(Exception ex)
 		{
 			ex.getMessage();
@@ -73,7 +73,7 @@ public class Board {
 		//first move
 		for(int i = 0; i < 24 - move[0]; ++i){ //not taking into account the children states where moves lead out of board
 											//at this moment
-			fMove += n; //increasing when reds, decreasing when greens
+			fMove -= n; //increasing when reds, decreasing when greens
 			
 			if(!isValidMove(fMove, move[0], n)) continue;
 			
@@ -128,7 +128,7 @@ public class Board {
 		if(signp != n || signp != 0) return false; //this position does not contain any of the player's pieces
 		
 		int signm = (int) Math.signum(table[pos+move]);
-		if(signm == n || table[pos+move]+1 == 0 || table[pos+move] == 0)
+		if(signm == n || table[pos+move]+n == 0 || table[pos+move] == 0)
 			return true; //this position either contains player's pieces, either is empty, or it contains just one of opponent's pieces
 		return false;
 	}
