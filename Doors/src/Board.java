@@ -25,9 +25,13 @@ public class Board {
 
     private static int[] table; //a list of stacks of Pieces
     // list->positions of board, stack->pieces in each position
+    
+ // Checkers on bar (that have been hit).  on_bar[0] is green player, on_bar[1] is red player.
+    private static int[] on_bar;
 
     public Board(){
         table = new int[24];
+        on_bar = new int[2];
     }
 	
 	public Board(int[] t){
@@ -47,7 +51,22 @@ public class Board {
 		}
 	}
 	
+	public void setBar(int[] t){ 
+		//for(int i = 0; i < table.length; ++i)
+		//	table[i] = t[i];
+		try
+		{
+		    System.arraycopy(t, 0, on_bar, 0, t.length);//----->na to pw sta paidia
+		}
+		catch(Exception ex)
+		{
+			ex.getMessage();
+		}
+	}
+	
 	public int[] getTable() { return table; }
+	
+	public int[] getBar() { return on_bar; }
 	
 	//if returned list is empty, no valid moves can be done
 	public ArrayList<Board> getChildren(Dice dice, PieceEnum player){
@@ -117,6 +136,11 @@ public class Board {
 		table[23] = 2;
 	}
 	
+	public void initBar(){
+		on_bar[0] = 0;
+        on_bar[1] = 0;
+	}
+	
 	/** Checks if the move is legal
 	 * @param pos current position of the piece to move
 	 * @param move step the piece has to move
@@ -128,7 +152,7 @@ public class Board {
 		if(signp != n || signp != 0) return false; //this position does not contain any of the player's pieces
 		
 		int signm = (int) Math.signum(table[pos+move]);
-		if(signm == n || table[pos+move]+n == 0 || table[pos+move] == 0)
+		if(signm == n || table[pos+move]+n == 0 || table[pos+move] == 0 && on_bar[(-1/2*n)+(1/2)]==0)
 			return true; //this position either contains player's pieces, either is empty, or it contains just one of opponent's pieces
 		return false;
 	}
