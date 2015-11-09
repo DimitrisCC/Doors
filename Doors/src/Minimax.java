@@ -29,10 +29,10 @@ public class Minimax {
 		}
 		
 		int min = INF;
-		ArrayList<Board> succ = b.getChildren(d, PieceEnum.RED);
+		ArrayList<Board> succ = b.getChildren(d, Player.RED);
 		int value;
 		for(Board current : succ){
-			value = chanceValue(current, d, PieceEnum.GREEN, treeLength+1, alpha, beta);
+			value = chanceValue(current, d, Player.GREEN, treeLength+1, alpha, beta);
 			if (value < min) min = value;
 		}
 		return min;
@@ -46,16 +46,16 @@ public class Minimax {
 		}
 		
 		int max = -INF;
-		ArrayList<Board> succ = b.getChildren(d, PieceEnum.GREEN);
+		ArrayList<Board> succ = b.getChildren(d, Player.GREEN);
 		int value;
 		for(Board current : succ){
-			value = chanceValue(current, d, PieceEnum.RED, treeLength+1, alpha, beta);
+			value = chanceValue(current, d, Player.RED, treeLength+1, alpha, beta);
 			if (value > max) max = value;
 		}
 		return max;
 	} 
 	
-	public int chanceValue(Board b, Dice d,PieceEnum nextPlayer, int treeLength,int alpha, int beta){
+	public int chanceValue(Board b, Dice d, Player green, int treeLength, int alpha, int beta){
 		
 		float expectedValue = 0; //PROSOXIIIIIIII!!!!! edw isws exoume provlima!!!
 		float s = 0;
@@ -64,7 +64,7 @@ public class Minimax {
 		int roundedValue = 0;
 			//kanonika i timi auti pou 8 prokipsei einai float! opote i 8a valoume na epistrefetai genika
 			//float i 8a kanoume stroggilopoiisi!!! edw kanw stroggilopoiisi an einai omws to allazoume
-		if(nextPlayer == PieceEnum.GREEN){ //8ewrisa oti to if edw einai pio grigoro (p einai logika) apo to na to eixa enswmatwmeno sto for
+		if(green == Player.GREEN){ //8ewrisa oti to if edw einai pio grigoro (p einai logika) apo to na to eixa enswmatwmeno sto for
 			
 			for(Dice roll: possibleRolls){
 				currentP  = 1/(roll.isDouble()? 36:18);
@@ -81,7 +81,7 @@ public class Minimax {
 				if(roundedValue > alpha) alpha = roundedValue;
 			}
 			
-		}else if(nextPlayer == PieceEnum.RED){
+		}else if(green == Player.RED){
 			
 			for(Dice roll: possibleRolls){
 				currentP  = 1/(roll.isDouble()? 36:18);
