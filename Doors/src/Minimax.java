@@ -14,7 +14,7 @@ public class Minimax {
 	//o max einai panta o prasinos kai o chance einai chance telos pantwn
 	//opote mesa sts sinartiseis xrisimopoiw fixed PieceEnums...parola auta epeidi to 8ema isws
 	//mporei na veltiw8ei genika to afisa stn dilwsi kai vlepoume
-	public Board MinimaxAlgorithm(Board root, Dice d, PieceEnum player)
+	public Board MinimaxAlgorithm(Board root, Dice d, Player player)
 	{
 		possibleRolls = Dice.allPossibleRolls(); //initialize possibleRolls
 		int bestValue = maxValue(root, d, 0, -INF, INF);
