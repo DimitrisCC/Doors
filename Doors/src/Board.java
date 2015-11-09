@@ -37,24 +37,22 @@ public class Board {
 	
 	private static final int PIECE_TOTAL_NUM = 15;
 	
-    private static int[] table; //a list of stacks of Pieces
+    private int[] table; //a list of stacks of Pieces
     // list->positions of board, stack->pieces in each position
     
-    private int greenPieceNum;
-    private int redPieceNum;
+   // Checkers on bar (that have been hit).  onBar[0] is green player, on_bar[1] is red player.
+    private int[] onBar;
 
     public Board(){
         table = new int[24];
         initBoard();
-        greenPieceNum = PIECE_TOTAL_NUM;
-        redPieceNum = PIECE_TOTAL_NUM;
+        onBar = new int[2];
     }
 	
 	public Board(int[] t){
 		table = new int[24];
 		setTable(t);
-		greenPieceNum = PIECE_TOTAL_NUM;
-        redPieceNum = PIECE_TOTAL_NUM;
+		onBar = new int[2];
 	}
 	
 	public void setTable(int[] t){ 
@@ -147,6 +145,8 @@ public class Board {
 	 */
 	protected boolean isValidMove(int pos, int move, Player player){
 		
+		if(piecesOnBar(player) > 0) return false;
+		
 		byte n = player.getSign();
 		int signp = (int) Math.signum(table[pos]);
 		
@@ -160,6 +160,15 @@ public class Board {
 			return true; //this position either contains player's pieces, either is empty, or it contains just one of opponent's pieces
 		return false;
 	}
+	
+	protected int piecesOnBar(Player player){
+		if (player == Player.GREEN && onBar[0] > 0)
+			return onBar[0];
+		else if (player == Player.RED && onBar[1] > 0)
+			return onBar[1];
+		else return 0;
+	}
+	
 	/**
 	 * Checks if you picked a correct piece
 	 */
@@ -187,8 +196,8 @@ public class Board {
 		//move done
 		//izzy pizzy
 		if(Math.signum(prev) < Math.signum(table[pos+move])){
-			if (prev < 0) redPieceNum--;
-			else if (prev > 0) greenPieceNum--;
+			if (prev < 0) onBar[1]++;
+			else if (prev > 0) onBar[0]++;
 		}
 	}
 	
@@ -260,22 +269,20 @@ public class Board {
         return greens == 15;
     }
     
-    public int getGreenPiecesNumber(){
-    	return this.greenPieceNum;
+    public int getGreensEatean(){
+    	return onBar[0];
     }
     
-    public int getRedPiecesNumber(){
-    	return this.redPieceNum;
+    public int getRedsEaten(){
+    	return onBar[1];
     }
     
-    public int redsEaten(){
-    	return PIECE_TOTAL_NUM - redPieceNum;
+    public int getRedsLeft(){
+    	return PIECE_TOTAL_NUM - onBar[0];
     }
     
-    public int greensEaten(){
-    	return PIECE_TOTAL_NUM - greenPieceNum;
+    public int getGreensLeft(){
+    	return PIECE_TOTAL_NUM - onBar[1];
     }
-
-   // public movePieceTo
 
 }

@@ -12,7 +12,7 @@ public final class MainGUI {
 		currentGame = new Board();
 		playGame(currentGame);
 	}
-
+	
 	private static void playGame(Board currentGame) {
 
 		//GameGui guiGame = new GameGui();
