@@ -14,48 +14,48 @@ public class Minimax {
 	//o max einai panta o prasinos kai o chance einai chance telos pantwn
 	//opote mesa sts sinartiseis xrisimopoiw fixed PieceEnums...parola auta epeidi to 8ema isws
 	//mporei na veltiw8ei genika to afisa stn dilwsi kai vlepoume
-	public Board MinimaxAlgorithm(Board root, Dice d, Player player)
+	public Move MinimaxAlgorithm(Board root, Dice d, Player player)
 	{
 		possibleRolls = Dice.allPossibleRolls(); //initialize possibleRolls
-		int bestValue = maxValue(root, d, 0, -INF, INF);
-		return new Board();
+		Move bestMove = maxValue(root, d, 0, -INF, INF);
+		return new Move();
 	}
 	
-	public int minValue(Board b, Dice d, int treeLength,int alpha, int beta){
+	public Move minValue(Board b, Dice d, int treeLength,int alpha, int beta){
 		
 		if(treeLength == MAX_LENGTH){
 			//TODO
 			//epistrefei to apotelesma tis euretikis sto b
 		}
 		
-		int min = INF;
+		Move min = new Move(INF);
 		ArrayList<Board> succ = b.getChildren(d, Player.RED);
-		int value;
+		Move value;
 		for(Board current : succ){
 			value = chanceValue(current, d, Player.GREEN, treeLength+1, alpha, beta);
-			if (value < min) min = value;
+			if (value.getScore() < min.getScore()) min = value;
 		}
 		return min;
 	}
 	
-	public int maxValue(Board b,Dice d, int treeLength, int alpha, int beta){
+	public Move maxValue(Board b,Dice d, int treeLength, int alpha, int beta){
 		
 		if(treeLength == MAX_LENGTH){
 			//TODO
 			//epistrefei to apotelesma tis euretikis sto b
 		}
 		
-		int max = -INF;
+		Move max = new Move(-INF);
 		ArrayList<Board> succ = b.getChildren(d, Player.GREEN);
-		int value;
+		Move value;
 		for(Board current : succ){
 			value = chanceValue(current, d, Player.RED, treeLength+1, alpha, beta);
-			if (value > max) max = value;
+			if (value.getScore() > max.getScore()) max = value;
 		}
 		return max;
 	} 
 	
-	public int chanceValue(Board b, Dice d, Player green, int treeLength, int alpha, int beta){
+	public Move chanceValue(Board b, Dice d, Player green, int treeLength, int alpha, int beta){
 		
 		float expectedValue = 0; //PROSOXIIIIIIII!!!!! edw isws exoume provlima!!!
 		float s = 0;
@@ -68,7 +68,7 @@ public class Minimax {
 			
 			for(Dice roll: possibleRolls){
 				currentP  = 1/(roll.isDouble()? 36:18);
-				s += maxValue(b, roll, treeLength+1, alpha, beta)*currentP;
+				s += maxValue(b, roll, treeLength+1, alpha, beta).getScore()*currentP;
 				p += currentP;
 				expectedValue = s + (1-currentP)*Vmax; //----> auto kanonika 8a oristei opws kai to Vmin stn klassi tis euretikis..
 				//---> antiproswpeuei tin kaliteri dinati timi p mporei na parei o max (isws mesw tis euretikis dld poia 8a itan i kaliteri timi genika

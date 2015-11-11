@@ -47,6 +47,8 @@ public class Board {
     private int move; //target position
     private Player player;
     
+    private Move lastMovePlayed;
+    
     Dice dice;
 
     public Board(){
@@ -339,4 +341,5 @@ public class Board {
     	return getDiceMoveset(dice);
     }
 
+    public Move getLastMovePlayed(){ return lastMovePlayed; }
 }
