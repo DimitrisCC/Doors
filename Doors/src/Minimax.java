@@ -18,7 +18,7 @@ public class Minimax {
 	{
 		possibleRolls = Dice.allPossibleRolls(); //initialize possibleRolls
 		Move bestMove = maxValue(root, d, 0, -INF, INF);
-		return new Move();
+		return bestMove;
 	}
 	
 	public Move minValue(Board b, Dice d, int treeLength,int alpha, int beta){
@@ -26,6 +26,7 @@ public class Minimax {
 		if(treeLength == MAX_LENGTH){
 			//TODO
 			//epistrefei to apotelesma tis euretikis sto b
+			//return new Move(lastPlayedMove, <timi euretikis>); //----> edw xreiazetai i proigoumeni kinisi...
 		}
 		
 		Move min = new Move(INF);
@@ -33,7 +34,10 @@ public class Minimax {
 		Move value;
 		for(Board current : succ){
 			value = chanceValue(current, d, Player.GREEN, treeLength+1, alpha, beta);
-			if (value.getScore() < min.getScore()) min = value;
+			if (value.getScore() < min.getScore()){
+				min.setMove(value.getMove());
+				min.setScore(value.getScore());
+			}
 		}
 		return min;
 	}
@@ -68,14 +72,15 @@ public class Minimax {
 			
 			for(Dice roll: possibleRolls){
 				currentP  = 1/(roll.isDouble()? 36:18);
-				s += maxValue(b, roll, treeLength+1, alpha, beta).getScore()*currentP;
+				Move max = maxValue(b, roll, treeLength+1, alpha, beta);
+				s += max.getScore()*currentP;
 				p += currentP;
 				expectedValue = s + (1-currentP)*Vmax; //----> auto kanonika 8a oristei opws kai to Vmin stn klassi tis euretikis..
 				//---> antiproswpeuei tin kaliteri dinati timi p mporei na parei o max (isws mesw tis euretikis dld poia 8a itan i kaliteri timi genika
 				//---> pou 8a epestrefe gia auton)
 				//---> gia na mn vgazei error pros t paron to dilwnw kapws edw
 				roundedValue = Math.round(expectedValue); // gia na mn to ipologizw sinexeia
-				if(roundedValue < alpha) return roundedValue; //prionisma a
+				if(roundedValue < alpha) return new Move(roundedValue); //prionisma a
 				//alpha = (roundedValue > alpha) ? roundedValue : alpha;
 				//pio apla
 				if(roundedValue > alpha) alpha = roundedValue;
@@ -85,18 +90,19 @@ public class Minimax {
 			
 			for(Dice roll: possibleRolls){
 				currentP  = 1/(roll.isDouble()? 36:18);
-				expectedValue += minValue(b, roll, treeLength+1, alpha, beta)*currentP;
+				Move min = minValue(b, roll, treeLength+1, alpha, beta);
+				expectedValue += min.getScore()*currentP;
 				p += currentP;
 				expectedValue = s + (1-currentP)*Vmin;
 				roundedValue = Math.round(expectedValue); // gia na mn to ipologizw sinexeia
-				if(roundedValue > beta) return roundedValue; //prionisma a
+				if(roundedValue > beta) return new Move(roundedValue); //prionisma a
 				//alpha = (roundedValue > alpha) ? roundedValue : alpha;
 				//pio apla
 				if(roundedValue < beta) beta = roundedValue;
 			}
 		}
 		
-		return roundedValue;
+		return new Move(roundedValue);
 	}
 	
 

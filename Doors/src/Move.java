@@ -24,7 +24,7 @@ public class Move {
 		move = new int[4];
 		for(int i=0; i<move.length; i++) move[i] = -1;
 		score = value;
-	}
+	} 
 	
 	public Move(int[] moves, int value)
 	{
