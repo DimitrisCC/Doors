@@ -121,51 +121,186 @@ public class Board {
 		
 		Board child;
 		int[][] playedMove = new int[4][4];
+		playedMove[2][0] = -1; // oso dn exw diples auta dilwnoun invalid timi alliws 8a einai san
+		// na metakineis kati apo tn 8esi 0 stn 8esi 0.....
+		playedMove[2][1] = -1;
+		playedMove[3][0] = -1;
+		playedMove[3][1] = -1;
 		int n = player.getSign();
 		int fMove = pN + n; //fMove -> first move
 		int sMove = pN + n; //sMove -> second move
 		
-		//first move
-		for(int i = 0; i < 24 - move[0]; ++i){ //not taking into account the children states where moves lead out of board
-											//at this moment
-			fMove -= n; //increasing when reds, decreasing when greens
+		if(move[0] == move[1]){
+			int tMove = pN + n; //tMove -> third move
+			int foMove = pN + n; //lMove -> fourth move
 			
-			if(i < 24 - (move[0] + move[1]))
-			{
-				if(isValidMove(fMove, move[0] + move[1], player)){
-					child = new Board(this);
-					child.move(fMove, move[0]+move[1], n);
+			for(int i = 0; i < 24 - move[0]; ++i){ //first move
+				fMove -= n;
+				
+				if(i < 24 - (move[0]*4))
+				{
+					if(isValidMove(fMove, move[0]*4, player)){
+						child = new Board(this);
+						child.move(fMove, move[0]*4, n);
+						playedMove[0][0] = fMove;
+						playedMove[0][1] = fMove + move[0];
+						playedMove[1][0] = fMove + move[0];
+						playedMove[1][1] = fMove + 2*move[0];
+						playedMove[2][0] = fMove + 2*move[0];
+						playedMove[2][1] = fMove + 3*move[0];
+						playedMove[3][0] = fMove + 3*move[0];
+						playedMove[3][1] = fMove + 4*move[0];//stn Move exw 8ewrisei oti oi kiniseis ginontai
+						//diadoxika..........
+						child.setLastPlayedMove(playedMove);
+						children.add(child);
+					}
+	
+				}
+				
+				if(!isValidMove(fMove, move[0], player)) continue;
+				
+				for(int j = 0; j < 24 - move[0]; ++i){ //second move
+					sMove -= n;
+					
+					if(i < 24 - (move[0]*3))
+					{
+						if(isValidMove(sMove, move[0]*3, player)){
+							child = new Board(this);
+							child.move(fMove, move[0], n);
+							playedMove[0][0] = fMove;
+							playedMove[0][1] = fMove + move[0];
+							child.move(sMove, move[0]*3, n);
+							playedMove[1][0] = sMove;
+							playedMove[1][1] = sMove + move[0];
+							playedMove[2][0] = sMove + move[0];
+							playedMove[2][1] = sMove + 2*move[0];
+							playedMove[3][0] = sMove + 2*move[0];
+							playedMove[3][1] = sMove + 3*move[0];//stn Move exw 8ewrisei oti oi kiniseis ginontai
+							//diadoxika..........
+							child.setLastPlayedMove(playedMove);
+							children.add(child);
+						}
+		
+					}
+					
+					if(!isValidMove(sMove, move[0], player)) continue;
+					
+					for(int k = 0; k < 24 - move[0]; ++i){ // third move
+						tMove -= n;
+						
+						if(i < 24 - (move[0]*2))
+						{
+							if(isValidMove(tMove, move[0]*2, player)){
+								//--> arxika metakinw ta 2 prwta poulia kanonika kai to 3o kata 2*move[0]
+								child = new Board(this);
+								child.move(fMove, move[0], n);//prwto pouli
+								playedMove[0][0] = fMove;
+								playedMove[0][1] = fMove + move[0];
+								child.move(sMove, move[0], n);//deutero pouli
+								playedMove[1][0] = sMove;
+								playedMove[1][1] = sMove + move[0];
+								child.move(tMove, 2*move[0], n);//the final count down
+								playedMove[2][0] = tMove;
+								playedMove[2][1] = tMove + move[0];
+								playedMove[3][0] = tMove + move[0];
+								playedMove[3][1] = tMove + 2*move[0];//stn Move exw 8ewrisei oti oi kiniseis ginontai
+								//diadoxika..........
+								child.setLastPlayedMove(playedMove);
+								children.add(child);
+								
+								//--> kai twra  metakino 2 poulia kata 2*move[0] (sas to pa gamietai to simpan)
+								if(isValidMove(fMove, move[0]*2, player))//--> dn exei simasia an pairnw to fMove i to sMove edw
+								{
+									child = new Board(this);
+									child.move(fMove, 2*move[0], n);//prwto pouli kata 2*move[0]
+									playedMove[0][0] = fMove;
+									playedMove[0][1] = fMove + move[0];
+									playedMove[1][0] = fMove + move[0];
+									playedMove[1][1] = fMove + 2*move[0];
+									child.move(tMove, 2*move[0], n);//the final count down
+									playedMove[2][0] = tMove;
+									playedMove[2][1] = tMove + move[0];
+									playedMove[3][0] = tMove + move[0];
+									playedMove[3][1] = tMove + 2*move[0];//stn Move exw 8ewrisei oti oi kiniseis ginontai
+									//diadoxika..........
+									child.setLastPlayedMove(playedMove);
+									children.add(child);
+								}
+							}
+			
+						}
+						
+						if(!isValidMove(tMove, move[0], player)) continue;
+						
+						for(int l = 0; l < 24 - move[0]; ++i){ //fourth move
+							foMove -= n;
+							//--> edw metakinoume 4 poulia ena ena mono tou!!
+							
+							if(!isValidMove(foMove, move[0], player)) continue;
+							
+							child = new Board(this);
+							child.move(fMove, move[0], n);//prwto pouli 
+							playedMove[0][0] = fMove;
+							playedMove[0][1] = fMove + move[0];
+							child.move(sMove, move[0], n);//deutero pouli 
+							playedMove[1][0] = sMove;
+							playedMove[1][1] = sMove + move[0];
+							child.move(tMove, move[0], n);//trito pouli
+							playedMove[2][0] = tMove;
+							playedMove[2][1] = tMove + move[0];
+							child.move(foMove, move[0], n);//trito pouli
+							playedMove[3][0] = foMove;
+							playedMove[3][1] = foMove + move[0];//stn Move exw 8ewrisei oti oi kiniseis ginontai
+							//diadoxika..........
+							child.setLastPlayedMove(playedMove);
+							children.add(child);
+						
+						}
+					}	
+				}
+			}
+		}else{
+			//first move
+			for(int i = 0; i < 24 - move[0]; ++i){ //not taking into account the children states where moves lead out of board
+												//at this moment
+				fMove -= n; //increasing when reds, decreasing when greens
+				
+				if(i < 24 - (move[0] + move[1]))
+				{
+					if(isValidMove(fMove, move[0] + move[1], player)){
+						child = new Board(this);
+						child.move(fMove, move[0]+move[1], n);
+						playedMove[0][0] = fMove;
+						playedMove[0][1] = fMove + move[0];
+						playedMove[1][0] = fMove + move[0];
+						playedMove[1][1] = fMove + move[0] + move[1]; //stn Move exw 8ewrisei oti oi kiniseis ginontai
+						//diadoxika..........
+						child.setLastPlayedMove(playedMove);
+						children.add(child);
+					}
+	
+				}
+				
+				if(!isValidMove(fMove, move[0], player)) continue;
+				
+				//second move
+				for(int j = 0; j < 24 - move[1]; ++j){ //not taking into account the children states where moves lead out of board
+													//at this moment
+					sMove -= n; //increasing when reds, decreasing when greens
+					if(!isValidMove(sMove, move[1], player)) continue;
+				
+					child = new Board(this); //clone this state
+					child.move(fMove, move[0], n); 
 					playedMove[0][0] = fMove;
 					playedMove[0][1] = fMove + move[0];
-					playedMove[1][0] = fMove + move[0];
-					playedMove[1][1] = fMove + move[0] + move[1]; //stn Move exw 8ewrisei oti oi kiniseis ginontai
-					//diadoxika..........
+					child.move(sMove, move[1], n);
+					playedMove[1][0] = sMove;
+					playedMove[1][1] = sMove + move[1];
 					child.setLastPlayedMove(playedMove);
 					children.add(child);
+					
 				}
-
-			}
-			
-			if(!isValidMove(fMove, move[0], player)) continue;
-			
-			//second move
-			for(int j = 0; j < 24 - move[1]; ++j){ //not taking into account the children states where moves lead out of board
-												//at this moment
-				sMove -= n; //increasing when reds, decreasing when greens
-				if(!isValidMove(sMove, move[1], player)) continue;
-			
-				child = new Board(this); //clone this state
-				child.move(fMove, move[0], n); 
-				playedMove[0][0] = fMove;
-				playedMove[0][1] = fMove + move[0];
-				child.move(sMove, move[1], n);
-				playedMove[1][0] = sMove;
-				playedMove[1][1] = sMove + move[1];
-				child.setLastPlayedMove(playedMove);
-				children.add(child);
-				
-			}
-
+			}		
 		}
 	}
 	
