@@ -31,12 +31,12 @@ public class Minimax {
 		
 		Move min = new Move(INF);
 		ArrayList<Board> succ = b.getChildren(d, Player.RED);
-		Move value;
+		int value;
 		for(Board current : succ){
 			value = chanceValue(current, d, Player.GREEN, treeLength+1, alpha, beta);
-			if (value.getScore() < min.getScore()){
-				min.setMove(value.getMove());
-				min.setScore(value.getScore());
+			if (value < min.getScore()){
+				min.setMove(current.getLastPlayedMove());
+				min.setScore(value);
 			}
 		}
 		return min;
@@ -51,15 +51,18 @@ public class Minimax {
 		
 		Move max = new Move(-INF);
 		ArrayList<Board> succ = b.getChildren(d, Player.GREEN);
-		Move value;
+		int value;
 		for(Board current : succ){
 			value = chanceValue(current, d, Player.RED, treeLength+1, alpha, beta);
-			if (value.getScore() > max.getScore()) max = value;
+			if (value > max.getScore()) {
+				max.setMove(current.getLastPlayedMove());
+				max.setScore(value);
+			}
 		}
 		return max;
 	} 
 	
-	public Move chanceValue(Board b, Dice d, Player green, int treeLength, int alpha, int beta){
+	public int chanceValue(Board b, Dice d, Player green, int treeLength, int alpha, int beta){
 		
 		float expectedValue = 0; //PROSOXIIIIIIII!!!!! edw isws exoume provlima!!!
 		float s = 0;
@@ -80,7 +83,7 @@ public class Minimax {
 				//---> pou 8a epestrefe gia auton)
 				//---> gia na mn vgazei error pros t paron to dilwnw kapws edw
 				roundedValue = Math.round(expectedValue); // gia na mn to ipologizw sinexeia
-				if(roundedValue < alpha) return new Move(roundedValue); //prionisma a
+				if(roundedValue < alpha) return roundedValue; //prionisma a
 				//alpha = (roundedValue > alpha) ? roundedValue : alpha;
 				//pio apla
 				if(roundedValue > alpha) alpha = roundedValue;
@@ -95,14 +98,14 @@ public class Minimax {
 				p += currentP;
 				expectedValue = s + (1-currentP)*Vmin;
 				roundedValue = Math.round(expectedValue); // gia na mn to ipologizw sinexeia
-				if(roundedValue > beta) return new Move(roundedValue); //prionisma a
+				if(roundedValue > beta) return roundedValue; //prionisma a
 				//alpha = (roundedValue > alpha) ? roundedValue : alpha;
 				//pio apla
 				if(roundedValue < beta) beta = roundedValue;
 			}
 		}
 		
-		return new Move(roundedValue);
+		return roundedValue;
 	}
 	
 

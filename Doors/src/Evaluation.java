@@ -9,7 +9,7 @@ public class Evaluation {
 	 {
 	   int score=evaluateCheckers(b,player);
 	   score+=evaluateDoors(b,player);
-	 
+	   score-=threatenedCheckers(b,player);
 	   return score;
 	 } 
     
@@ -70,6 +70,36 @@ public class Evaluation {
 	     
 	     return (doors*50)+(inrow*100);
 	 }
-     
-
+	 
+     //Returns the number of threatened checkers
+	 private int threatenedCheckers(Board b, int player)
+	 {
+		 int singles=0;
+		 int [] board = b.getTable();
+		 if(player==1)
+	        {
+	            int i=positions-1;
+	            //skip checkers that cannot be threatened
+	            while(i>=0 && board[i]<=0)
+	                i--;
+	            for(int y=0;y<i;y++)
+	            {
+	                if(board[i]==-1)
+	                	singles++;
+	            }
+	        }
+	        else
+	        {
+	            int i=0;
+	            //skip checkers that cannot be threatened
+	            while(i<positions && board[i]>=0)
+	                i++;
+	            for(int y=(i+1);y<positions;y++)
+	            {
+	                if(board[i]==1)
+	                    singles++;
+	            }
+	        }
+	        return singles;
+	 }
 }
