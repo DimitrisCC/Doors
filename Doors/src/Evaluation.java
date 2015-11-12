@@ -71,6 +71,7 @@ public class Evaluation {
 	     return (doors*50)+(inrow*100);
 	 }
      
+	 //Returns the number of threatened checkers
 	 private int threatenedCheckers(Board b, int player)
 	 {
 		 int singles=0;
