@@ -45,34 +45,42 @@ public class Board {
     
     private int pos; //starting position
     private int move; //target position
-    private Player player;
+   // private Player player;
     
-    private Move lastMovePlayed;
+    private int[][] lastPlayedMove;
     
-    Dice dice;
+    //Dice dice;
 
     public Board(){
         table = new int[24];
         initBoard();
         eaten = new int[2];
-        player = Player.NONE;
-        dice = new Dice();
+        
+        for(int i=0; i<lastPlayedMove.length; i++)
+        	for(int j=0; j<lastPlayedMove[0].length; j++)
+        		lastPlayedMove[i][j] = -1;
+       // player = Player.NONE;
+        //dice = new Dice();
     }
-    
+    /*
     public Board(Player player){
     	 table = new int[24];
          initBoard();
          eaten = new int[2];
          this.player = player;
          dice = new Dice();
-    }
+    }*/
 	
 	public Board(Board board){
 		table = new int[24];
 		setTable(board.getTable());
 		eaten = new int[2];
-		player = board.getPlayer();
-		dice = new Dice();
+		
+		 for(int i=0; i<lastPlayedMove.length; i++)
+	        	for(int j=0; j<lastPlayedMove[0].length; j++)
+	        		lastPlayedMove[i][j] = -1;
+		//player = board.getPlayer();
+		//dice = new Dice();
 	}
 	
 	public void setTable(int[] t){ 
@@ -84,13 +92,14 @@ public class Board {
 		}
 	}
 	
+	/*
 	public Player getPlayer(){
 		return player;
 	}
 	
 	public void setPlayer(Player player){
 		this.player = player;
-	}
+	} */
 	
 	public int[] getTable() { return table; }
 	
@@ -111,6 +120,7 @@ public class Board {
 	private void _getChildren(byte[] move, ArrayList<Board> children, int pN, Player player){
 		
 		Board child;
+		int[][] playedMove = new int[4][4];
 		int n = player.getSign();
 		int fMove = pN + n; //fMove -> first move
 		int sMove = pN + n; //sMove -> first move
@@ -131,7 +141,12 @@ public class Board {
 				if(sMove != fMove){
 					child = new Board(this); //clone this state
 					child.move(fMove, move[0], n); 
+					playedMove[0][0] = fMove;
+					playedMove[0][1] = move[0];
 					child.move(sMove, move[1], n);
+					playedMove[1][0] = sMove;
+					playedMove[1][1] = move[1];
+					child.setLastPlayedMove(playedMove);
 					children.add(child);
 				} else { //same piece
 					if(isValidMove(fMove, move[0]+move[1], player)){
@@ -169,37 +184,31 @@ public class Board {
 	 * @return true is move is legal
 	 */
 	protected boolean isValidMove(int pos, int move, Player player){
-		if(player == null) player = this.player;
+		//if(player == null) player = this.player;
 		if(piecesOnBar(player) > 0) return false;
 		
-		byte n = player.getSign();
-		int signp = (int) Math.signum(table[pos]);
 		
-		if((!isValidPick(pos, player)) || signp != 0) return false;
+		byte n = player.getSign();
+		//int signp = (int) Math.signum(table[pos]);
+		
+		if(!isValidPick(pos, player)) return false;
 		//this position does not contain any of the player's pieces
 		
 		if(!checkDirection(pos, move, player)) return false;
 		
 		int signm = (int) Math.signum(table[pos+move]);
 		if(signm == n || table[pos+move]+n == 0 || table[pos+move] == 0)
-			return true; //this position either contains player's pieces, either is empty, or it contains just one of opponent's pieces
+			return true; //this position either contains player's pieces, or it contains just one of opponent's pieces, either is empty
 		return false;
 	}
 	
-	protected int piecesOnBar(Player player){
-		
-		if (player == Player.GREEN && eaten[0] > 0)
-			return eaten[0];
-		else if (player == Player.RED && eaten[1] > 0)
-			return eaten[1];
-		else return 0;
-	}
+	
 	
 	/**
 	 * Checks if you picked a correct piece
 	 */
 	public boolean isValidPick(int pos, Player player){
-		if (player == null) player = this.player;
+		//if (player == null) player = this.player;
 		if(Math.signum(table[pos]) == player.getSign()){
 			//setStatus("Got your piece, mate!");
 			return true;
@@ -211,21 +220,25 @@ public class Board {
 	
 	/** Performs the move
 	 * @param pos current position of the piece to move
-	 * @param move step the piece has to move
+	 * @param steps steps the piece has to move
 	 * @param n n = -1 for RED, n = 1 for GREEN
 	 */
-	protected void move(int pos, int move, int n){
+	protected void move(int pos, int steps, int n){
 		//validity of the move is already checked
 		table[pos] -= n; //decrease the absolute value
 		
-		int prev = table[pos+move];
-		table[pos+move] += n;
+		int prev = table[pos+steps];
+		
+		table[pos+steps] += n;
 		//move done
 		//izzy pizzy
-		if(Math.signum(prev) < Math.signum(table[pos+move])){
+		
+		if(Math.abs(prev) == 1){
+			table[pos+steps] += n;
 			if (prev < 0) eaten[1]++;
 			else if (prev > 0) eaten[0]++;
 		}
+		
 	}
 	
 	public int getNumberOfPiecesAt(int pos){
@@ -233,7 +246,7 @@ public class Board {
 	}
 	
 	public boolean isValidTarget(int moveTarget, Player player){
-		if(player == null) player = this.player;
+		//if(player == null) player = this.player;
 		int n = player.getSign();
 		int signm = (int) Math.signum(table[moveTarget]);
 		if(signm == n || table[moveTarget]+n == 0 || table[moveTarget] == 0)
@@ -312,34 +325,22 @@ public class Board {
     public int getGreensLeft(){
     	return PIECE_TOTAL_NUM - eaten[1];
     }
-    
-    public byte[] rollDice(){
-    	return dice.roll();
-    }
-    
-    public byte[] getDice(){
-    	return dice.getValues();
-    }
-    
-    public byte[] getDiceMoveset(Dice dice){
-    	
-    	byte[] moves = new byte[4];
-    	moves[0] = dice.getValues()[0];
-    	moves[1] = dice.getValues()[1];
-    	
-    	if(dice.isDouble()){
-    		moves[2] = moves[0];
-    		moves[3] = moves[0];
-    	}
-    	
-    	return moves;
-    }
-    
-    public byte[] getDiceMoveset(){
-    	Dice dice = new Dice();
-    	dice.roll();
-    	return getDiceMoveset(dice);
-    }
 
-    public Move getLastMovePlayed(){ return lastMovePlayed; }
+	
+	protected int piecesOnBar(Player player){
+		
+		if (player == Player.GREEN && eaten[0] > 0)
+			return eaten[0];
+		else if (player == Player.RED && eaten[1] > 0)
+			return eaten[1];
+		else return 0;
+	}
+  
+    public int[][] getLastPlayedMove(){ return lastPlayedMove; }
+    
+    public void setLastPlayedMove(int[][] move){
+    	for(int i=0; i<lastPlayedMove.length; i++)
+    		for(int j=0; j<lastPlayedMove[0].length; j++)
+    			lastPlayedMove[i][j] = move[i][j];
+    }
 }
