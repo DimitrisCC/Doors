@@ -136,10 +136,12 @@ public class Board {
 					child = new Board(this);
 					child.move(fMove, move[0]+move[1], n);
 					playedMove[0][0] = fMove;
-					playedMove[0][1] = move[0];
-					playedMove[1][0] = fMove;
-					playedMove[1][1] = move[1];
+					playedMove[0][1] = fMove + move[0];
+					playedMove[1][0] = fMove + move[0];
+					playedMove[1][1] = fMove + move[0] + move[1]; //stn Move exw 8ewrisei oti oi kiniseis ginontai
+					//diadoxika..........
 					child.setLastPlayedMove(playedMove);
+					children.add(child);
 				}
 
 			}
@@ -155,10 +157,10 @@ public class Board {
 				child = new Board(this); //clone this state
 				child.move(fMove, move[0], n); 
 				playedMove[0][0] = fMove;
-				playedMove[0][1] = move[0];
+				playedMove[0][1] = fMove + move[0];
 				child.move(sMove, move[1], n);
 				playedMove[1][0] = sMove;
-				playedMove[1][1] = move[1];
+				playedMove[1][1] = sMove + move[1];
 				child.setLastPlayedMove(playedMove);
 				children.add(child);
 				
