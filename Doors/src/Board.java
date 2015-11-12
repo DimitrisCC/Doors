@@ -123,38 +123,45 @@ public class Board {
 		int[][] playedMove = new int[4][4];
 		int n = player.getSign();
 		int fMove = pN + n; //fMove -> first move
-		int sMove = pN + n; //sMove -> first move
+		int sMove = pN + n; //sMove -> second move
 		
 		//first move
 		for(int i = 0; i < 24 - move[0]; ++i){ //not taking into account the children states where moves lead out of board
 											//at this moment
 			fMove -= n; //increasing when reds, decreasing when greens
 			
+			if(i < 24 - (move[0] + move[1]))
+			{
+				if(isValidMove(fMove, move[0] + move[1], player)){
+					child = new Board(this);
+					child.move(fMove, move[0]+move[1], n);
+					playedMove[0][0] = fMove;
+					playedMove[0][1] = move[0];
+					playedMove[1][0] = fMove;
+					playedMove[1][1] = move[1];
+					child.setLastPlayedMove(playedMove);
+				}
+
+			}
+			
 			if(!isValidMove(fMove, move[0], player)) continue;
 			
 			//second move
-			for(int j = 0; j < 24 - move[0]; ++j){ //not taking into account the children states where moves lead out of board
+			for(int j = 0; j < 24 - move[1]; ++j){ //not taking into account the children states where moves lead out of board
 												//at this moment
 				sMove -= n; //increasing when reds, decreasing when greens
 				if(!isValidMove(sMove, move[1], player)) continue;
 			
-				if(sMove != fMove){
-					child = new Board(this); //clone this state
-					child.move(fMove, move[0], n); 
-					playedMove[0][0] = fMove;
-					playedMove[0][1] = move[0];
-					child.move(sMove, move[1], n);
-					playedMove[1][0] = sMove;
-					playedMove[1][1] = move[1];
-					child.setLastPlayedMove(playedMove);
-					children.add(child);
-				} else { //same piece
-					if(isValidMove(fMove, move[0]+move[1], player)){
-						child = new Board(this);
-						child.move(fMove, move[0]+move[1], n);
-						children.add(child);
-					}
-				}
+				child = new Board(this); //clone this state
+				child.move(fMove, move[0], n); 
+				playedMove[0][0] = fMove;
+				playedMove[0][1] = move[0];
+				child.move(sMove, move[1], n);
+				playedMove[1][0] = sMove;
+				playedMove[1][1] = move[1];
+				child.setLastPlayedMove(playedMove);
+				children.add(child);
+				
 			}
 
 		}
