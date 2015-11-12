@@ -68,7 +68,7 @@ public class Evaluation {
 	     if(atLeastTwoCheckersPerPoint>inrow)
 	            inrow=atLeastTwoCheckersPerPoint;
 	     
-	     return (doors*50)+(inrow*100);
+	     return (doors+inrow)*20;
 	 }
      
 	 //Returns the number of threatened checkers
