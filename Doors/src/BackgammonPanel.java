@@ -48,7 +48,7 @@ public class BackgammonPanel extends JPanel {
 		setDice4(Toolkit.getDefaultToolkit().createImage("resources//dice4.png"));
 		setDice5(Toolkit.getDefaultToolkit().createImage("resources//dice5.png"));
 		setDice6(Toolkit.getDefaultToolkit().createImage("resources//dice6.png"));
-		setGreenPiece(Toolkit.getDefaultToolkit().createImage("resources//green.png"));
+		setGreenPiece(Toolkit.getDefaultToolkit().createImage("resources//green.png"));//--> GreenPeace....
 		setRedPiece(Toolkit.getDefaultToolkit().createImage("resources//red.png"));
 		
 		buttons = new ArrayList<JButton>();
@@ -252,6 +252,7 @@ public class BackgammonPanel extends JPanel {
 		int diceX = DICE_X + i * DICE_SIZE;
 		
 		byte[] dices = game.getDice();
+		if(dices[0] == 0) dices = game.rollDice();
 		
 		try {
 			switch (dices[i]) {

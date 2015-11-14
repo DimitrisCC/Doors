@@ -10,6 +10,7 @@ public final class MainGUI {
 
 	private static Player currentPlayer = Player.GREEN;
 	private static Board currentGame;
+	private static Dice dice;
 
 	private MainGUI() { }
 
@@ -31,8 +32,6 @@ public final class MainGUI {
 				try {
 					currentGame = new Board();
 					playGame(currentGame);
-					BackgammonFrame window = new BackgammonFrame(currentGame);
-					window.setVisible(true);
 				} catch (Exception e) {
 					e.printStackTrace();
 				}
@@ -41,20 +40,35 @@ public final class MainGUI {
 	}
 	
 	private static void playGame(Board currentGame) {
+		
 
+		BackgammonFrame window = new BackgammonFrame(currentGame);
+		window.setVisible(true);
 		//GameGui guiGame = new GameGui();
 		//bf = new BackgammonFrame(currentGame);
-		/*while (currentGame.getWinner() == Player.NONE) {
-			if (curPl == Player.GREEN) {
-				guiGame.playTurn(currentGame, currentGame.getPlayer1(), bf);
-				curPl = Player.RED;
+		while (currentGame.getWinner() == Player.NONE) {
+			if (currentPlayer == Player.GREEN) {
+				playTurn(window, Player.GREEN);
+				currentPlayer = Player.RED;
 			} else {
-				guiGame.playTurn(currentGame, currentGame.getPlayer2(), bf);
-				curPl = Player.GREEN;
+				playTurn(window, Player.RED);
+				currentPlayer = Player.GREEN;
 			}
 		}
 
-		bf.winnerDialog();*/
+		window.winnerDialog();
+	}
+	
+	private static void playTurn(BackgammonFrame gameFrame, Player player)
+	{
+		if(player == Player.GREEN){//--> ara paizei to pc
+			int n = player.getSign();
+			dice.roll();
+			gameFrame.getGame().makeMove(Minimax.MinimaxAlgorithm(gameFrame.getGame(), dice, Player.GREEN), n);
+			gameFrame.Repaint();
+		}else{
+			
+		}
 	}
 
 }

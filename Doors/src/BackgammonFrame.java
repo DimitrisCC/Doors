@@ -16,6 +16,7 @@ public class BackgammonFrame extends JFrame implements MouseListener, MouseMotio
 	private static final long serialVersionUID = -1419452740845309834L;
 	private Board game;
 	private StatusBar statusBar;
+	private BackgammonPanel panel;
 
 	/**
 	 * Create the application.
@@ -30,7 +31,6 @@ public class BackgammonFrame extends JFrame implements MouseListener, MouseMotio
 	 * Initialize the contents of the 
 	 */
 	private void initialize() {
-		BackgammonPanel panel;
 		Container container;
 
 		setDefaultCloseOperation(EXIT_ON_CLOSE);
@@ -52,6 +52,11 @@ public class BackgammonFrame extends JFrame implements MouseListener, MouseMotio
 		update();
 	}
 
+	public void Repaint(){
+		panel.repaint();
+		//repaint();
+		update();
+	}
 	@Override
 	public void mouseDragged(MouseEvent e) {
 		// TODO Auto-generated method stub
@@ -97,5 +102,15 @@ public class BackgammonFrame extends JFrame implements MouseListener, MouseMotio
 	public void update(){
 		statusBar.setText("yolo");
 		repaint();
+	}
+	
+
+	public void winnerDialog() {
+		// TODO Auto-generated method stub
+		
+	}
+
+	public Board getGame() {
+		return game;
 	}
 }
