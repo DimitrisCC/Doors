@@ -35,14 +35,14 @@ public class Minimax {
 		for(Board current : succ){
 			value = chanceValue(current, d, Player.GREEN, treeLength+1, alpha, beta);
 			if (value < min.getScore()){
-				min.setMove(current.getLastPlayedMove());
+				min.setMove(current.getLastPlayedMoves().get(current.getLastPlayedMoves().size()-1).getMove()); //---->>>DEN KSERW POIA KINHSH ENNOEIS EDW!!!!
 				min.setScore(value);
 			}
 		}
 		return min;
 	}
 	
-	public Move maxValue(Board b,Dice d, int treeLength, int alpha, int beta){
+	public Move maxValue(Board b, Dice d, int treeLength, int alpha, int beta){
 		
 		if(treeLength == MAX_LENGTH){
 			//TODO
@@ -55,7 +55,7 @@ public class Minimax {
 		for(Board current : succ){
 			value = chanceValue(current, d, Player.RED, treeLength+1, alpha, beta);
 			if (value > max.getScore()) {
-				max.setMove(current.getLastPlayedMove());
+				max.setMove(current.getLastPlayedMoves().get(current.getLastPlayedMoves().size()-1).getMove()); //---->>>DEN KSERW POIA KINHSH ENNOEIS EDW!!!!
 				max.setScore(value);
 			}
 		}

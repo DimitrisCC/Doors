@@ -47,20 +47,22 @@ public class Board {
     private int move; //target position
    // private Player player;
     
-    private int[][] lastPlayedMove;
+    //private int[][] lastPlayedMove;
+    private ArrayList<Move> lastPlayedMoves;
     
-    //Dice dice;
+    Dice dice;
 
     public Board(){
         table = new int[24];
         initBoard();
         eaten = new int[2];
+        lastPlayedMoves = new ArrayList<Move>();
         
-        for(int i=0; i<lastPlayedMove.length; i++)
+       /* for(int i=0; i<lastPlayedMove.length; i++)
         	for(int j=0; j<lastPlayedMove[0].length; j++)
-        		lastPlayedMove[i][j] = -1;
+        		lastPlayedMove[i][j] = -1;*/
        // player = Player.NONE;
-        //dice = new Dice();
+        dice = new Dice();
     }
     /*
     public Board(Player player){
@@ -76,11 +78,13 @@ public class Board {
 		setTable(board.getTable());
 		eaten = new int[2];
 		
-		 for(int i=0; i<lastPlayedMove.length; i++)
+		lastPlayedMoves = new ArrayList<Move>();
+		
+		/* for(int i=0; i<lastPlayedMove.length; i++)
 	        	for(int j=0; j<lastPlayedMove[0].length; j++)
-	        		lastPlayedMove[i][j] = -1;
+	        		lastPlayedMove[i][j] = -1;*/
 		//player = board.getPlayer();
-		//dice = new Dice();
+		dice = new Dice();
 	}
 	
 	public void setTable(int[] t){ 
@@ -151,7 +155,7 @@ public class Board {
 						playedMove[3][0] = fMove + 3*move[0];
 						playedMove[3][1] = fMove + 4*move[0];//stn Move exw 8ewrisei oti oi kiniseis ginontai
 						//diadoxika..........
-						child.setLastPlayedMove(playedMove);
+						child.setLastPlayedMove(new Move(playedMove));
 						children.add(child);
 					}
 	
@@ -177,7 +181,7 @@ public class Board {
 							playedMove[3][0] = sMove + 2*move[0];
 							playedMove[3][1] = sMove + 3*move[0];//stn Move exw 8ewrisei oti oi kiniseis ginontai
 							//diadoxika..........
-							child.setLastPlayedMove(playedMove);
+							child.setLastPlayedMove(new Move(playedMove));
 							children.add(child);
 						}
 		
@@ -205,7 +209,7 @@ public class Board {
 								playedMove[3][0] = tMove + move[0];
 								playedMove[3][1] = tMove + 2*move[0];//stn Move exw 8ewrisei oti oi kiniseis ginontai
 								//diadoxika..........
-								child.setLastPlayedMove(playedMove);
+								child.setLastPlayedMove(new Move(playedMove));
 								children.add(child);
 								
 								//--> kai twra  metakino 2 poulia kata 2*move[0] (sas to pa gamietai to simpan)
@@ -223,7 +227,7 @@ public class Board {
 									playedMove[3][0] = tMove + move[0];
 									playedMove[3][1] = tMove + 2*move[0];//stn Move exw 8ewrisei oti oi kiniseis ginontai
 									//diadoxika..........
-									child.setLastPlayedMove(playedMove);
+									child.setLastPlayedMove(new Move(playedMove));
 									children.add(child);
 								}
 							}
@@ -252,7 +256,7 @@ public class Board {
 							playedMove[3][0] = foMove;
 							playedMove[3][1] = foMove + move[0];//stn Move exw 8ewrisei oti oi kiniseis ginontai
 							//diadoxika..........
-							child.setLastPlayedMove(playedMove);
+							child.setLastPlayedMove(new Move(playedMove));
 							children.add(child);
 						
 						}
@@ -275,7 +279,7 @@ public class Board {
 						playedMove[1][0] = fMove + move[0];
 						playedMove[1][1] = fMove + move[0] + move[1]; //stn Move exw 8ewrisei oti oi kiniseis ginontai
 						//diadoxika..........
-						child.setLastPlayedMove(playedMove);
+						child.setLastPlayedMove(new Move(playedMove));
 						children.add(child);
 					}
 	
@@ -296,7 +300,7 @@ public class Board {
 					child.move(sMove, move[1], n);
 					playedMove[1][0] = sMove;
 					playedMove[1][1] = sMove + move[1];
-					child.setLastPlayedMove(playedMove);
+					child.setLastPlayedMove(new Move(playedMove));
 					children.add(child);
 					
 				}
@@ -480,12 +484,13 @@ public class Board {
 		else return 0;
 	}
   
-    public int[][] getLastPlayedMove(){ return lastPlayedMove; }
+    public ArrayList<Move> getLastPlayedMoves(){ return lastPlayedMoves; }
     
-    public void setLastPlayedMove(int[][] move){
-    	for(int i=0; i<lastPlayedMove.length; i++)
+    public void setLastPlayedMove(Move move){
+    	/*for(int i=0; i<lastPlayedMove.length; i++)
     		for(int j=0; j<lastPlayedMove[0].length; j++)
-    			lastPlayedMove[i][j] = move[i][j];
+    			lastPlayedMove[i][j] = move[i][j];*/
+    	lastPlayedMoves.add(move);
     }
     
     //It returns the number of checkers 
@@ -502,5 +507,38 @@ public class Board {
     	
     }
     
+    
+    //xreiazontai gia to gui
+    //prepei na vlepei ta zaria autou tou stigmiotypou
+    //an ginetai na mpoun allou, tha mpoun ok
+    
+    public byte[] rollDice(){
+		return dice.roll();
+    }
+    
+    public byte[] getDice(){
+    	return dice.getValues();
+    }
+    
+    public byte[] getDiceMoveset(Dice dice){
+    	
+    	byte[] moves = new byte[4];
+    	moves[0] = dice.getValues()[0];
+    	moves[1] = dice.getValues()[1];
+    	
+    	if(dice.isDouble()){
+    		moves[2] = moves[0];
+    		moves[3] = moves[0];
+    	}
+    	
+    	return moves;
+    }
+    
+    public byte[] getDiceMoveset(){
+    	Dice dice = new Dice();
+    	dice.roll();
+    	return getDiceMoveset(dice);
+    }
+
     
 }

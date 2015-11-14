@@ -38,6 +38,11 @@ public class Move {
 		score = value;
 	}
 	
+	public Move(Move move){
+		this.move = move.getMove();
+		score = 0;
+	}
+	
 	public int[][] getMove(){ return move; } 
 	
 	public int getScore(){ return score; }
