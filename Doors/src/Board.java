@@ -55,6 +55,8 @@ public class Board {
     private int[] freedPieces; //if 15, then you win
     //[0] for green, [1] for red
 
+    private Player winner = Player.NONE;
+    
     public Board(){
         table = new int[24];
         initBoard();
@@ -148,7 +150,6 @@ public class Board {
 				{
 					if(isValidMove(fMove, move[0]*4, player)){
 						child = new Board(this);
-						child.move(fMove, move[0]*4, n);
 						playedMove[0][0] = fMove;
 						playedMove[0][1] = fMove + move[0];
 						playedMove[1][0] = fMove + move[0];
@@ -158,7 +159,10 @@ public class Board {
 						playedMove[3][0] = fMove + 3*move[0];
 						playedMove[3][1] = fMove + 4*move[0];//stn Move exw 8ewrisei oti oi kiniseis ginontai
 						//diadoxika..........
-						child.setLastPlayedMove(new Move(playedMove));
+						Move moveToMake = new Move(playedMove);
+						child.makeMove(moveToMake, n);
+						
+						child.setLastPlayedMove(moveToMake);
 						children.add(child);
 					}
 	
@@ -173,10 +177,8 @@ public class Board {
 					{
 						if(isValidMove(sMove, move[0]*3, player)){
 							child = new Board(this);
-							child.move(fMove, move[0], n);
 							playedMove[0][0] = fMove;
 							playedMove[0][1] = fMove + move[0];
-							child.move(sMove, move[0]*3, n);
 							playedMove[1][0] = sMove;
 							playedMove[1][1] = sMove + move[0];
 							playedMove[2][0] = sMove + move[0];
@@ -184,7 +186,10 @@ public class Board {
 							playedMove[3][0] = sMove + 2*move[0];
 							playedMove[3][1] = sMove + 3*move[0];//stn Move exw 8ewrisei oti oi kiniseis ginontai
 							//diadoxika..........
-							child.setLastPlayedMove(new Move(playedMove));
+							Move moveToMake = new Move(playedMove);
+							child.makeMove(moveToMake, n);
+							
+							child.setLastPlayedMove(moveToMake);
 							children.add(child);
 						}
 		
@@ -200,37 +205,44 @@ public class Board {
 							if(isValidMove(tMove, move[0]*2, player)){
 								//--> arxika metakinw ta 2 prwta poulia kanonika kai to 3o kata 2*move[0]
 								child = new Board(this);
-								child.move(fMove, move[0], n);//prwto pouli
+								//prwto pouli
 								playedMove[0][0] = fMove;
 								playedMove[0][1] = fMove + move[0];
-								child.move(sMove, move[0], n);//deutero pouli
+								//deutero pouli
 								playedMove[1][0] = sMove;
 								playedMove[1][1] = sMove + move[0];
-								child.move(tMove, 2*move[0], n);//the final count down
+								//the final count down
 								playedMove[2][0] = tMove;
 								playedMove[2][1] = tMove + move[0];
 								playedMove[3][0] = tMove + move[0];
 								playedMove[3][1] = tMove + 2*move[0];//stn Move exw 8ewrisei oti oi kiniseis ginontai
 								//diadoxika..........
-								child.setLastPlayedMove(new Move(playedMove));
+								Move moveToMake = new Move(playedMove);
+								child.makeMove(moveToMake, n);
+								
+								child.setLastPlayedMove(moveToMake);
 								children.add(child);
 								
 								//--> kai twra  metakino 2 poulia kata 2*move[0] (sas to pa gamietai to simpan)
 								if(isValidMove(fMove, move[0]*2, player))//--> dn exei simasia an pairnw to fMove i to sMove edw
 								{
 									child = new Board(this);
-									child.move(fMove, 2*move[0], n);//prwto pouli kata 2*move[0]
+									//prwto pouli kata 2*move[0]
 									playedMove[0][0] = fMove;
 									playedMove[0][1] = fMove + move[0];
 									playedMove[1][0] = fMove + move[0];
 									playedMove[1][1] = fMove + 2*move[0];
-									child.move(tMove, 2*move[0], n);//the final count down
+									//the final count down
 									playedMove[2][0] = tMove;
 									playedMove[2][1] = tMove + move[0];
 									playedMove[3][0] = tMove + move[0];
 									playedMove[3][1] = tMove + 2*move[0];//stn Move exw 8ewrisei oti oi kiniseis ginontai
 									//diadoxika..........
-									child.setLastPlayedMove(new Move(playedMove));
+									Move moveToMake1 = new Move(playedMove);
+									child.makeMove(moveToMake1, n); //--> edw tn onomasa moveToMake1 giati ipirxe conflict me tn apopanw
+									//--> epeidi itan sto idio scope
+									
+									child.setLastPlayedMove(moveToMake1);
 									children.add(child);
 								}
 							}
@@ -246,20 +258,23 @@ public class Board {
 							if(!isValidMove(foMove, move[0], player)) continue;
 							
 							child = new Board(this);
-							child.move(fMove, move[0], n);//prwto pouli 
+							//prwto pouli 
 							playedMove[0][0] = fMove;
 							playedMove[0][1] = fMove + move[0];
-							child.move(sMove, move[0], n);//deutero pouli 
+							//deutero pouli 
 							playedMove[1][0] = sMove;
 							playedMove[1][1] = sMove + move[0];
-							child.move(tMove, move[0], n);//trito pouli
+							//trito pouli
 							playedMove[2][0] = tMove;
 							playedMove[2][1] = tMove + move[0];
-							child.move(foMove, move[0], n);//trito pouli
+							//trito pouli
 							playedMove[3][0] = foMove;
 							playedMove[3][1] = foMove + move[0];//stn Move exw 8ewrisei oti oi kiniseis ginontai
 							//diadoxika..........
-							child.setLastPlayedMove(new Move(playedMove));
+							Move moveToMake = new Move(playedMove);
+							child.makeMove(moveToMake, n);
+							
+							child.setLastPlayedMove(moveToMake);
 							children.add(child);
 						
 						}
@@ -276,13 +291,15 @@ public class Board {
 				{
 					if(isValidMove(fMove, move[0] + move[1], player)){
 						child = new Board(this);
-						child.move(fMove, move[0]+move[1], n);
 						playedMove[0][0] = fMove;
 						playedMove[0][1] = fMove + move[0];
 						playedMove[1][0] = fMove + move[0];
 						playedMove[1][1] = fMove + move[0] + move[1]; //stn Move exw 8ewrisei oti oi kiniseis ginontai
 						//diadoxika..........
-						child.setLastPlayedMove(new Move(playedMove));
+						Move moveToMake = new Move(playedMove);
+						child.makeMove(moveToMake, n);
+						
+						child.setLastPlayedMove(moveToMake);
 						children.add(child);
 					}
 	
@@ -297,13 +314,16 @@ public class Board {
 					if(!isValidMove(sMove, move[1], player)) continue;
 				
 					child = new Board(this); //clone this state
-					child.move(fMove, move[0], n); 
+					// to prwto pouli
 					playedMove[0][0] = fMove;
 					playedMove[0][1] = fMove + move[0];
-					child.move(sMove, move[1], n);
+					// to deutero pouli
 					playedMove[1][0] = sMove;
 					playedMove[1][1] = sMove + move[1];
-					child.setLastPlayedMove(new Move(playedMove));
+					Move moveToMake = new Move(playedMove);
+					child.makeMove(moveToMake, n);
+					
+					child.setLastPlayedMove(moveToMake);
 					children.add(child);
 					
 				}
@@ -374,20 +394,30 @@ public class Board {
 	 * @param steps steps the piece has to move
 	 * @param n n = -1 for RED, n = 1 for GREEN
 	 */
-	protected void move(int pos, int steps, int n){
+	protected void makeMove(Move m, int n){
 		//validity of the move is already checked
-		table[pos] -= n; //decrease the absolute value
 		
-		int prev = table[pos+steps];
 		
-		table[pos+steps] += n;
-		//move done
-		//izzy pizzy
+		int[][] moveToMake = m.getMove();
 		
-		if(Math.abs(prev) == 1){
-			table[pos+steps] += n;
-			if (prev < 0) eaten[1]++;
-			else if (prev > 0) eaten[0]++;
+		for(int i=0; i< moveToMake.length; i++)
+		{	
+			if(moveToMake[i][0] != -1){ //---> an einai -1 tote dn ginetai i antistoixi kinisi
+				//---> PROSOXI!! isws mas fanei xrisimo to -1 na ipodilwnei pouli ektos board!!!
+				table[moveToMake[i][0]] -= n; //decrease the absolute value
+				int prev = table[moveToMake[i][1]];
+				table[moveToMake[i][1]] += n;
+				if(Math.abs(prev) == 1){
+					table[moveToMake[i][1]] += n;
+					if (prev < 0) eaten[1]++;
+					else if (prev > 0) eaten[0]++;
+				}
+			}else{
+				//---> Mporei na xrisimopoii8ei gia na metakinoume poulia ektos board!
+				//---> An moveToMake[i][0] == -1 kai moveToMake != -1
+				//---> tote metakinise ena pouli apo ta fagwmena sto table[moveToMake[i][1]]
+				return;
+			}
 		}
 		
 	}
@@ -553,6 +583,10 @@ public class Board {
     	dice.roll();
     	return getDiceMoveset(dice);
     }
+
+	public Player getWinner() {
+		return winner;
+	}
 
     
 }

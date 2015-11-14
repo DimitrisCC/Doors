@@ -8,20 +8,20 @@ public class Minimax {
 	
 	private static int MAX_LENGTH = 2; // 3ekinaei apo to 0 (opote en teli 3 einai ta epipeda...)
 	private static int INF = 100000;
-	private ArrayList<Dice> possibleRolls; // isws kalo na alla3ei se oura proteraiotitas me pio panw osa exoun pi8anotita 1/18 kai pio katw osa 1/36
+	private static ArrayList<Dice> possibleRolls; // isws kalo na alla3ei se oura proteraiotitas me pio panw osa exoun pi8anotita 1/18 kai pio katw osa 1/36
 	
 	//pros to paron exw 8ewrisei dedomeno oti o min einai panta o kokkinos
 	//o max einai panta o prasinos kai o chance einai chance telos pantwn
 	//opote mesa sts sinartiseis xrisimopoiw fixed PieceEnums...parola auta epeidi to 8ema isws
 	//mporei na veltiw8ei genika to afisa stn dilwsi kai vlepoume
-	public Move MinimaxAlgorithm(Board root, Dice d, Player player)
+	public static Move MinimaxAlgorithm(Board root, Dice d, Player player)
 	{
 		possibleRolls = Dice.allPossibleRolls(); //initialize possibleRolls
 		Move bestMove = maxValue(root, d, 0, -INF, INF);
 		return bestMove;
 	}
 	
-	public Move minValue(Board b, Dice d, int treeLength,int alpha, int beta){
+	private static Move minValue(Board b, Dice d, int treeLength,int alpha, int beta){
 		
 		if(treeLength == MAX_LENGTH){
 			//TODO
@@ -42,7 +42,7 @@ public class Minimax {
 		return min;
 	}
 	
-	public Move maxValue(Board b, Dice d, int treeLength, int alpha, int beta){
+	private static Move maxValue(Board b, Dice d, int treeLength, int alpha, int beta){
 		
 		if(treeLength == MAX_LENGTH){
 			//TODO
@@ -62,7 +62,7 @@ public class Minimax {
 		return max;
 	} 
 	
-	public int chanceValue(Board b, Dice d, Player green, int treeLength, int alpha, int beta){
+	private static int chanceValue(Board b, Dice d, Player green, int treeLength, int alpha, int beta){
 		
 		float expectedValue = 0; //PROSOXIIIIIIII!!!!! edw isws exoume provlima!!!
 		float s = 0;
