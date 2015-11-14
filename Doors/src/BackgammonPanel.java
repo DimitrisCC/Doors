@@ -234,7 +234,6 @@ public class BackgammonPanel extends JPanel {
 			} else {
 				g.drawImage(image, x, y - i * PIECE_STEP, null);
 			}
-
 		}
 	}
 	
@@ -243,8 +242,8 @@ public class BackgammonPanel extends JPanel {
 		g.drawImage(getBoardBackground(), 0, 0, null);
 		drawPieces(g);
 
-		for (int i = 0; i < 2; i++)
-			drawDices(g, i);
+		for (int i = 0; i < 2; i++){
+			drawDices(g, i);}
 	}
 	
 	private void drawDices(Graphics g, int i){
@@ -252,6 +251,7 @@ public class BackgammonPanel extends JPanel {
 		int diceX = DICE_X + i * DICE_SIZE;
 		
 		byte[] dices = game.getDice();
+		if(dices[0]==0) dices = game.rollDice(); //should be gone by the end
 		
 		try {
 			switch (dices[i]) {
@@ -278,7 +278,7 @@ public class BackgammonPanel extends JPanel {
 				break;
 			}
 		} catch (Exception e) {
-			System.out.println("DrawGui:drawDices, something not ok :/ ");
+			System.out.println("BackgammonPanel:drawDices, something's not ok :/ ");
 		}
 	}
 

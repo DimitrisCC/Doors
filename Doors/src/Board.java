@@ -51,6 +51,9 @@ public class Board {
     private ArrayList<Move> lastPlayedMoves;
     
     Dice dice;
+    
+    private int[] freedPieces; //if 15, then you win
+    //[0] for green, [1] for red
 
     public Board(){
         table = new int[24];
@@ -505,6 +508,17 @@ public class Board {
         }
     	return sum;	
     	
+    }
+    
+    /**
+     * Checks if this board is a terminal state.
+     * If it is then someone has won the game.
+     * @return the winner if any
+     */
+    public Player isTerminal(){
+    	if(freedPieces[0] == 15) return Player.GREEN;
+    	else if (freedPieces[1] == 15) return Player.RED;
+    	else return Player.NONE;
     }
     
     
