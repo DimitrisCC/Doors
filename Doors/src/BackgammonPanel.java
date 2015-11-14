@@ -59,122 +59,124 @@ public class BackgammonPanel extends JPanel {
 		JButton button11 = new JButton("12");
 		button11.setBounds(27, 618, 50, 23);
 		this.add(button11);
-		buttons.add(button11);
 		
 		JButton button10 = new JButton("11");
 		button10.setBounds(78, 618, 50, 23);
 		this.add(button10);
-		buttons.add(button10);
 		
 		JButton button9 = new JButton("10");
 		button9.setBounds(129, 618, 50, 23);
 		this.add(button9);
-		buttons.add(button9);
 		
 		JButton button8 = new JButton("9");
 		button8.setBounds(180, 618, 50, 23);
 		this.add(button8);
-		buttons.add(button8);
 		
 		JButton button7 = new JButton("8");
 		button7.setBounds(231, 618, 50, 23);
 		this.add(button7);
-		buttons.add(button7);
 		
 		JButton button6 = new JButton("7");
 		button6.setBounds(282, 618, 50, 23);
 		this.add(button6);
-		buttons.add(button6);
 		
 		JButton button5 = new JButton("6");
 		button5.setBounds(387, 618, 50, 23);
 		this.add(button5);
-		buttons.add(button5);
 		
 		JButton button4 = new JButton("5");
 		button4.setBounds(438, 618, 50, 23);
 		this.add(button4);
-		buttons.add(button4);
 		
 		JButton button3 = new JButton("4");
 		button3.setBounds(489, 618, 50, 23);
 		this.add(button3);
-		buttons.add(button3);
 		
 		JButton button2 = new JButton("3");
 		button2.setBounds(540, 618, 50, 23);
 		this.add(button2);
-		buttons.add(button2);
 		
 		JButton button1 = new JButton("2");
 		button1.setBounds(591, 618, 50, 23);
 		this.add(button1);
-		buttons.add(button1);
 		
 		JButton button0 = new JButton("1");
 		button0.setBounds(642, 618, 50, 23);
 		this.add(button0);
-		buttons.add(button0);
 		
 		JButton button12 = new JButton("13");
 		button12.setBounds(27, 0, 50, 23);
 		this.add(button12);
-		buttons.add(button12);
 		
 		JButton button13 = new JButton("14");
 		button13.setBounds(78, 0, 50, 23);
 		this.add(button13);
-		buttons.add(button13);
 		
 		JButton button14 = new JButton("15");
 		button14.setBounds(129, 0, 50, 23);
 		this.add(button14);
-		buttons.add(button14);
 		
 		JButton button15 = new JButton("16");
 		button15.setBounds(179, 0, 50, 23);
 		this.add(button15);
-		buttons.add(button15);
 		
 		JButton button16 = new JButton("17");
 		button16.setBounds(230, 0, 50, 23);
 		this.add(button16);
-		buttons.add(button16);
 		
 		JButton button17 = new JButton("18");
 		button17.setBounds(281, 0, 50, 23);
 		this.add(button17);
-		buttons.add(button17);
 		
 		JButton button18 = new JButton("19");
 		button18.setBounds(387, 0, 50, 23);
 		this.add(button18);
-		buttons.add(button18);
 		
 		JButton button19 = new JButton("20");
 		button19.setBounds(438, 0, 50, 23);
 		this.add(button19);
-		buttons.add(button19);
 		
 		JButton button20 = new JButton("21");
 		button20.setBounds(489, 0, 50, 23);
 		this.add(button20);
-		buttons.add(button20);
 		
 		JButton button21 = new JButton("22");
 		button21.setBounds(540, 0, 50, 23);
 		this.add(button21);
-		buttons.add(button21);
 		
 		JButton button22 = new JButton("23");
 		button22.setBounds(591, 0, 50, 23);
 		this.add(button22);
-		buttons.add(button22);
 		
-		JButton button24 = new JButton("24");
-		button24.setBounds(642, 0, 50, 23);
-		this.add(button24);
-		buttons.add(button24);
+		JButton button23 = new JButton("24");
+		button23.setBounds(642, 0, 50, 23);
+		this.add(button23);
+		
+
+		buttons.add(button0);
+		buttons.add(button1);
+		buttons.add(button2);
+		buttons.add(button3);
+		buttons.add(button4);
+		buttons.add(button5);
+		buttons.add(button6);
+		buttons.add(button7);
+		buttons.add(button8);
+		buttons.add(button9);
+		buttons.add(button10);
+		buttons.add(button11);
+		buttons.add(button12);
+		buttons.add(button13);
+		buttons.add(button14);
+		buttons.add(button15);
+		buttons.add(button16);
+		buttons.add(button17);
+		buttons.add(button18);
+		buttons.add(button19);
+		buttons.add(button20);
+		buttons.add(button21);
+		buttons.add(button22);
+		buttons.add(button23);
 	}
 	
 	private void drawPieces(Graphics g){
