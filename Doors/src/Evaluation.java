@@ -151,7 +151,7 @@ public class Evaluation {
 			{
 				singles = b.numberOfSingles(18,23, player);	
 			}
-			return singles*20;
+			return singles*15;
 		}
 		return singles;
 		 
