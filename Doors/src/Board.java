@@ -618,7 +618,6 @@ public class Board {
 					}
 					else if (prev > 0){
 						eaten[0]++;
-						if(moveToMake[i][1] > 17) piecesATdestination[0]--;
 						//efaga ena pouli t antipalou to opoio itan stn perioxi mazematos t
 					}
 				}
