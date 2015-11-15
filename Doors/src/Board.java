@@ -43,6 +43,10 @@ public class Board {
    // Checkers on bar (that have been hit).  eaten[0] is green player, eaten[1] is red player.
     private int[] eaten;
     
+    //how many pieces of each player have reached destination
+    private int[] piecesATdestination;
+  //[0] for green, [1] for red
+    
     private int pos; //starting position //--> pou xrisimopoiountai?
     private int move; //target position //---> pou xrisimopoiountai?
 //    /private Player player;
@@ -61,6 +65,8 @@ public class Board {
         table = new int[24];
         initBoard();
         eaten = new int[2];
+        piecesATdestination = new int[2];
+        freedPieces = new int[2];
         lastPlayedMoves = new ArrayList<Move>();
         
        /* for(int i=0; i<lastPlayedMove.length; i++)
@@ -608,6 +614,12 @@ public class Board {
 					if (prev < 0) eaten[1]++;
 					else if (prev > 0) eaten[0]++;
 				}
+				//check if a piece reached destination
+				if(n == 1){
+					if( moveToMake[i][1] > 17 ) piecesATdestination[0]++;
+				}else{
+					if( moveToMake[i][1] < 6 ) piecesATdestination[1]++;
+				}
 			}else{
 				if(n == 1){
 					if(moveToMake[i][1] == 24)
@@ -758,6 +770,10 @@ public class Board {
     	if(freedPieces[0] == 15) return Player.GREEN;
     	else if (freedPieces[1] == -15) return Player.RED;
     	else return Player.NONE;
+    }
+    
+    public int piecesAtDestination(Player p){
+    	return piecesATdestination[(p == Player.RED)? 1 : 0];
     }
     
     
