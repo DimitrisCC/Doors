@@ -118,6 +118,12 @@ public class Board {
 	
 	public int[] getTable() { return table; }
 	
+	public int[] getEaten() { return eaten; }
+	
+	public int[] getHomeCheckers() { return piecesATdestination; }
+	
+	
+	
 	//if returned list is empty, no valid moves can be done
 	public ArrayList<Board> getChildren(Dice dice, Player player){
 		ArrayList<Board> children = new ArrayList<Board>();
@@ -760,6 +766,20 @@ public class Board {
     	return sum;	
     	
     }
+    
+    //It returns the number of single checkers from pos1-pos2 
+    public int numberOfSingles(int pos1,int pos2,int player)
+    {
+    	int sum=0;	
+    	for(int i=pos1;i<=pos2;i++)
+        {    
+    		sum+=Math.abs(player*getNumberOfPiecesAt(i)+(1-player)*getNumberOfPiecesAt(i))==1?1:0;
+    			
+        }
+    	return sum;	
+        
+    }
+    
     
     /**
      * Checks if this board is a terminal state.
