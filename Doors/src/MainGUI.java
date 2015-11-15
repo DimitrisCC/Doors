@@ -61,7 +61,7 @@ public final class MainGUI {
 	
 	public static void playTurn(Player player)
 	{
-		if(player == Player.RED){//--> ara paizei to pc //---->>>kale o kokkinos den einai o cpu??
+		if(player == Player.RED){//--> ara paizei to pc //---->>>kale o kokkinos den einai o cpu?? -->>>> oxi?
 			System.out.println("REDZZZ");
 			gameFrame.setPlayer(currentPlayer);
 			int n = player.getSign();
@@ -72,6 +72,7 @@ public final class MainGUI {
 			System.out.println("GRENZNZZ");
 			gameFrame.setPlayer(currentPlayer);
 			new java.util.Scanner(System.in).nextLine();//??????
+			
 		}
 	}
 

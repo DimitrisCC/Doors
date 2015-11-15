@@ -333,6 +333,8 @@ public class BackgammonPanel extends JPanel implements MouseMotionListener  {
 	public void setPlayer(Player p){
 		player = p;
 	}
+	
+	public Player getPlayer(){ return player;}
 
 	private void setDice1(Image newImage) {
 		dice1 = newImage;
@@ -446,6 +448,9 @@ public class BackgammonPanel extends JPanel implements MouseMotionListener  {
 		if(game.isValidTarget(index, player)){
 			int[][] ms = new int[4][2];
 			ms[0][0] = position; ms[0][1] = index;
+			ms[1][0] = position; ms[1][1] = index;
+			ms[2][0] = position; ms[2][1] = index;
+			ms[3][0] = position; ms[3][1] = index;
 			game.makeMove(new Move(ms), player.getSign());
 			if(i == 1){} //afairese prwth kinhsh apo statusBar, omoiws gia kathe i
 			jumpsYet += moveset.get(i-1);

@@ -580,21 +580,42 @@ public class Board {
 		
 		for(int i=0; i< moveToMake.length; i++)
 		{	
-			if((moveToMake[i][0] != -1) || (moveToMake[i][0] != 24)){ 
+			if((moveToMake[i][0] > -1) || (moveToMake[i][0] < 24)){ 
 				//normal move
 				table[moveToMake[i][0]] -= n; //decrease the absolute value
+				
+			}else{
+				if(n == 1){
+					if(moveToMake[i][0] == -1){
+						eaten[0]--;
+					}
+						//else no move happens...positions wrong
+					//but the validity is checked already...
+				}else{//n == -1
+					if(moveToMake[i][0] == 24){
+						eaten[1]--;
+					}
+					//else no move happens...positions wrong
+					//but the validity is checked already...
+				}
+			}
+			
+			if((moveToMake[i][1] > -1)||(moveToMake[i][1] < 24)){
 				int prev = table[moveToMake[i][1]];
 				table[moveToMake[i][1]] += n;
-				if(Math.abs(prev) == 1){
+				if((Math.abs(prev) == 1)&&(Math.signum(prev) != n)){
 					table[moveToMake[i][1]] += n;
 					if (prev < 0) eaten[1]++;
 					else if (prev > 0) eaten[0]++;
 				}
 			}else{
-				//---> Mporei na xrisimopoii8ei gia na metakinoume poulia ektos board!
-				//---> An moveToMake[i][0] == -1 kai moveToMake != -1
-				//---> tote metakinise ena pouli apo ta fagwmena sto table[moveToMake[i][1]]
-				return;
+				if(n == 1){
+					if(moveToMake[i][1] == 24)
+						freedPieces[0]++;
+				}else{ // n==-1
+					if(moveToMake[i][1] == -1)
+						freedPieces[1]++;
+				}
 			}
 		}
 		
