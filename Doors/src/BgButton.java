@@ -25,7 +25,8 @@ public class BgButton extends JButton implements ActionListener {
 	}
 
 	@Override
-	public void actionPerformed(ActionEvent e) {
+	public void actionPerformed(ActionEvent e) { //--> giati actionPerformed ki oxi onClick??
+		//--> nomizw 8a exei provlima giati oti action kai na ginetai 8a kanei kinisi px
 		System.out.println("acc");
 		BackgammonPanel panel = (BackgammonPanel) this.getParent();
 		if(!panel.isPicked()) panel.pick(number-1);

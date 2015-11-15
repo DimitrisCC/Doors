@@ -71,7 +71,7 @@ public final class MainGUI {
 		}else{
 			System.out.println("GRENZNZZ");
 			gameFrame.setPlayer(currentPlayer);
-			new java.util.Scanner(System.in).nextLine();
+			new java.util.Scanner(System.in).nextLine();//??????
 		}
 	}
 

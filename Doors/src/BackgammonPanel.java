@@ -14,7 +14,7 @@ import javax.swing.*;
 
 public class BackgammonPanel extends JPanel implements MouseMotionListener  {
 	
-	private static final long serialVersionUID = 1L;
+	private static final long serialVersionUID = 1L; //--> pou xrisimopoieitai?
 	
 	private static final int BORDER = 30;
 	private static final int PIECE_STEP = 25;
@@ -40,7 +40,7 @@ public class BackgammonPanel extends JPanel implements MouseMotionListener  {
 	private Board game;
 	private Player player;
 	private int position;
-	private ArrayList<Integer> moveset;
+	private ArrayList<Integer> moveset; //????
 	private byte jumpsYet;
 	
 	private ArrayList<BgButton> buttons;
@@ -199,13 +199,26 @@ public class BackgammonPanel extends JPanel implements MouseMotionListener  {
 		buttonRoll.setVerticalAlignment(SwingConstants.BOTTOM);
 		buttonRoll.setForeground(Color.WHITE);
 		buttonRoll.setFont(new Font("Serif", Font.BOLD, 14));
-		buttonRoll.addActionListener(new ActionListener() {
-				@Override
-	            public void actionPerformed(ActionEvent e){
-	               //well, here is a concurrency problem
-	            }      
-		});
+		buttonRoll.addActionListener(new RollButtonListener(this));
 		add(buttonRoll);
+	}
+	
+	//---> twra arkei kapws na periorizetai kai na mn patietai sinexeia....
+	//--> dn 3erw kan an ginetai...
+	class RollButtonListener implements ActionListener {
+		  BackgammonPanel b;
+		  RollButtonListener(BackgammonPanel b) { 
+			  //--> logika prepei kapws na ma8ainei poios prepei na pai3ei ki an prepei na pati8ei t koumpi ktl
+			  //---> i mexri na pai3ei o paiktis na e3afanizetai...
+			  this.b = b;
+		  }
+
+		  public void actionPerformed(ActionEvent e) {
+		    if (e.getSource().equals(buttonRoll)) {
+		    	b.getGameboard().rollDice();
+		        b.repaint();
+		    }
+		  }    
 	}
 	
 	private void drawPieces(Graphics g){
@@ -215,7 +228,8 @@ public class BackgammonPanel extends JPanel implements MouseMotionListener  {
 				image = getRedPiece();
 			} else if (game.colorAt(i) == Player.GREEN) {
 				image = getGreenPiece();
-			} else { image = null; } ///!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+			} else { image = null; } ///!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!! //---> mipws ena
+			//---> continue 8a voi8ouse????
 			getCoordinates(g, image, i);
 		}
 	}
@@ -312,7 +326,7 @@ public class BackgammonPanel extends JPanel implements MouseMotionListener  {
 				break;
 			}
 		} catch (Exception e) {
-			System.out.println("BackgammonPanel:drawDices, something's not ok :/ ");
+			System.out.println("BackgammonPanel:drawDices, something's not ok. You are totally noob at Doors sorry! :/ ");
 		}
 	}
 	
@@ -418,11 +432,14 @@ public class BackgammonPanel extends JPanel implements MouseMotionListener  {
 		System.out.println("click");
 	}
 	
-	public void jump(int index){
+	public void jump(int index){ //--> pou kaleitai?
+		//---> pragmatika edw to xasa teleiws....e3igise plz
 		int i;
+		//--> proipo8etei na exei kli8ei prwta i apo panw gia arxikopoiisi tou moveset....
 		for(i = 0; i < moveset.size(); ++i){
 			if (position + moveset.get(i) == index &&
 					moveset.get(i) + jumpsYet <= (game.getDiceValues()[0]+game.getDiceValues()[1]))
+				//---> dn eimai sigouri oti katalava tn logiki alla nomizw dn 8a douleuei gia tis diples...
 				break;
 		}
 		

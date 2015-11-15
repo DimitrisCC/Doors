@@ -9,10 +9,10 @@ public class Move {
 	
 	public Move()
 	{
-		move = new int[4][2]; //--->> 4x2 kale oxi 4x4
+		move = new int[4][2]; //--->> 4x2 kale oxi 4x4  --->>> na me sigxwras merikes fores kanw pragmata grigora :P
 		for(int i=0; i<move.length; i++)
 			for(int j=0; j<move[0].length; j++) move[i][j] = -1;
-		score = 0; //prepei na skeftw ena invalide noumero gia edw
+		score = 0; //prepei na skeftw ena invalide noumero gia edw px to -INF i to INF
 	}
 	
 	public Move(int[][] moves)
