@@ -611,8 +611,16 @@ public class Board {
 				table[moveToMake[i][1]] += n;
 				if((Math.abs(prev) == 1)&&(Math.signum(prev) != n)){
 					table[moveToMake[i][1]] += n;
-					if (prev < 0) eaten[1]++;
-					else if (prev > 0) eaten[0]++;
+					if (prev < 0){
+						eaten[1]++;
+						if(moveToMake[i][1] < 6) piecesATdestination[1]--;
+						//efaga ena pouli t antipalou to opoio itan stn perioxi mazematos t
+					}
+					else if (prev > 0){
+						eaten[0]++;
+						if(moveToMake[i][1] > 17) piecesATdestination[0]--;
+						//efaga ena pouli t antipalou to opoio itan stn perioxi mazematos t
+					}
 				}
 				//check if a piece reached destination
 				if(n == 1){
