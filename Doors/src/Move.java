@@ -9,7 +9,7 @@ public class Move {
 	
 	public Move()
 	{
-		move = new int[4][4];
+		move = new int[4][2]; //--->> 4x2 kale oxi 4x4
 		for(int i=0; i<move.length; i++)
 			for(int j=0; j<move[0].length; j++) move[i][j] = -1;
 		score = 0; //prepei na skeftw ena invalide noumero gia edw
@@ -17,14 +17,14 @@ public class Move {
 	
 	public Move(int[][] moves)
 	{
-		move = new int[4][4];
+		move = new int[4][2];
 		setMove(moves);
 		score = 0;
 	}
 	
 	public Move(int value)
 	{
-		move = new int[4][4];
+		move = new int[4][2];
 		for(int i=0; i<move.length; i++)
 			for(int j=0; j <move[0].length ; j++) 
 				move[i][j] = -1;
@@ -33,7 +33,7 @@ public class Move {
 	
 	public Move(int[][] moves, int value)
 	{
-		move = new int[4][4];
+		move = new int[4][2];
 		setMove(moves);
 		score = value;
 	}

@@ -45,7 +45,7 @@ public class Board {
     
     private int pos; //starting position
     private int move; //target position
-   // private Player player;
+//    /private Player player;
     
     //private int[][] lastPlayedMove;
     private ArrayList<Move> lastPlayedMoves;
@@ -336,16 +336,16 @@ public class Board {
 	 */
 	protected void initBoard(){
 		//initialization of a doors game
-        //RED: 0->23 -integer
-        //GREEN: 23->0 +integer
-		table[POS_NUM_0] = -2;
-		table[POS_NUM_5] = 5;
-		table[POS_NUM_7] = 3;
-		table[POS_NUM_11] = -5;
-		table[POS_NUM_12] = 5;
-		table[POS_NUM_16] = -3;
-		table[POS_NUM_18] = -5;
-		table[POS_NUM_23] = 2;
+        //GREEN: 0->23 +integer
+        //RED: 23->0 -integer
+		table[POS_NUM_0] = 2;
+		table[POS_NUM_5] = -5;
+		table[POS_NUM_7] = -3;
+		table[POS_NUM_11] = 5;
+		table[POS_NUM_12] = -5;
+		table[POS_NUM_16] = 3;
+		table[POS_NUM_18] = 5;
+		table[POS_NUM_23] = -2;
 	}
 	
 	/** Checks if the move is legal
@@ -356,8 +356,9 @@ public class Board {
 	 */
 	protected boolean isValidMove(int pos, int move, Player player){
 		//if(player == null) player = this.player;
-		if(piecesOnBar(player) > 0) return false;
+		if(pos+move > 23 || pos < 0 || move < 0) return false;
 		
+		if(piecesOnBar(player) > 0) return false;
 		
 		byte n = player.getSign();
 		//int signp = (int) Math.signum(table[pos]);
@@ -380,7 +381,10 @@ public class Board {
 	 */
 	public boolean isValidPick(int pos, Player player){
 		//if (player == null) player = this.player;
+		if(pos < 0 || pos > 23) return false;
+		System.out.println(Math.signum(table[pos]));
 		if(Math.signum(table[pos]) == player.getSign()){
+			System.out.println(Math.signum(table[pos]));
 			//setStatus("Got your piece, mate!");
 			return true;
 		} else {
@@ -396,7 +400,6 @@ public class Board {
 	 */
 	protected void makeMove(Move m, int n){
 		//validity of the move is already checked
-		
 		
 		int[][] moveToMake = m.getMove();
 		
@@ -428,6 +431,7 @@ public class Board {
 	
 	public boolean isValidTarget(int moveTarget, Player player){
 		//if(player == null) player = this.player;
+		if(moveTarget < 0 || moveTarget > 23) return false;
 		int n = player.getSign();
 		int signm = (int) Math.signum(table[moveTarget]);
 		if(signm == n || table[moveTarget]+n == 0 || table[moveTarget] == 0)
@@ -560,11 +564,15 @@ public class Board {
 		return dice.roll();
     }
     
-    public byte[] getDice(){
+    public byte[] getDiceValues(){
     	return dice.getValues();
     }
     
-    public byte[] getDiceMoveset(Dice dice){
+    public Dice getDice(){
+    	return dice;
+    }
+    
+    public byte[] getDiceMoves(Dice dice){
     	
     	byte[] moves = new byte[4];
     	moves[0] = dice.getValues()[0];
@@ -578,15 +586,25 @@ public class Board {
     	return moves;
     }
     
-    public byte[] getDiceMoveset(){
-    	Dice dice = new Dice();
-    	dice.roll();
-    	return getDiceMoveset(dice);
+    public ArrayList<Integer> getDiceMoveset(Dice dice){
+    	byte[] ms = getDiceMoves(dice);
+    	ArrayList<Integer> arms = new ArrayList<Integer>();
+    	
+    	if(dice.isDouble()){
+    		arms.add((int) ms[0]);
+        	arms.add((int) ms[0]*2);
+        	arms.add((int) ms[0]*3);
+        	arms.add((int) ms[0]*4);
+    	} else {
+    		arms.add((int) ms[0]);
+        	arms.add((int) ms[1]);
+        	arms.add((int) ms[0]+ms[1]);
+    	}
+    	return arms;
     }
 
 	public Player getWinner() {
 		return winner;
 	}
 
-    
 }

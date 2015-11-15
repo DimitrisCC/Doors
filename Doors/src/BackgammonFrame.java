@@ -1,20 +1,12 @@
-import java.awt.event.MouseEvent;
-import java.awt.event.MouseListener;
-import java.awt.event.MouseMotionListener;
-
 import javax.swing.JFrame;
-
 import java.awt.BorderLayout;
-import java.awt.Color;
 import java.awt.Container;
 
-import javax.swing.JButton;
-import javax.swing.JPanel;
-
-public class BackgammonFrame extends JFrame implements MouseListener, MouseMotionListener {
+public class BackgammonFrame extends JFrame {
 
 	private static final long serialVersionUID = -1419452740845309834L;
 	private Board game;
+	private Player player;
 	private StatusBar statusBar;
 	private BackgammonPanel panel;
 
@@ -24,6 +16,7 @@ public class BackgammonFrame extends JFrame implements MouseListener, MouseMotio
 	public BackgammonFrame(Board game) {
 		super("Backgammon Doors");
 		this.game = game;
+		this.player = Player.NONE;
 		initialize();
 	}
 
@@ -44,66 +37,16 @@ public class BackgammonFrame extends JFrame implements MouseListener, MouseMotio
 		statusBar = new StatusBar();
 		container.add(statusBar, BorderLayout.SOUTH);
 		
-		addMouseListener(this);
-		addMouseMotionListener(this);
-		
 		setVisible(true);
 		repaint();
-		update();
+		//update();
 	}
 
-	public void Repaint(){
+	public void repaintAndUpdate(String status){
 		panel.repaint();
 		//repaint();
-		update();
+//		/update();
 	}
-	@Override
-	public void mouseDragged(MouseEvent e) {
-		// TODO Auto-generated method stub
-		
-	}
-
-	@Override
-	public void mouseMoved(MouseEvent e) {
-		// TODO Auto-generated method stub
-		update();
-	}
-
-	@Override
-	public void mouseClicked(MouseEvent e) {
-		// TODO Auto-generated method stub
-		
-	}
-
-	@Override
-	public void mousePressed(MouseEvent e) {
-		// TODO Auto-generated method stub
-		
-	}
-
-	@Override
-	public void mouseReleased(MouseEvent e) {
-		// TODO Auto-generated method stub
-		
-	}
-
-	@Override
-	public void mouseEntered(MouseEvent e) {
-		// TODO Auto-generated method stub
-		
-	}
-
-	@Override
-	public void mouseExited(MouseEvent e) {
-		// TODO Auto-generated method stub
-		
-	}
-	
-	public void update(){
-		statusBar.setText("yolo");
-		repaint();
-	}
-	
 
 	public void winnerDialog() {
 		// TODO Auto-generated method stub
@@ -112,5 +55,14 @@ public class BackgammonFrame extends JFrame implements MouseListener, MouseMotio
 
 	public Board getGame() {
 		return game;
+	}
+	
+	public void setPlayer(Player p){
+		player = p;
+		panel.setPlayer(player);
+	}
+	
+	public Player getPlayer(){
+		return player;
 	}
 }

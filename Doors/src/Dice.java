@@ -17,6 +17,7 @@ public class Dice {
 
     public Dice(byte[] v) {
         random = new Random();
+        values = new byte[2];
         setValues(v);
     }
     /**
