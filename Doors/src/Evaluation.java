@@ -10,14 +10,15 @@ public class Evaluation {
 	 */
 	 public float boardScore(Board b, int player)
 	 {
-	   int score=evaluateCheckers(b,player);
+	   int score=evaluateCheckers(b,player);//tha trexei se kathe board.An px mou faei ena pouli xekinaei apo thn arxh.
 	   score+=evaluateDoors(b,player);
 	   score-=threatenedCheckers(b,player);
-	  //--->NEW  
+	  //--->NEW
       if(b.getEaten()[1-player]>0)//check if I have hit at least an opponent's checker
 	   {
     	   score-= penalisedHitting_1(b,player);
     	   score-= penalisedHitting_2(b,player); 
+    	   score+= (getNumberOf_FinalBlocks(b,player)*5);
 	   }
       //-------
       
@@ -42,7 +43,7 @@ public class Evaluation {
 	        else
 	           score1= score1-player*board[i]*(positions-i-1)+(1-player)*board[i]*(positions-i-1);
 	      }
-		  return score1+(5*b.getHomeCheckers()[player]);//----->NEW prosthesa varos gia ta poulia pou einai sth home area 
+		  return score1+(20*b.getHomeCheckers()[player]);//----->NEW prosthesa varos gia ta poulia pou einai sth home area 
 	 }
 	 
 	 /*
@@ -81,7 +82,7 @@ public class Evaluation {
 	     if(atLeastTwoCheckersPerPoint>inrow)
 	            inrow=atLeastTwoCheckersPerPoint;
 	     
-	     return (doors+inrow)*20;
+	     return (doors+inrow)*15;
 	 }
      
 	 //Returns the number of threatened checkers.Threatened checkers are the checkers that can be hit by the opponent.
@@ -91,7 +92,7 @@ public class Evaluation {
 		 int singles=0;
 		 int [] board = b.getTable();
 		 if(player==1)
-	        {
+	     {
 	            int i=positions-1;
 	            //skip checkers that cannot be threatened
 	            while(i>=0 && board[i]<=0)
@@ -101,8 +102,8 @@ public class Evaluation {
 	                if(board[i]==-1)
 	                	singles++;
 	            }
-	        }
-	        else
+	      }
+	      else
 	        {
 	            int i=0;
 	            //skip checkers that cannot be threatened
@@ -129,29 +130,14 @@ public class Evaluation {
     	int singles=0;
 		if(1<=home[player] && home[player]>=10)//If player has 1-10 checkers at his/her area
 		{
-			if(player==0)
-			{
-				singles = b.numberOfSingles(0,5, player);//take the player's single checkers of his/her home area 
-		    }
-			else
-			{
-				singles = b.numberOfSingles(18,23, player);	
-			}
-			
-			return singles*10;
+		   singles = b.numberOfSingles(player);//take the player's single checkers of his/her home area 
+		   return singles*20;
 			
 		} 
-		else if(home[player]>10)//now player has picked most of his/her checkers in his/her home area
+		else if(home[player]>10)//Now player has picked most of his/her checkers in his/her home area
 		{
-			if(player==0)
-			{
-				singles = b.numberOfSingles(0,5, player);
-		    }
-			else
-			{
-				singles = b.numberOfSingles(18,23, player);	
-			}
-			return singles*15;
+		   singles = b.numberOfSingles(player);
+		   return singles*50;
 		}
 		return singles;
 		 
@@ -159,7 +145,7 @@ public class Evaluation {
       
       /*
        * --->NEW
-       *Returns a penalty for a wrong move when player leads
+       *Returns a penalty for a wrong move when player leads.
        */
       private int penalisedHitting_2(Board b,int player)
       {
@@ -168,23 +154,38 @@ public class Evaluation {
     	  
     	  if(home[player]>home[1-player])//check If player has more checkers than his/her opponent in his/her home area 
     	  {
-    		 if(player==0) 
-    		 {
-    			 if(b.numberOfcheckers(6, 11, player)>b.numberOfcheckers(12, 17,1-player))
+    		 if(b.numberOfcheckers(player)>b.numberOfcheckers(1-player))
     			 {
-    				 penalty=50;
-    				 
+    				 penalty=80;
     			 }
-    	     }
-    		 else if(player==1) 
-    		 {
-    			 if(b.numberOfcheckers(6, 11,1-player)<b.numberOfcheckers(12, 17,player))
-    			 {
-    				 penalty=50;
-    		     }
-    	     }
     	   }
     	   return penalty;
     	 }
+      
+      /*
+      *--->NEW
+      *It has a lot in common with the evaluateDoors function.
+      *It returns the number of blocks in the player's home area. 
+      *
+      */
+      private int getNumberOf_FinalBlocks(Board b,int player)
+      {
+    	  int blocks=0;
+    	  int [] board = b.getTable();
+    	  int [] home = b.getHomeCheckers();
+    	  if(home[player]>=5)
+    	  {
+    		  for(int i=((1-player)*0+18*player);i<((1-player)*5+23*player);i++)
+    		  {
+    			  if((player*board[i]+1-player)<(-player+(1-player)*board[i]))
+    			  {
+    				  blocks++;
+    			  }//if
+    			  
+    		   }//for  
+    	  }
+    	  return blocks;
+       }
+      
       
     }
