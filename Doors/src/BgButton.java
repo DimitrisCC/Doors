@@ -44,7 +44,7 @@ public class BgButton extends JButton implements ActionListener {
 					//numOfCheckersMoved = 0;
 				//}
 			//}else{
-				if(panel.getJumpsYet() == panel.getGameboard().getTotalJumpsFromDice(panel.getGameboard().getDice())){
+				if(panel.getJumpsYet() == panel.getGameboard().getDice().getTotalJumpsFromDice()){
 					panel.setMyTurn(false);
 				}
 			//}

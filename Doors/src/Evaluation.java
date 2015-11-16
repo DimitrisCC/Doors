@@ -130,13 +130,13 @@ public class Evaluation {
     	int singles=0;
 		if(1<=home[player] && home[player]>=10)//If player has 1-10 checkers at his/her area
 		{
-		   singles = b.numberOfSingles(player);//take the player's single checkers of his/her home area 
+		   singles = numberOfSingles(b, player);//take the player's single checkers of his/her home area 
 		   return singles*20;
 			
 		} 
 		else if(home[player]>10)//Now player has picked most of his/her checkers in his/her home area
 		{
-		   singles = b.numberOfSingles(player);
+		   singles = numberOfSingles(b, player);
 		   return singles*50;
 		}
 		return singles;
@@ -154,7 +154,7 @@ public class Evaluation {
     	  
     	  if(home[player]>home[1-player])//check If player has more checkers than his/her opponent in his/her home area 
     	  {
-    		 if(b.numberOfcheckers(player)>b.numberOfcheckers(1-player))
+    		 if(numberOfcheckers(b, player)>numberOfcheckers(b, 1-player))
     			 {
     				 penalty=80;
     			 }
@@ -185,6 +185,32 @@ public class Evaluation {
     		   }//for  
     	  }
     	  return blocks;
+       }
+      
+      //It returns the number of checkers 
+      //from the 6-11 area for the player_0 or from the 12-17 area for the player_1 
+      private static int numberOfcheckers(Board b, int player)
+      {   
+      	int sum=0;
+      	for(int i=((1-player)*6+12*player);i<((1-player)*11+17*player);i++)
+          {
+            sum+=player*b.getNumberOfPiecesAt(i)+(1-player)*b.getNumberOfPiecesAt(i);
+      			
+          }
+      	return sum;	
+      }
+      
+      //It returns the number of single checkers from the 0-5 area for the player_0
+      // or from the 18-23 area for the player_1
+      private static int numberOfSingles(Board b, int player)
+      {
+      	int sum=0;	
+      	for(int i=((1-player)*0+18*player);i<((1-player)*5+23*player);i++)
+          {    
+      		sum+=Math.abs(player*b.getNumberOfPiecesAt(i)+(1-player)*b.getNumberOfPiecesAt(i))==1?1:0;
+      			
+          }
+      	return sum;	
        }
       
       

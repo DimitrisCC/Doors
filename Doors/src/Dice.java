@@ -59,5 +59,45 @@ public class Dice {
     }
     
     public boolean isDouble(){ return values[0] == values[1];}
-
+    
+    public byte[] getDiceMoves(){
+    	
+    	byte[] moves = new byte[4];
+    	moves[0] = getValues()[0];
+    	moves[1] = getValues()[1];
+    	
+    	if(isDouble()){
+    		moves[2] = moves[0];
+    		moves[3] = moves[0];
+    	}
+    	
+    	return moves;
+    }
+    
+    public ArrayList<Integer> getDiceMoveset(){
+    	byte[] ms = getDiceMoves();
+    	ArrayList<Integer> arms = new ArrayList<Integer>();
+    	
+    	if(isDouble()){
+    		arms.add((int) ms[0]);
+        	arms.add((int) ms[0]*2);
+        	arms.add((int) ms[0]*3);
+        	arms.add((int) ms[0]*4);
+    	} else {
+    		arms.add((int) ms[0]);
+        	arms.add((int) ms[1]);
+        	arms.add((int) ms[0]+ms[1]);
+    	}
+    	return arms;
+    }
+    
+    public int getTotalJumpsFromDice(){
+    	int total = getValues()[0]+getValues()[1];
+    	
+    	if(isDouble()){
+    		total += getValues()[0] * 2;
+    	}
+    	
+    	return total;
+    }
 }

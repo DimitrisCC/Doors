@@ -47,8 +47,8 @@ public class Board {
     private int[] piecesATdestination;
   //[0] for green, [1] for red
     
-    private int pos; //starting position //--> pou xrisimopoiountai?
-    private int move; //target position //---> pou xrisimopoiountai?
+   // private int pos; //starting position //--> pou xrisimopoiountai?
+   //private int move; //target position //---> pou xrisimopoiountai?
 //    /private Player player;
     
     //private int[][] lastPlayedMove;
@@ -776,31 +776,7 @@ public class Board {
     	lastPlayedMoves.add(move);
     }
     
-    //It returns the number of checkers 
-    //from the 6-11 area for the player_0 or from the 12-17 area for the player_1 
-    public int numberOfcheckers(int player)
-    {   
-    	int sum=0;
-    	for(int i=((1-player)*6+12*player);i<((1-player)*11+17*player);i++)
-        {
-          sum+=player*getNumberOfPiecesAt(i)+(1-player)*getNumberOfPiecesAt(i);
-    			
-        }
-    	return sum;	
-    }
-    
-    //It returns the number of single checkers from the 0-5 area for the player_0
-    // or from the 18-23 area for the player_1
-    public int numberOfSingles(int player)
-    {
-    	int sum=0;	
-    	for(int i=((1-player)*0+18*player);i<((1-player)*5+23*player);i++)
-        {    
-    		sum+=Math.abs(player*getNumberOfPiecesAt(i)+(1-player)*getNumberOfPiecesAt(i))==1?1:0;
-    			
-        }
-    	return sum;	
-     }
+
     
     
     /**
@@ -818,63 +794,10 @@ public class Board {
     	return piecesATdestination[(p == Player.RED)? 1 : 0];
     }
     
-    
-    //xreiazontai gia to gui
-    //prepei na vlepei ta zaria autou tou stigmiotypou
-    //an ginetai na mpoun allou, tha mpoun ok
-    
-    public byte[] rollDice(){
-		return dice.roll();
-    }
-    
-    public byte[] getDiceValues(){
-    	return dice.getValues();
-    }
-    
     public Dice getDice(){
     	return dice;
     }
     
-    public byte[] getDiceMoves(Dice dice){
-    	
-    	byte[] moves = new byte[4];
-    	moves[0] = dice.getValues()[0];
-    	moves[1] = dice.getValues()[1];
-    	
-    	if(dice.isDouble()){
-    		moves[2] = moves[0];
-    		moves[3] = moves[0];
-    	}
-    	
-    	return moves;
-    }
-    
-    public ArrayList<Integer> getDiceMoveset(Dice dice){
-    	byte[] ms = getDiceMoves(dice);
-    	ArrayList<Integer> arms = new ArrayList<Integer>();
-    	
-    	if(dice.isDouble()){
-    		arms.add((int) ms[0]);
-        	arms.add((int) ms[0]*2);
-        	arms.add((int) ms[0]*3);
-        	arms.add((int) ms[0]*4);
-    	} else {
-    		arms.add((int) ms[0]);
-        	arms.add((int) ms[1]);
-        	arms.add((int) ms[0]+ms[1]);
-    	}
-    	return arms;
-    }
-    
-    public int getTotalJumpsFromDice(Dice dice){
-    	int total = dice.getValues()[0]+dice.getValues()[1];
-    	
-    	if(dice.isDouble()){
-    		total += dice.getValues()[0] * 2;
-    	}
-    	
-    	return total;
-    }
 
 	public Player getWinner() {
 		return winner;

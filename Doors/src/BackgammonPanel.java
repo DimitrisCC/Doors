@@ -226,7 +226,7 @@ public class BackgammonPanel extends JPanel implements MouseMotionListener  {
 				return;
 			}
 		    if (e.getSource().equals(buttonRoll)&&!clicked) {
-		    	b.getGameboard().rollDice();
+		    	b.getGameboard().getDice().roll();
 		        b.repaint();
 		        clicked = true;
 		    }
@@ -309,9 +309,9 @@ public class BackgammonPanel extends JPanel implements MouseMotionListener  {
 		
 		int diceX = DICE_X + i * DICE_SIZE;
 		
-		byte[] dices = game.getDiceValues();
+		byte[] dices = game.getDice().getValues();
 
-		if(dices[0]==0) dices = game.rollDice(); //should be gone by the end
+		if(dices[0]==0) dices = game.getDice().roll(); //should be gone by the end
 	
 		try {
 			switch (dices[i]) {
@@ -437,16 +437,16 @@ public class BackgammonPanel extends JPanel implements MouseMotionListener  {
 		picked = false; //for when you reconsider the pick
 		//maybe unnecessary
 
-		if(jumpsYet < game.getTotalJumpsFromDice(game.dice)) //-->afou einai pou einai stn Board dn xreiazetai na pairnei orisma...
+		if(jumpsYet < game.getDice().getTotalJumpsFromDice()) //-->afou einai pou einai stn Board dn xreiazetai na pairnei orisma...
 			//-->genika oles autes nomizw 8a itan pio wraio na nai stn Dice ws static me8odoi an kai dn 3erw an 8a s voleue sts kliseis t idio
 		if(game.isValidPick(index, player)){
 			this.position = index;
-			moveset = game.getDiceMoveset(game.getDice());
+			moveset = game.getDice().getDiceMoveset();
 	
 			for(int i = 0; i < moveset.size(); ++i){
 				if(moveset.get(i) == 0) continue;
 				if(game.isValidTarget(index+moveset.get(i), player)){
-					if((jumpsYet + moveset.get(i) <= game.getTotalJumpsFromDice(game.dice))&&(moveset.get(i) != doneMove))
+					if((jumpsYet + moveset.get(i) <= game.getDice().getTotalJumpsFromDice())&&(moveset.get(i) != doneMove))
 						buttons.get(index+moveset.get(i)).highlight();
 					else
 						continue;
@@ -466,7 +466,7 @@ public class BackgammonPanel extends JPanel implements MouseMotionListener  {
 			for(int i = 0; i < moveset.size(); ++i){
 				m = moveset.get(i);
 				if (position + m == index &&
-						m + jumpsYet <= game.getTotalJumpsFromDice(game.getDice()))
+						m + jumpsYet <= game.getDice().getTotalJumpsFromDice())
 				{//valid move according to number of left jumps and the dice
 					if(game.isValidTarget(index, player)){ //check the gameboard validity of the move
 						int[][] ms = new int[4][2];
@@ -478,7 +478,7 @@ public class BackgammonPanel extends JPanel implements MouseMotionListener  {
 						if(m == 0){} //afairese prwth kinhsh apo statusBar, omoiws gia kathe i
 						jumpsYet += m;
 						doneMove = m;
-						if((game.getTotalJumpsFromDice(game.getDice())) == jumpsYet){
+						if((game.getDice().getTotalJumpsFromDice()) == jumpsYet){
 							jumpsYet = 0;
 							setMyTurn(false);
 							//---->to roll dn prepei na ginetai edw...etsi nomizw...
