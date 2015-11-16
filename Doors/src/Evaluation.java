@@ -16,8 +16,8 @@ public class Evaluation {
 	  //--->NEW  
       if(b.getEaten()[1-player]>0)//check if I have hit at least an opponent's checker
 	   {
-		  score-= penalisedHitting(b,player);
-		   
+    	   score-= penalisedHitting_1(b,player);
+    	   score-= penalisedHitting_2(b,player); 
 	   }
       //-------
       
@@ -27,7 +27,7 @@ public class Evaluation {
 	 /*
 	  * This function weights your checkers more if they are closer to your home
 	  * and penalises you for the opponent's checkers that are close to his/her home.
-	  * Also it gives weight for the checkers that are at home.
+	  * Also it gives more weight for the checkers that are at home.
 	  * player->0 for green checkers 
 	  *       ->1 for red checkers
 	  */    
@@ -42,7 +42,7 @@ public class Evaluation {
 	        else
 	           score1= score1-player*board[i]*(positions-i-1)+(1-player)*board[i]*(positions-i-1);
 	      }
-		  return score1+(5*b.getHomeCheckers()[player]);//----->NEW prosthesa varos gia ta poulia pou einai st home area 
+		  return score1+(5*b.getHomeCheckers()[player]);//----->NEW prosthesa varos gia ta poulia pou einai sth home area 
 	 }
 	 
 	 /*
@@ -123,7 +123,7 @@ public class Evaluation {
 	  * Returns the penalty of player's single checkers that are in his/her home area depending on the total number of  
 	  * his/her checkers that are in his/her home  area
 	  */
-      private int penalisedHitting(Board b,int player)
+      private int penalisedHitting_1(Board b,int player)
 	 {  
     	int [] home = b.getHomeCheckers();
     	int singles=0;
@@ -156,4 +156,35 @@ public class Evaluation {
 		return singles;
 		 
 	 }
-}
+      
+      /*
+       * --->NEW
+       *Returns a penalty for a wrong move when player leads
+       */
+      private int penalisedHitting_2(Board b,int player)
+      {
+    	  int penalty=0;
+    	  int [] home = b.getHomeCheckers();
+    	  
+    	  if(home[player]>home[1-player])//check If player has more checkers than his/her opponent in his/her home area 
+    	  {
+    		 if(player==0) 
+    		 {
+    			 if(b.numberOfcheckers(6, 11, player)>b.numberOfcheckers(12, 17,1-player))
+    			 {
+    				 penalty=50;
+    				 
+    			 }
+    	     }
+    		 else if(player==1) 
+    		 {
+    			 if(b.numberOfcheckers(6, 11,1-player)<b.numberOfcheckers(12, 17,player))
+    			 {
+    				 penalty=50;
+    		     }
+    	     }
+    	   }
+    	   return penalty;
+    	 }
+      
+    }
