@@ -26,14 +26,14 @@ public class Minimax {
 		if(treeLength == MAX_LENGTH){
 			//TODO
 			//epistrefei to apotelesma tis euretikis sto b
-			//return new Move(lastPlayedMove, <timi euretikis>); //----> edw xreiazetai i proigoumeni kinisi...
+			return new Move(b.getLastPlayedMoves().get(b.getLastPlayedMoves().size()-1).getMove(), (int)Evaluation.boardScore(b,0)); 
 		}
 		
 		Move min = new Move(INF);
-		ArrayList<Board> succ = b.getChildren(d, Player.RED);
+		ArrayList<Board> succ = b.getChildren(d, Player.GREEN);
 		int value;
 		for(Board current : succ){
-			value = chanceValue(current, d, Player.GREEN, treeLength+1, alpha, beta);
+			value = chanceValue(current, d, Player.RED, treeLength+1, alpha, beta);
 			if (value < min.getScore()){
 				min.setMove(current.getLastPlayedMoves().get(current.getLastPlayedMoves().size()-1).getMove()); //---->>>DEN KSERW POIA KINHSH ENNOEIS EDW!!!!
 				min.setScore(value);
@@ -47,13 +47,14 @@ public class Minimax {
 		if(treeLength == MAX_LENGTH){
 			//TODO
 			//epistrefei to apotelesma tis euretikis sto b
+			return new Move(b.getLastPlayedMoves().get(b.getLastPlayedMoves().size()-1).getMove(), (int)Evaluation.boardScore(b,1)); 
 		}
 		
 		Move max = new Move(-INF);
-		ArrayList<Board> succ = b.getChildren(d, Player.GREEN);
+		ArrayList<Board> succ = b.getChildren(d, Player.RED);
 		int value;
 		for(Board current : succ){
-			value = chanceValue(current, d, Player.RED, treeLength+1, alpha, beta);
+			value = chanceValue(current, d, Player.GREEN, treeLength+1, alpha, beta);
 			if (value > max.getScore()) {
 				max.setMove(current.getLastPlayedMoves().get(current.getLastPlayedMoves().size()-1).getMove()); //---->>>DEN KSERW POIA KINHSH ENNOEIS EDW!!!!
 				max.setScore(value);
