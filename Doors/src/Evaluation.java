@@ -8,7 +8,7 @@ public class Evaluation {
 	 * player->0 for green checkers 
      *       ->1 for red checkers 
 	 */
-	 public float boardScore(Board b, int player)
+	 public static float boardScore(Board b, int player)
 	 {
 	   int score=evaluateCheckers(b,player);//tha trexei se kathe board.An px mou faei ena pouli xekinaei apo thn arxh.
 	   score+=evaluateDoors(b,player);
@@ -32,7 +32,7 @@ public class Evaluation {
 	  * player->0 for green checkers 
 	  *       ->1 for red checkers
 	  */    
-	 private int evaluateCheckers(Board b, int player)
+	 private static int evaluateCheckers(Board b, int player)
 	 {
 		 int score1=0;
 		 int [] board = b.getTable();
@@ -58,7 +58,7 @@ public class Evaluation {
 	  *
 	  * 
 	  */
-	 private int evaluateDoors(Board b, int player)
+	 private static int evaluateDoors(Board b, int player)
 	 {
 		 int doors=0;
 	     int inrow=0;
@@ -87,7 +87,7 @@ public class Evaluation {
      
 	 //Returns the number of threatened checkers.Threatened checkers are the checkers that can be hit by the opponent.
 	 //So if there's a single checker and there is not any opponent's checkers before it, this single checker does not affect the score.  
-	 private int threatenedCheckers(Board b, int player)
+	 private static int threatenedCheckers(Board b, int player)
 	 {
 		 int singles=0;
 		 int [] board = b.getTable();
@@ -124,7 +124,7 @@ public class Evaluation {
 	  * Returns the penalty of player's single checkers that are in his/her home area depending on the total number of  
 	  * his/her checkers that are in his/her home  area
 	  */
-      private int penalisedHitting_1(Board b,int player)
+      private static int penalisedHitting_1(Board b,int player)
 	 {  
     	int [] home = b.getHomeCheckers();
     	int singles=0;
@@ -147,7 +147,7 @@ public class Evaluation {
        * --->NEW
        *Returns a penalty for a wrong move when player leads.
        */
-      private int penalisedHitting_2(Board b,int player)
+      private static int penalisedHitting_2(Board b,int player)
       {
     	  int penalty=0;
     	  int [] home = b.getHomeCheckers();
@@ -168,7 +168,7 @@ public class Evaluation {
       *It returns the number of blocks in the player's home area. 
       *
       */
-      private int getNumberOf_FinalBlocks(Board b,int player)
+      private static int getNumberOf_FinalBlocks(Board b,int player)
       {
     	  int blocks=0;
     	  int [] board = b.getTable();

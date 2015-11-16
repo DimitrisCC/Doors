@@ -9,7 +9,7 @@ public class BgButton extends JButton implements ActionListener {
 	private static final long serialVersionUID = 1L;
 	
 	private int number;
-	private static int numOfCheckersMoved;
+	private static int jumpsYet;
 
 	public BgButton(String text){
 		super(text);
@@ -26,7 +26,7 @@ public class BgButton extends JButton implements ActionListener {
 	}
 
 	@Override
-	public void actionPerformed(ActionEvent e) { //--> giati actionPerformed ki oxi onClick??
+	public void actionPerformed(ActionEvent e) { //--> giati actionPerformed ki oxi onClick?? //-->>giati etsi legetai h methodos
 		//--> nomizw 8a exei provlima giati oti action kai na ginetai 8a kanei kinisi px
 		System.out.println("acc");
 		BackgammonPanel panel = (BackgammonPanel) this.getParent();
@@ -36,20 +36,18 @@ public class BgButton extends JButton implements ActionListener {
 			if(!panel.isPicked()) panel.pick(number-1);
 			else{
 				panel.jump(number-1);
-				numOfCheckersMoved++;
 			}
 			
-			if(panel.getGameboard().getDice().isDouble()){
-				if(numOfCheckersMoved == 4){
+			//if(panel.getGameboard().getDice().isDouble()){
+				//if(numOfCheckersMoved == 4){
+					//panel.setMyTurn(false);
+					//numOfCheckersMoved = 0;
+				//}
+			//}else{
+				if(panel.getJumpsYet() == panel.getGameboard().getTotalJumpsFromDice(panel.getGameboard().getDice())){
 					panel.setMyTurn(false);
-					numOfCheckersMoved = 0;
 				}
-			}else{
-				if(numOfCheckersMoved == 2){
-					panel.setMyTurn(false);
-					numOfCheckersMoved = 0;
-				}
-			}
+			//}
 		}
 	}
 	
