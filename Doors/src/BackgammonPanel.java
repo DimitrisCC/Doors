@@ -422,12 +422,17 @@ public class BackgammonPanel extends JPanel implements MouseMotionListener  {
 		return game;
 	}
 	
+	public void setMyTurn(boolean flag){ isItMyTurn = flag;}
+	
+	public boolean getMyTurn(){return isItMyTurn;} //--> dn 3erw an xreiazetai pou8ena
+	
 	public void pick(int index){
 		
 		picked = false; //for when you reconsider the pick
 		//maybe unnecessary
 
-		if(jumpsYet < game.getTotalJumpsFromDice(game.dice))
+		if(jumpsYet < game.getTotalJumpsFromDice(game.dice)) //-->afou einai pou einai stn Board dn xreiazetai na pairnei orisma...
+			//-->genika oles autes nomizw 8a itan pio wraio na nai stn Dice ws static me8odoi an kai dn 3erw an 8a s voleue sts kliseis t idio
 		if(game.isValidPick(index, player)){
 			this.position = index;
 			moveset = game.getDiceMoveset(game.getDice());

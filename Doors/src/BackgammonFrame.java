@@ -57,6 +57,8 @@ public class BackgammonFrame extends JFrame {
 		return game;
 	}
 	
+	public BackgammonPanel getGamePanel(){return panel;}
+	
 	public void setPlayer(Player p){
 		player = p;
 		panel.setPlayer(player);

@@ -591,7 +591,7 @@ public class Board {
 		
 		for(int i=0; i< moveToMake.length; i++)
 		{	
-			if((moveToMake[i][0] > -1) && (moveToMake[i][0] < 24)){ //-->> prepei kai ta dyo na alitheuoun
+			if((moveToMake[i][0] > -1) && (moveToMake[i][0] < 24)){ //-->> prepei kai ta dyo na alitheuoun -->>>SWSTOS!!!
 				//normal move
 				table[moveToMake[i][0]] -= n; //pick that piece 
 				System.out.println(table[moveToMake[i][0]]+" MAKE MOVE!!!!!!!!!!!!!!!!!");
@@ -621,10 +621,13 @@ public class Board {
 				//eating time
 				eaten[(n+1)/2]++; //thank you toumpis, -->>to kana ligo pio synoptiko
 				
-				if((n+1)/2 == 1)
+				if((n+1)/2 == 1){
 					if(moveToMake[i][1] < 6)
-						piecesATdestination[1]--;
-				
+						piecesATdestination[1]--; //one red piece from this area got eaten
+				}else{ //-->dn to xes valei.....
+					if(moveToMake[i][1] > 17)
+						piecesATdestination[0]--;
+				}
 				//int prev = table[moveToMake[i][1]];
 				//table[moveToMake[i][1]] += n;
 				
@@ -642,7 +645,7 @@ public class Board {
 				//}
 					
 				//check if a piece reached destination
-				if(n == 1){
+				if(n == 1){ //--> isws enswmatwnetai me t parapanw if
 					if( moveToMake[i][1] > 17 ) piecesATdestination[0]++;
 				}else{
 					if( moveToMake[i][1] < 6 ) piecesATdestination[1]++;

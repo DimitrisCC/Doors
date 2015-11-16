@@ -9,6 +9,7 @@ public class BgButton extends JButton implements ActionListener {
 	private static final long serialVersionUID = 1L;
 	
 	private int number;
+	private static int numOfCheckersMoved;
 
 	public BgButton(String text){
 		super(text);
@@ -30,10 +31,25 @@ public class BgButton extends JButton implements ActionListener {
 		System.out.println("acc");
 		BackgammonPanel panel = (BackgammonPanel) this.getParent();
 		//mono otan paizei o an8rwpos prepei na exei dikaiwma na patisei..
-		if(panel.getPlayer() == Player.GREEN){ //kapws prepei na valoume sta8eres poion 8ewroume pc kai poion an8rwpo
+		if(panel.getMyTurn()){ //kapws prepei na valoume sta8eres poion 8ewroume pc kai poion an8rwpo
 			//dn to xw valei giati dn exw apofasisei p prepei na mpei
 			if(!panel.isPicked()) panel.pick(number-1);
-			else panel.jump(number-1);
+			else{
+				panel.jump(number-1);
+				numOfCheckersMoved++;
+			}
+			
+			if(panel.getGameboard().getDice().isDouble()){
+				if(numOfCheckersMoved == 4){
+					panel.setMyTurn(false);
+					numOfCheckersMoved = 0;
+				}
+			}else{
+				if(numOfCheckersMoved == 2){
+					panel.setMyTurn(false);
+					numOfCheckersMoved = 0;
+				}
+			}
 		}
 	}
 	

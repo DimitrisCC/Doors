@@ -47,7 +47,7 @@ public final class MainGUI {
 		//GameGui guiGame = new GameGui();
 		//bf = new BackgammonFrame(currentGame);
 		while (currentGame.getWinner() == Player.NONE) {
-			if (currentPlayer == Player.GREEN) {
+			if (gameFrame.getGamePanel().getMyTurn()) {
 				playTurn(Player.GREEN);
 				currentPlayer = Player.RED;
 			} else {
@@ -66,8 +66,10 @@ public final class MainGUI {
 			gameFrame.setPlayer(currentPlayer);
 			int n = player.getSign();
 			dice.roll();
+			gameFrame.getContentPane().repaint();
 			gameFrame.getGame().makeMove(Minimax.MinimaxAlgorithm(gameFrame.getGame(), dice, Player.RED), n);
 			gameFrame.repaintAndUpdate("CPU played.");
+			gameFrame.getGamePanel().setMyTurn(true);
 		}else{
 			System.out.println("GRENZNZZ");
 			gameFrame.setPlayer(currentPlayer);
