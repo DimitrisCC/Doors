@@ -562,9 +562,8 @@ public class Board {
 	public boolean isValidPick(int pos, Player player){
 		//if (player == null) player = this.player;
 		if(pos >= 0 || pos <= 23){;
-			System.out.println(Math.signum(table[pos]));
+			System.out.println(table[pos]+"SSSSSSSSSIGNNN ON PICK");
 			if(Math.signum(table[pos]) == player.getSign()){
-				System.out.println(Math.signum(table[pos]));
 				//setStatus("Got your piece, mate!");
 				return true;
 			} else {
@@ -592,18 +591,21 @@ public class Board {
 		
 		for(int i=0; i< moveToMake.length; i++)
 		{	
-			if((moveToMake[i][0] > -1) || (moveToMake[i][0] < 24)){ 
+			if((moveToMake[i][0] > -1) && (moveToMake[i][0] < 24)){ //-->> prepei kai ta dyo na alitheuoun
 				//normal move
-				table[moveToMake[i][0]] -= n; //decrease the absolute value
-				
-			}else{
+				table[moveToMake[i][0]] -= n; //pick that piece 
+				System.out.println(table[moveToMake[i][0]]+" MAKE MOVE!!!!!!!!!!!!!!!!!");
+			
+			} else if (moveToMake[i][0] < -1) {
+				break; //no other moves //possibly it's a single move by the player
+			} else { //GREEN-PLAYER
 				if(n == 1){
 					if(moveToMake[i][0] == -1){
 						eaten[0]--;
 					}
 						//else no move happens...positions wrong
 					//but the validity is checked already...
-				}else{//n == -1
+				}else{//n == -1 RED-CPU
 					if(moveToMake[i][0] == 24){
 						eaten[1]--;
 					}
@@ -612,12 +614,23 @@ public class Board {
 				}
 			}
 			
-			if((moveToMake[i][1] > -1)||(moveToMake[i][1] < 24)){
-				int prev = table[moveToMake[i][1]];
-				table[moveToMake[i][1]] += n;
-				if((Math.abs(prev) == 1)&&(Math.signum(prev) != n)){
-					table[moveToMake[i][1]] += n;
-					if (prev < 0){
+			if((moveToMake[i][1] > -1) && (moveToMake[i][1] < 24)){
+				
+				table[moveToMake[i][1]] += n; //move that piece here
+				if(table[moveToMake[i][1]] == 0) table[moveToMake[i][1]] += n;
+				//eating time
+				eaten[(n+1)/2]++; //thank you toumpis, -->>to kana ligo pio synoptiko
+				
+				if((n+1)/2 == 1)
+					if(moveToMake[i][1] < 6)
+						piecesATdestination[1]--;
+				
+				//int prev = table[moveToMake[i][1]];
+				//table[moveToMake[i][1]] += n;
+				
+				//if((Math.abs(prev) == 1) && (Math.signum(prev) != n)){
+					
+					/*if (prev < 0){
 						eaten[1]++;
 						if(moveToMake[i][1] < 6) piecesATdestination[1]--;
 						//efaga ena pouli t antipalou to opoio itan stn perioxi mazematos t
@@ -625,8 +638,9 @@ public class Board {
 					else if (prev > 0){
 						eaten[0]++;
 						//efaga ena pouli t antipalou to opoio itan stn perioxi mazematos t
-					}
-				}
+					}*/
+				//}
+					
 				//check if a piece reached destination
 				if(n == 1){
 					if( moveToMake[i][1] > 17 ) piecesATdestination[0]++;
@@ -643,7 +657,6 @@ public class Board {
 				}
 			}
 		}
-		
 	}
 	
 	public int getNumberOfPiecesAt(int pos){
@@ -652,7 +665,7 @@ public class Board {
 	
 	public boolean isValidTarget(int moveTarget, Player player){
 		//if(player == null) player = this.player;
-		if(moveTarget >= 0 || moveTarget <= 23){
+		if(moveTarget >= 0 && moveTarget <= 23){ //&& not ||s
 			int n = player.getSign();
 			int signm = (int) Math.signum(table[moveTarget]);
 			if(signm == n || table[moveTarget]+n == 0 || table[moveTarget] == 0)
@@ -849,6 +862,16 @@ public class Board {
         	arms.add((int) ms[0]+ms[1]);
     	}
     	return arms;
+    }
+    
+    public int getTotalJumpsFromDice(Dice dice){
+    	int total = dice.getValues()[0]+dice.getValues()[1];
+    	
+    	if(dice.isDouble()){
+    		total += dice.getValues()[0] * 2;
+    	}
+    	
+    	return total;
     }
 
 	public Player getWinner() {

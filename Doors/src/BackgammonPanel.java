@@ -40,13 +40,17 @@ public class BackgammonPanel extends JPanel implements MouseMotionListener  {
 	private Board game;
 	private Player player;
 	private int position;
-	private ArrayList<Integer> moveset; //????
+	private ArrayList<Integer> moveset;
 	private byte jumpsYet;
+	private int lastPick; //to cleanse the highlight
+	private int doneMove; 
 	
 	private ArrayList<BgButton> buttons;
 	private JButton buttonRoll;
 	
 	private boolean picked;
+	
+	private boolean isItMyTurn; //is it the turn of the player?
 
 	public BackgammonPanel(Board game) {
 		this.game = game;
@@ -64,6 +68,7 @@ public class BackgammonPanel extends JPanel implements MouseMotionListener  {
 		
 		buttons = new ArrayList<BgButton>();
 		picked = false;
+		isItMyTurn = true;
 		addMouseMotionListener(this);
 		drawButtons();
 	}
@@ -214,6 +219,7 @@ public class BackgammonPanel extends JPanel implements MouseMotionListener  {
 		  }
 
 		  public void actionPerformed(ActionEvent e) {
+			if(!isItMyTurn) return;
 		    if (e.getSource().equals(buttonRoll)) {
 		    	b.getGameboard().rollDice();
 		        b.repaint();
@@ -228,8 +234,8 @@ public class BackgammonPanel extends JPanel implements MouseMotionListener  {
 				image = getRedPiece();
 			} else if (game.colorAt(i) == Player.GREEN) {
 				image = getGreenPiece();
-			} else { image = null; } ///!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!! //---> mipws ena
-			//---> continue 8a voi8ouse????
+			} else { continue; } ///!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!! //---> mipws ena
+			//---> continue 8a voi8ouse???? -->>distixws oxi
 			getCoordinates(g, image, i);
 		}
 	}
@@ -417,50 +423,71 @@ public class BackgammonPanel extends JPanel implements MouseMotionListener  {
 	}
 	
 	public void pick(int index){
-		System.out.println("click0" + player+index);
+		
+		picked = false; //for when you reconsider the pick
+		//maybe unnecessary
+
+		if(jumpsYet < game.getTotalJumpsFromDice(game.dice))
 		if(game.isValidPick(index, player)){
 			this.position = index;
 			moveset = game.getDiceMoveset(game.getDice());
-			System.out.println("click1");
+	
 			for(int i = 0; i < moveset.size(); ++i){
 				if(moveset.get(i) == 0) continue;
 				if(game.isValidTarget(index+moveset.get(i), player)){
-					buttons.get(index+moveset.get(i)).highlight();
+					if(jumpsYet > 0 && 
+							(!game.getDice().isDouble() &&
+									(moveset.get(i) == doneMove || moveset.get(i) == game.getTotalJumpsFromDice(game.dice))))
+									//if a move is done and if not double, move must be the other dice
+						continue; //so that to not highlighted a chosen move
+					else buttons.get(index+moveset.get(i)).highlight();
 				}
 			}
+			
 			picked = true;
-		} else picked = false; //for when you reconsider the pick
-		
-		System.out.println("click");
+			lastPick = index;
+		}
+	
 	}
 	
-	public void jump(int index){ //--> pou kaleitai?
-		//---> pragmatika edw to xasa teleiws....e3igise plz
-		int i;
-		//--> proipo8etei na exei kli8ei prwta i apo panw gia arxikopoiisi tou moveset....
-		for(i = 0; i < moveset.size(); ++i){
-			if (position + moveset.get(i) == index &&
-					moveset.get(i) + jumpsYet <= (game.getDiceValues()[0]+game.getDiceValues()[1]))
-				//---> dn eimai sigouri oti katalava tn logiki alla nomizw dn 8a douleuei gia tis diples...
-				break;
-		}
+	public void jump(int index){ 
 		
-		if(game.isValidTarget(index, player)){
-			int[][] ms = new int[4][2];
-			ms[0][0] = position; ms[0][1] = index;
-			ms[1][0] = position; ms[1][1] = -1;
-			ms[2][0] = position; ms[2][1] = -1;
-			ms[3][0] = position; ms[3][1] = -1;
-			game.makeMove(new Move(ms), player.getSign());
-			if(i == 1){} //afairese prwth kinhsh apo statusBar, omoiws gia kathe i
-			jumpsYet += moveset.get(i-1);
-			if((game.getDiceValues()[0]+game.getDiceValues()[1]) == jumpsYet){
-				//tsekarisma gia katastash mazematos h/kai terminal
+		int m = 0;
+		if(picked)
+		for(int i = 0; i < moveset.size(); ++i){
+			m = moveset.get(i);
+			if (position + m == index &&
+					m + jumpsYet <= game.getTotalJumpsFromDice(game.getDice()))
+			{//valid move according to number of left jumps and the dice
+				if(game.isValidTarget(index, player)){ //check the gameboard validity of the move
+					int[][] ms = new int[4][2];
+					ms[0][0] = position; ms[0][1] = index;
+					ms[1][0] = -99; ms[1][1] = -1;
+					ms[2][0] = -99; ms[2][1] = -1;
+					ms[3][0] = -99; ms[3][1] = -1;
+					game.makeMove(new Move(ms), player.getSign()); //make the move finally
+					if(m == 0){} //afairese prwth kinhsh apo statusBar, omoiws gia kathe i
+					jumpsYet += m;
+					doneMove = m;
+					if((game.getTotalJumpsFromDice(game.getDice())) == jumpsYet){
+						jumpsYet = 0;
+						game.rollDice();
+						repaint();
+						//break: well the if's end, so the outer break does the work
+					}
+				}
+				break;
 			}
 		}
-		for(i = 0; i < moveset.size(); ++i){
-			buttons.get(index+moveset.get(i)).cleanse();
+	
+		//in any case, cleanse the highlights
+		for(int i = 0; i < moveset.size(); ++i){
+			if(lastPick+moveset.get(i) < 24)
+				buttons.get(lastPick+moveset.get(i)).cleanse();
 		}
+		//and remove the pick
+		//false move results to backrolling so its helpfull
+		//we should mention it in the manual :P
 		picked = false;
 	}
 	

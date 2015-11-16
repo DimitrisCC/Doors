@@ -28,8 +28,8 @@ public final class MainGUI {
 		    // If Nimbus is not available, you can set the GUI to another look and feel.
 		}
 		
-		//EventQueue.invokeLater(new Runnable() {
-			//public void run() {
+		//EventQueue.invokeLater(new Runnable() { //gamouse san threading idea, alla dimiourgei provlimata synchronization
+			//public void run() { 
 				//try {
 					currentGame = new Board();
 					playGame(currentGame);
@@ -61,7 +61,7 @@ public final class MainGUI {
 	
 	public static void playTurn(Player player)
 	{
-		if(player == Player.RED){//--> ara paizei to pc //---->>>kale o kokkinos den einai o cpu?? -->>>> oxi?
+		if(player == Player.RED){
 			System.out.println("REDZZZ");
 			gameFrame.setPlayer(currentPlayer);
 			int n = player.getSign();
@@ -71,7 +71,7 @@ public final class MainGUI {
 		}else{
 			System.out.println("GRENZNZZ");
 			gameFrame.setPlayer(currentPlayer);
-			new java.util.Scanner(System.in).nextLine();//??????
+			new java.util.Scanner(System.in).nextLine();//?????? -->>> debugging pipa
 			
 		}
 	}
