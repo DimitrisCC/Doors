@@ -50,7 +50,7 @@ public final class MainGUI {
 				gameFrame.getGamePanel().setRoll(true);
 				gameFrame.setPlayer(currentPlayer);
 				while(gameFrame.getGamePanel().isMyTurn())
-					System.out.println("me here");//DEBUG
+					System.out.print("");
 				currentPlayer = Player.RED;
 			}else{
 				gameFrame.getGamePanel().setRoll(false);
@@ -58,6 +58,7 @@ public final class MainGUI {
 				int n = currentPlayer.getSign();
 				currentGame.getDice().roll();
 				gameFrame.getContentPane().repaint();
+				System.out.println("HEARE");
 				gameFrame.getGame().makeMove(Minimax.MinimaxAlgorithm(gameFrame.getGame(), currentGame.getDice(), Player.RED), n);
 				gameFrame.getContentPane().repaint();
 				gameFrame.getGamePanel().setMyTurn(true);

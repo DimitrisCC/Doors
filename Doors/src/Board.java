@@ -389,7 +389,7 @@ public class Board {
 							
 							if(!isValidMove(tMove, n*move[0], player)) continue;
 							
-							for(int l = 0; l < 24 - move[0]; ++i){ //fourth move
+							for(int l = 0; l < 24 - move[0]; ++l){ //fourth move
 								foMove += n;
 								
 								// case we move four (different) pieces for move[0] steps each
