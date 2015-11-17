@@ -1,5 +1,3 @@
-
-
 public class Evaluation {
   
 	private static final int  positions= 24;
@@ -255,3 +253,4 @@ public class Evaluation {
       
       
     }
+

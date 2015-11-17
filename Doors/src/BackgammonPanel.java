@@ -47,6 +47,7 @@ public class BackgammonPanel extends JPanel implements MouseMotionListener  {
 	
 	private ArrayList<BgButton> buttons;
 	private JButton buttonRoll;
+	private JLabel statusBar;
 	
 	private boolean picked;
 	
@@ -71,6 +72,21 @@ public class BackgammonPanel extends JPanel implements MouseMotionListener  {
 		isItMyTurn = true;
 		addMouseMotionListener(this);
 		drawButtons();
+		drawStatusBar();
+	}
+	
+	private void drawStatusBar(){
+		statusBar = new JLabel("LET THE GAME BEGIN!!!", SwingConstants.CENTER);
+		statusBar.setBounds(0, 640, 720, 20);
+		statusBar.setOpaque(true);
+		statusBar.setBackground(Color.black);
+		statusBar.setForeground(Color.yellow);
+		this.add(statusBar);
+	}
+	
+	public void setStatus(String status){
+		statusBar.setText(status);
+		statusBar.repaint();
 	}
 	
 	private void drawButtons(){
@@ -208,27 +224,18 @@ public class BackgammonPanel extends JPanel implements MouseMotionListener  {
 		add(buttonRoll);
 	}
 	
-	//---> twra arkei kapws na periorizetai kai na mn patietai sinexeia....
-	//--> dn 3erw kan an ginetai...
+	
 	class RollButtonListener implements ActionListener {
 		  BackgammonPanel b;
-		  boolean clicked;
 		  RollButtonListener(BackgammonPanel b) { 
-			  //--> logika prepei kapws na ma8ainei poios prepei na pai3ei ki an prepei na pati8ei t koumpi ktl
-			  //---> i mexri na pai3ei o paiktis na e3afanizetai...
 			  this.b = b;
-			  clicked = false;
 		  }
 
 		  public void actionPerformed(ActionEvent e) {
-			if(!b.getMyTurn()){ 
-				clicked = false;
-				return;
-			}
-		    if (e.getSource().equals(buttonRoll)&&!clicked) {
-		    	b.getGameboard().rollDice();
+		    if (e.getSource().equals(buttonRoll)) {
+		    	b.getGameboard().getDice().roll();
 		        b.repaint();
-		        clicked = true;
+		        b.setRoll(false);
 		    }
 		  }    
 	}
@@ -309,9 +316,9 @@ public class BackgammonPanel extends JPanel implements MouseMotionListener  {
 		
 		int diceX = DICE_X + i * DICE_SIZE;
 		
-		byte[] dices = game.getDiceValues();
+		byte[] dices = game.getDice().getValues();
 
-		if(dices[0]==0) dices = game.rollDice(); //should be gone by the end
+		if(dices[0]==0) dices = game.getDice().roll(); //should be gone by the end
 	
 		try {
 			switch (dices[i]) {
@@ -430,33 +437,45 @@ public class BackgammonPanel extends JPanel implements MouseMotionListener  {
 	
 	public void setMyTurn(boolean flag){ isItMyTurn = flag;}
 	
-	public boolean getMyTurn(){return isItMyTurn;} //--> dn 3erw an xreiazetai pou8ena
+	public boolean isMyTurn(){return isItMyTurn;} 
 	
 	public void pick(int index){
 		
 		picked = false; //for when you reconsider the pick
 		//maybe unnecessary
 
-		if(jumpsYet < game.getTotalJumpsFromDice(game.dice)) //-->afou einai pou einai stn Board dn xreiazetai na pairnei orisma...
-			//-->genika oles autes nomizw 8a itan pio wraio na nai stn Dice ws static me8odoi an kai dn 3erw an 8a s voleue sts kliseis t idio
-		if(game.isValidPick(index, player)){
-			this.position = index;
-			moveset = game.getDiceMoveset(game.getDice());
-	
-			for(int i = 0; i < moveset.size(); ++i){
-				if(moveset.get(i) == 0) continue;
-				if(game.isValidTarget(index+moveset.get(i), player)){
-					if((jumpsYet + moveset.get(i) <= game.getTotalJumpsFromDice(game.dice))&&(moveset.get(i) != doneMove))
-						buttons.get(index+moveset.get(i)).highlight();
-					else
-						continue;
+		if(jumpsYet < game.getDice().getTotalJumpsFromDice()){ 
+			if(game.isValidPick(index, player)){
+				setStatus("Got your piece, mate!");
+				this.position = index;
+				moveset = game.getDice().getDiceMoveset();
+				if(game.getDice().isDouble()){
+					for(int i = 0; i < moveset.size(); ++i){
+						if(moveset.get(i) == 0) continue;
+						if(game.isValidTarget(index+moveset.get(i), player)){
+							if(moveset.get(i)  <= (game.getDice().getTotalJumpsFromDice() - jumpsYet))
+								buttons.get(index+moveset.get(i)).highlight();
+							else
+								continue;
+						}
+					}
+				}else{
+					for(int i = 0; i < moveset.size(); ++i){
+						if(moveset.get(i) == 0) continue;
+						if(game.isValidTarget(index+moveset.get(i), player)){
+							if((moveset.get(i)!= doneMove)&&(jumpsYet + moveset.get(i) <= game.getDice().getTotalJumpsFromDice()))
+								buttons.get(index+moveset.get(i)).highlight();
+							else
+								continue;
+						}
+					}
 				}
+				picked = true;
+				lastPick = index;
+			}else{
+				setStatus("Wrong color, bro!");
 			}
-			
-			picked = true;
-			lastPick = index;
 		}
-	
 	}
 	
 	public void jump(int index){ 
@@ -466,27 +485,22 @@ public class BackgammonPanel extends JPanel implements MouseMotionListener  {
 			for(int i = 0; i < moveset.size(); ++i){
 				m = moveset.get(i);
 				if (position + m == index &&
-						m + jumpsYet <= game.getTotalJumpsFromDice(game.getDice()))
+						m + jumpsYet <= game.getDice().getTotalJumpsFromDice())
 				{//valid move according to number of left jumps and the dice
 					if(game.isValidTarget(index, player)){ //check the gameboard validity of the move
 						int[][] ms = new int[4][2];
 						ms[0][0] = position; ms[0][1] = index;
-						ms[1][0] = -99; ms[1][1] = -1;
-						ms[2][0] = -99; ms[2][1] = -1;
-						ms[3][0] = -99; ms[3][1] = -1;
+						ms[1][0] = -99; ms[1][1] = -99;
+						ms[2][0] = -99; ms[2][1] = -99;
+						ms[3][0] = -99; ms[3][1] = -99;
 						game.makeMove(new Move(ms), player.getSign()); //make the move finally
 						if(m == 0){} //afairese prwth kinhsh apo statusBar, omoiws gia kathe i
 						jumpsYet += m;
 						doneMove = m;
-						if((game.getTotalJumpsFromDice(game.getDice())) == jumpsYet){
+						if((game.getDice().getTotalJumpsFromDice()) == jumpsYet){
 							jumpsYet = 0;
+							doneMove = 0;
 							setMyTurn(false);
-							//---->to roll dn prepei na ginetai edw...etsi nomizw...
-							//----> vasika exoume 2 epiloges...na xrisimopoiisoume tn playTurn sto MainGui kai na mn 
-							//---->tn xrisimopoiisoume......an tn xrisimopoiisoume auto dn 8a ginei edw, alliws 8a ginei edw
-						
-							//game.rollDice();
-							//repaint();
 							//break: well the if's end, so the outer break does the work
 						}
 					}
@@ -501,8 +515,9 @@ public class BackgammonPanel extends JPanel implements MouseMotionListener  {
 			}
 			//and remove the pick
 			//false move results to backrolling so its helpfull
-			//we should mention it in the manual :P
+			//we should mention it in the manual :P //--MAKE DREAMS
 			picked = false;
+			setStatus("");
 		}
 	}
 	
@@ -522,6 +537,12 @@ public class BackgammonPanel extends JPanel implements MouseMotionListener  {
 	public void mouseMoved(MouseEvent e) {
 		// TODO Auto-generated method stub
 		
+	}
+
+	public void setRoll(boolean b) {
+		buttonRoll.setVisible(b);
+		buttonRoll.setEnabled(b);
+		this.repaint();
 	}
 
 }
