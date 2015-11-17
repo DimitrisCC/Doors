@@ -15,14 +15,14 @@ public class Minimax {
 	//opote mesa sts sinartiseis xrisimopoiw fixed PieceEnums...parola auta epeidi to 8ema isws
 	//mporei na veltiw8ei genika to afisa stn dilwsi kai vlepoume
 	public static Move MinimaxAlgorithm(Board root, Dice d, Player player)
-	{
+	{System.out.println("minimaxAlgo");
 		possibleRolls = Dice.allPossibleRolls(); //initialize possibleRolls
 		Move bestMove = maxValue(root, d, 0, -INF, INF);
 		return bestMove;
 	}
 	
 	private static Move minValue(Board b, Dice d, int treeLength,int alpha, int beta){
-		
+		System.out.println("min");
 		if(treeLength == MAX_LENGTH){
 			//TODO
 			//epistrefei to apotelesma tis euretikis sto b
@@ -43,7 +43,7 @@ public class Minimax {
 	}
 	
 	private static Move maxValue(Board b, Dice d, int treeLength, int alpha, int beta){
-		
+		System.out.println("max");
 		if(treeLength == MAX_LENGTH){
 			//TODO
 			//epistrefei to apotelesma tis euretikis sto b
@@ -64,7 +64,7 @@ public class Minimax {
 	} 
 	
 	private static int chanceValue(Board b, Dice d, Player green, int treeLength, int alpha, int beta){
-		
+		System.out.println("gamw tn tixi m");
 		float expectedValue = 0; //PROSOXIIIIIIII!!!!! edw isws exoume provlima!!!
 		float s = 0;
 		float p = 0;

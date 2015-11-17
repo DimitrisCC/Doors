@@ -32,32 +32,36 @@ public class Board {
 	private static final int POS_NUM_18 = 18;
 	private static final int POS_NUM_23 = 23;
 	
-	private static final int RED_START_POS = 0;
-	private static final int GREEN_START_POS = 23;
+	private static final int RED_START_POS = 23;
+	private static final int GREEN_START_POS = 0;
 	
 	private static final int PIECE_TOTAL_NUM = 15;
 	
-    private int[] table; //a list of stacks of Pieces
-    // list->positions of board, stack->pieces in each position
+	//the table that represents the board of the game
+    //every position has a number that represents how many checkers are there.
+    //if this number is positive the checkers there are green, else the checkers there are red.
+    private int[] table; 
     
-   // Checkers on bar (that have been hit).  eaten[0] is green player, eaten[1] is red player.
+    //Checkers on bar (that have been hit).  eaten[0] is green player, eaten[1] is red player.
     private int[] eaten;
     
     //how many pieces of each player have reached destination
+    //[0] for green, [1] for red
     private int[] piecesATdestination;
-  //[0] for green, [1] for red
     
-   // private int pos; //starting position //--> pou xrisimopoiountai?
-   //private int move; //target position //---> pou xrisimopoiountai?
-//    /private Player player;
+    // private int pos; //starting position //--> pou xrisimopoiountai?
+  	//private int move; //target position //---> pou xrisimopoiountai?
+    //private Player player;
     
     //private int[][] lastPlayedMove;
     private ArrayList<Move> lastPlayedMoves;
     
+    //the dice of the game
     Dice dice;
     
-    private int[] freedPieces; //if 15, then you win
+    //if 15, then you win
     //[0] for green, [1] for red
+    private int[] freedPieces; 
 
     private Player winner = Player.NONE;
     
@@ -88,6 +92,8 @@ public class Board {
 		table = new int[24];
 		setTable(board.getTable());
 		eaten = new int[2];
+        piecesATdestination = new int[2];
+        freedPieces = new int[2];
 		
 		lastPlayedMoves = new ArrayList<Move>();
 		
@@ -135,29 +141,29 @@ public class Board {
 		
 	}
 	
-	//pN-> 0 when reds play, 23 when greens play
-	// ---> isws fainetai pio mperdemeno, alla toulaxiston den yparxei idios kwdikas, whatever
+	//pN-> 0 when green plays, 23 when red plays
 	private void _getChildren(byte[] move, ArrayList<Board> children, int pN, Player player){
-		// PROSOXI!! An 8ewrousame dedomeno oti kaleitai mono apo tn Max 8a itan poli pio apli oson afora
-		//ellegxous gia ton paikti
+		
+		System.out.println("ax"); //DEBUG
+	
 		Board child;
 		int[][] playedMove = new int[4][2];
 		// initialize moves we won't use with invalid values
-		playedMove[2][0] = -1;
-		playedMove[2][1] = -1;
-		playedMove[3][0] = -1;
-		playedMove[3][1] = -1;
+		playedMove[2][0] = -99;
+		playedMove[2][1] = -99;
+		playedMove[3][0] = -99;
+		playedMove[3][1] = -99;
 		int n = player.getSign();
-		int fMove = pN + n; //fMove -> first move
-		int sMove = pN + n; //sMove -> second move
-		int playerNum = (n == -1) ? 0 : 1; // xreiazetai gia to eaten
-		int posOfEaten = pN + n;
+		int fMove = pN - n; //fMove -> first move
+		int sMove = pN - n; //sMove -> second move
+		int playerNum = player.ordinal(); // xreiazetai gia to eaten
+		int posOfEaten = pN - n;
 		
 		if(move[0] == move[1]){ // this means double move
 			// all the calculations use only move[0]  because move[0] and move[1] have the same value
 
-			int tMove = pN + n; //tMove -> third move
-			int foMove = pN + n; //lMove -> fourth move
+			int tMove = pN - n; //tMove -> third move
+			int foMove = pN - n; //lMove -> fourth move
 			
 			if(eaten[playerNum] != 0){ // case we have eaten pieces 
 				int i;
@@ -170,10 +176,8 @@ public class Board {
 				
 				switch(eaten[playerNum]){
 				case 1: // we have 3 more moves to make
-					//kai  pali gamietai to simpan!
-					// #dn_einai_zwi_auti_kante_kati!!!
 					for(int j = 0; j < 24 - move[0]; ++j){
-						fMove -= n;
+						fMove += n;
 						
 						// case we move only one piece for 3*move[0] steps
 						if(j < 24 - 3*move[0]){
@@ -195,7 +199,7 @@ public class Board {
 						if(!isValidMove(fMove, n*move[0], player)) continue;
 						
 						for(int k = 0; k < 24 - move[0]; ++k){
-							sMove -= n;
+							sMove += n;
 							
 							// case we move one piece for move[0] steps and another piece for 2*move[0] steps
 							if(k < 24 - 2*move[0]){
@@ -217,7 +221,7 @@ public class Board {
 							if(!isValidMove(sMove, n*move[0], player)) continue;
 							
 							for(int l=0; l < 24-move[0]; ++l){
-								tMove -= n;
+								tMove += n;
 								
 								if(!isValidMove(tMove, n*move[0], player)) continue;
 								
@@ -240,7 +244,7 @@ public class Board {
 					break;
 				case 2: // we have 2 more moves to make
 					for(int j = 0; j < 24 - move[0]; ++j){
-						fMove -= n;
+						fMove += n;
 						
 						// case we move only one piece for 2*move[0] steps
 						if(j < 24 - 2*n*move[0]){
@@ -260,7 +264,7 @@ public class Board {
 						if(!isValidMove(fMove, n*move[0], player)) continue;
 						
 						for(int k = 0; k < 24 - move[0]; ++k){
-							sMove -= n;
+							sMove += n;
 							
 							if(!isValidMove(sMove, n*move[0], player)) continue;
 							// case we move two pieces for move[0] steps each
@@ -278,7 +282,7 @@ public class Board {
 					break;
 				case 3: // we have 1 more move to make
 					for(int j = 0; j < 24 - move[0]; ++j){
-						fMove -= n;
+						fMove += n;
 						if(!isValidMove(fMove, n*move[0], player)) continue;
 						//we have one last move to make
 						playedMove[3][0] = fMove;
@@ -294,12 +298,12 @@ public class Board {
 					break;
 				}
 				
-				eaten[playerNum] -= i;
+				eaten[playerNum] -= i + 1;
 			}else{
 				
 				for(int i = 0; i < 24 - move[0]; ++i){ //first move
 					
-					fMove -= n;
+					fMove += n;
 	
 					// case we move only one piece four times of the value of the dice
 					if(i < 24 - (move[0]*4))
@@ -327,7 +331,7 @@ public class Board {
 					if(!isValidMove(fMove, n*move[0], player)) continue;
 					
 					for(int j = 0; j < 24 - move[0]; ++i){ //second move
-						sMove -= n;
+						sMove += n;
 						
 						// case we move one piece for move[0] steps and another piece for 3*move[0] steps
 						if(i < 24 - (move[0]*3))
@@ -356,7 +360,7 @@ public class Board {
 						if(!isValidMove(sMove, n*move[0], player)) continue;
 						
 						for(int k = 0; k < 24 - move[0]; ++i){ // third move
-							tMove -= n;
+							tMove += n;
 							
 							// case we two pieces for move[0] steps each and one piece for 2*move[0] steps
 							if(i < 24 - (move[0]*2))
@@ -409,7 +413,7 @@ public class Board {
 							if(!isValidMove(tMove, n*move[0], player)) continue;
 							
 							for(int l = 0; l < 24 - move[0]; ++i){ //fourth move
-								foMove -= n;
+								foMove += n;
 								
 								// case we move four (different) pieces for move[0] steps each
 								if(!isValidMove(foMove, n*move[0], player)) continue;
@@ -446,6 +450,9 @@ public class Board {
 					if(isValidMove(posOfEaten, n*move[0], player)){
 						playedMove[0][0] = posOfEaten;
 						playedMove[0][1] = posOfEaten + n*move[0];
+					}else{
+						playedMove[0][0] = -1;
+						playedMove[0][1] = -1;
 					}
 					
 					if(isValidMove(posOfEaten, n*move[1], player)){
@@ -455,20 +462,77 @@ public class Board {
 						playedMove[1][0] = -1;
 						playedMove[1][1] = -1;
 					}
-					
-					Move moveToMake = new Move(playedMove);
-					child = new Board(this);
-					child.makeMove(moveToMake, n);
-					child.setLastPlayedMove(moveToMake);
-					children.add(child);
+					if((playedMove[0][1]!= -1)||(playedMove[1][1] != -1)){ //otherwise no piece could move
+						Move moveToMake = new Move(playedMove);
+						child = new Board(this);
+						child.makeMove(moveToMake, n);
+						child.setLastPlayedMove(moveToMake);
+						children.add(child);
+					}
 				}else{ //else eaten[playerNum] == 1 because eaten[playerNum] > 0
+					
+					//case we can move the eaten piece move[0] steps
+					if(isValidMove(posOfEaten, n*move[0], player)){
+						playedMove[0][0] = posOfEaten;
+						playedMove[0][1] = posOfEaten + n*move[0];
+						
+						for(int i=0; i < (24-move[1]); ++i){
+							fMove += n;
+							if(isValidMove(fMove, n*move[1], player)){
+								playedMove[1][0] = fMove;
+								playedMove[1][1] = fMove + n*move[1];
+								Move moveToMake = new Move(playedMove);
+								child = new Board(this);
+								child.makeMove(moveToMake, n);
+								child.setLastPlayedMove(moveToMake);
+								children.add(child);
+							}
+						}
+						
+						if(playedMove[1][1] == -1){ //no move was made in the for loop. however we must move the eaten checker
+							Move moveToMake = new Move(playedMove);
+							child = new Board(this);
+							child.makeMove(moveToMake, n);
+							child.setLastPlayedMove(moveToMake);
+							children.add(child);
+						}
+					}
+					
+					//case we can move the eaten piece move[1] steps
+					if(isValidMove(posOfEaten, n*move[1], player)){
+						playedMove[0][0] = posOfEaten;
+						playedMove[0][1] = posOfEaten + n*move[1];
+						
+						for(int i=0; i < (24-move[0]); ++i){
+							fMove += n;
+							if(isValidMove(fMove, n*move[0], player)){
+								playedMove[1][0] = fMove;
+								playedMove[1][1] = fMove + n*move[0];
+								Move moveToMake = new Move(playedMove);
+								child = new Board(this);
+								child.makeMove(moveToMake, n);
+								child.setLastPlayedMove(moveToMake);
+								children.add(child);
+							}
+						}
+						
+						if(playedMove[1][1] == -1){ //no move was made in the for loop. however we must move the eaten checker
+							Move moveToMake = new Move(playedMove);
+							child = new Board(this);
+							child.makeMove(moveToMake, n);
+							child.setLastPlayedMove(moveToMake);
+							children.add(child);
+						}
+					}
+					
+					//in case we cannot move the eaten piece neither by move[0] steps nor by move[1] steps we do nothing
 					
 				}
 			}else{
 				//first move
 				for(int i = 0; i < 24 - move[0]; ++i){ //not taking into account the children states where moves lead out of board
 													//at this moment
-					fMove -= n; //increasing when reds, decreasing when greens
+					fMove += n; //decreasing when reds, increasing when greens
 					
 					//case we move one piece for move[0] + move[1] steps
 					if(i < 24 - (move[0] + move[1]))
@@ -494,7 +558,7 @@ public class Board {
 					//second move
 					for(int j = 0; j < 24 - move[1]; ++j){ //not taking into account the children states where moves lead out of board
 														//at this moment
-						sMove -= n; //increasing when reds, decreasing when greens
+						sMove += n; //decreasing when reds, increasing when greens
 						if(!isValidMove(sMove, n*move[1], player)) continue;
 					
 						//case we move two pieces, the first for move[0] steps and the second for move[1] steps
@@ -561,18 +625,16 @@ public class Board {
 	 */
 	public boolean isValidPick(int pos, Player player){
 		//if (player == null) player = this.player;
-		if(pos >= 0 || pos <= 23){;
-			System.out.println(table[pos]+"SSSSSSSSSIGNNN ON PICK");
+		if(pos >= 0 && pos <= 23){;
+			System.out.println(table[pos]+"SSSSSSSSSIGNNN ON PICK");//DEBUG
 			if(Math.signum(table[pos]) == player.getSign()){
-				//setStatus("Got your piece, mate!");
 				return true;
 			} else {
-				//setStatus("Wrong color, bro!");
 				return false;
 			}
-		}else if (pos == -1){ // start position is the bar with eaten pieces
+		}else if (pos == -1){ // start position is the bar with eaten pieces for the green player
 			return (eaten[0] > 0);
-		}else if (pos == 24){
+		}else if (pos == 24){ // start position is the bar with eaten pieces for the red player
 			return (eaten[1] > 0);
 		}else{
 			return false;
@@ -594,7 +656,7 @@ public class Board {
 			if((moveToMake[i][0] > -1) && (moveToMake[i][0] < 24)){ //-->> prepei kai ta dyo na alitheuoun -->>>SWSTOS!!!
 				//normal move
 				table[moveToMake[i][0]] -= n; //pick that piece 
-				System.out.println(table[moveToMake[i][0]]+" MAKE MOVE!!!!!!!!!!!!!!!!!");
+				System.out.println(table[moveToMake[i][0]]+" MAKE MOVE!!!!!!!!!!!!!!!!!");//DEBUG
 			
 			} else if (moveToMake[i][0] < -1) {
 				break; //no other moves //possibly it's a single move by the player
@@ -617,17 +679,20 @@ public class Board {
 			if((moveToMake[i][1] > -1) && (moveToMake[i][1] < 24)){
 				
 				table[moveToMake[i][1]] += n; //move that piece here
-				if(table[moveToMake[i][1]] == 0) table[moveToMake[i][1]] += n;
-				//eating time
-				eaten[(n+1)/2]++; //thank you toumpis, -->>to kana ligo pio synoptiko
-				
-				if((n+1)/2 == 1){
-					if(moveToMake[i][1] < 6)
-						piecesATdestination[1]--; //one red piece from this area got eaten
-				}else{ //-->dn to xes valei.....
-					if(moveToMake[i][1] > 17)
-						piecesATdestination[0]--;
+				if(table[moveToMake[i][1]] == 0){
+					table[moveToMake[i][1]] += n;
+					eaten[(n+1)/2]++; //thank you toumpis, -->>to kana ligo pio synoptiko
+
+					//eating time
+					if((n+1)/2 == 1){
+						if(moveToMake[i][1] < 6)
+							piecesATdestination[1]--; //one red piece from this area got eaten
+					}else{ //-->dn to xes valei.....
+						if(moveToMake[i][1] > 17)
+							piecesATdestination[0]--;
+					}
 				}
+				
 				//int prev = table[moveToMake[i][1]];
 				//table[moveToMake[i][1]] += n;
 				
@@ -660,6 +725,9 @@ public class Board {
 				}
 			}
 		}
+		
+		setWinner(isTerminal());
+		
 	}
 	
 	public int getNumberOfPiecesAt(int pos){
@@ -689,7 +757,7 @@ public class Board {
 	 * Check if the moving direction is correct
 	 */
 	protected boolean checkDirection(int pos, int move, Player player) {
-		if ((player == Player.RED && move <= pos) || (player == Player.GREEN && move >= pos)) {
+		if ((player == Player.RED && move >= pos) || (player == Player.GREEN && move <= pos)) {
 			//setStatus("You're going in the wrong direction!");
 			return false;
 		}
@@ -803,4 +871,7 @@ public class Board {
 		return winner;
 	}
 
+	public void setWinner(Player w){
+		winner = w;
+	}
 }

@@ -47,6 +47,7 @@ public class BackgammonPanel extends JPanel implements MouseMotionListener  {
 	
 	private ArrayList<BgButton> buttons;
 	private JButton buttonRoll;
+	private JLabel statusBar;
 	
 	private boolean picked;
 	
@@ -71,6 +72,21 @@ public class BackgammonPanel extends JPanel implements MouseMotionListener  {
 		isItMyTurn = true;
 		addMouseMotionListener(this);
 		drawButtons();
+		drawStatusBar();
+	}
+	
+	private void drawStatusBar(){
+		statusBar = new JLabel("LET THE GAME BEGIN!!!", SwingConstants.CENTER);
+		statusBar.setBounds(0, 640, 720, 20);
+		statusBar.setOpaque(true);
+		statusBar.setBackground(Color.black);
+		statusBar.setForeground(Color.yellow);
+		this.add(statusBar);
+	}
+	
+	public void setStatus(String status){
+		statusBar.setText(status);
+		statusBar.repaint();
 	}
 	
 	private void drawButtons(){
@@ -440,6 +456,7 @@ public class BackgammonPanel extends JPanel implements MouseMotionListener  {
 		if(jumpsYet < game.getDice().getTotalJumpsFromDice()) //-->afou einai pou einai stn Board dn xreiazetai na pairnei orisma...
 			//-->genika oles autes nomizw 8a itan pio wraio na nai stn Dice ws static me8odoi an kai dn 3erw an 8a s voleue sts kliseis t idio
 		if(game.isValidPick(index, player)){
+			setStatus("Got your piece, mate!");
 			this.position = index;
 			moveset = game.getDice().getDiceMoveset();
 	
@@ -455,6 +472,8 @@ public class BackgammonPanel extends JPanel implements MouseMotionListener  {
 			
 			picked = true;
 			lastPick = index;
+		}else{
+			setStatus("Wrong color, bro!");
 		}
 	
 	}
@@ -503,6 +522,7 @@ public class BackgammonPanel extends JPanel implements MouseMotionListener  {
 			//false move results to backrolling so its helpfull
 			//we should mention it in the manual :P
 			picked = false;
+			setStatus("");
 		}
 	}
 	
@@ -522,6 +542,11 @@ public class BackgammonPanel extends JPanel implements MouseMotionListener  {
 	public void mouseMoved(MouseEvent e) {
 		// TODO Auto-generated method stub
 		
+	}
+
+	public void setRoll(boolean b) {
+		buttonRoll.setVisible(b);
+		this.repaint();
 	}
 
 }

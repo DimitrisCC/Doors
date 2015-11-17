@@ -5,7 +5,7 @@
 
 public enum Player {
 
-    RED, GREEN, CHANCE, NONE;
+     GREEN, RED, CHANCE, NONE;
 	
 	private byte sign;
 	private Player opponent;
