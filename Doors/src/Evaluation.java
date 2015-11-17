@@ -11,24 +11,45 @@ public class Evaluation {
 	 public static float boardScore(Board b, int player)
 	 {
 	   int score=evaluateCheckers(b,player);//tha trexei se kathe board.An px mou faei ena pouli xekinaei apo thn arxh.
-	   score+=evaluateDoors(b,player);
 	   score-=threatenedCheckers(b,player);
-	  //--->NEW
-      if(b.getEaten()[1-player]>0)//check if I have hit at least an opponent's checker
+	  
+	   //******NEW**********************************************************
+	   //DYSTYXVWS KALWNTAS TH getNumberOf_OpponentsCheckers PROSTHETW OUTWS H ALLWS POLUPLOKOTHTA.SKEFTOMAI AN 
+	   //TYXEI KAI TON PIASW THA HTAN KALO AN DEN EXW MAZEPSEI OLA TA POULIA STH PERIOXH MOU NA EXW TOULAXISTON PORTES GIA NA TON
+	   //EMPODISW NA FYGEI.WSTOSO DINONTAS VAROS STIS PORTES ISWS KATHUSTERW TA POULIA NA FTASOUN STH HOME AREA POU DEN ME 
+	   //SUMFEREI IDIWS AN DEN EXW PIASEI POULI TOU ANTIPALOU.--->AYTES TIS SKEPSEIS EKANA KAI EVALA TH PARAKATW SUNTHIKI.
+	   if(getNumberOf_OpponentsCheckers(b,player)>0 && b.getHomeCheckers()[player]<11)//check if player has at least one opponent's checker in his home area 
+	   {                                                                              // and if he/she has less than 11 checkers in his/her home area which means that he/she is 
+		                                                                              //not in 'final' situation.
+		   score+=evaluateDoors(b,player); 
+	   }
+	   //********************************************************************
+      
+	   if(b.getEaten()[1-player]>0)//check if player has hit at least an opponent's checker
 	   {
     	   score-= penalisedHitting_1(b,player);
-    	   score-= penalisedHitting_2(b,player); 
+    	 //*****NEW*************
+    	   if(penalisedHitting_2(b,player)==0)//Check if player loses the game
+    	   {
+    		   score+=(b.getEaten()[1-player]*80);//Player's score increases depending on the number of eaten checkers. 
+    	   }
+    	   else
+    	   {
+    		   score-=(b.getEaten()[1-player]*penalisedHitting_2(b,player));////Player's score decreases depending on the number of eaten checkers.    
+    	   }
+	       //************NEW******
+    	   
     	   score+= (getNumberOf_FinalBlocks(b,player)*5);
-	   }
-      //-------
-      
-	   return score;
+        }
+        return score;
 	 } 
     
 	 /*
 	  * This function weights your checkers more if they are closer to your home
 	  * and penalises you for the opponent's checkers that are close to his/her home.
-	  * Also it gives more weight for the checkers that are at home.
+	  * Also it gives more weight for the checkers that are at home and reduces your  
+	  * score more for the opponent's checkers that are at his/her home.
+	  * It also  penalises you for the checkers you have on bar.
 	  * player->0 for green checkers 
 	  *       ->1 for red checkers
 	  */    
@@ -43,9 +64,9 @@ public class Evaluation {
 	        else
 	           score1= score1-player*board[i]*(positions-i-1)+(1-player)*board[i]*(positions-i-1);
 	      }
-		  return score1+(20*b.getHomeCheckers()[player]);//----->NEW prosthesa varos gia ta poulia pou einai sth home area 
-	 }
-	 
+		  return score1+(20*b.getHomeCheckers()[player])-(20*b.getHomeCheckers()[1-player])-(20*b.getEaten()[player]);//----->NEW prosthesa varos gia ta poulia pou einai sth home area 
+	 }                                                                                   //******kai afairw gia ta poulia tou antipalou pou einai sth dikh tou home
+	                                                                                      //kai afairw gia ta poulia pou m exei piasei o antipalos
 	 /*
 	  * 
 	  * atLeastTwoCheckersPerPoint-> each time contains the number of doors that are in row.If there's a gap it becomes zero
@@ -53,7 +74,7 @@ public class Evaluation {
 	  *         numbers of red checkers doors at 13-19 region(player_1)  
 	  * inrow-> contains the maximum number of doors that  are in row 
 	  * 
-	  * This function calculates the score depending on the number 
+	  * This function calculates the score depending on the maximum number 
 	  * of doors in row and the total number of doors.
 	  *
 	  * 
@@ -119,7 +140,7 @@ public class Evaluation {
 	 }
 	 
 	 
-	 //--->NEW
+	 
 	 /*
 	  * Returns the penalty of player's single checkers that are in his/her home area depending on the total number of  
 	  * his/her checkers that are in his/her home  area
@@ -130,13 +151,13 @@ public class Evaluation {
     	int singles=0;
 		if(1<=home[player] && home[player]>=10)//If player has 1-10 checkers at his/her area
 		{
-		   singles = b.numberOfSingles(player);//take the player's single checkers of his/her home area 
+		   singles = numberOfSingles(b,player);//take the player's single checkers of his/her home area 
 		   return singles*20;
 			
 		} 
 		else if(home[player]>10)//Now player has picked most of his/her checkers in his/her home area
 		{
-		   singles = b.numberOfSingles(player);
+		   singles = numberOfSingles(b,player);
 		   return singles*50;
 		}
 		return singles;
@@ -144,7 +165,7 @@ public class Evaluation {
 	 }
       
       /*
-       * --->NEW
+       * 
        *Returns a penalty for a wrong move when player leads.
        */
       private static int penalisedHitting_2(Board b,int player)
@@ -154,7 +175,7 @@ public class Evaluation {
     	  
     	  if(home[player]>home[1-player])//check If player has more checkers than his/her opponent in his/her home area 
     	  {
-    		 if(b.numberOfcheckers(player)>b.numberOfcheckers(1-player))
+    		 if(numberOfcheckers(b,player)>numberOfcheckers(b,1-player))
     			 {
     				 penalty=80;
     			 }
@@ -163,7 +184,7 @@ public class Evaluation {
     	 }
       
       /*
-      *--->NEW
+      *
       *It has a lot in common with the evaluateDoors function.
       *It returns the number of blocks in the player's home area. 
       *
@@ -185,6 +206,51 @@ public class Evaluation {
     		   }//for  
     	  }
     	  return blocks;
+       }
+      
+      //******************NEW********************************
+       //It returns the number of opponent's checkers 
+      //from the home area of player 
+      public static int getNumberOf_OpponentsCheckers(Board b,int player)
+      {   
+      	int sum=0;
+      	int pieces=0;
+      	for(int i=((1-player)*0+18*player);i<((1-player)*5+23*player);i++)
+          {
+      		pieces =Math.abs(player*b.getNumberOfPiecesAt(i)+(1-player)*b.getNumberOfPiecesAt(i));
+      		sum+=pieces>=1?pieces:0;
+      			
+          }
+      	return sum;	
+      }
+      //************NEW******************************
+      
+      
+    //It returns the number of checkers 
+      //from the 6-11 area for the player_0 or from the 12-17 area for the player_1 
+      public static int numberOfcheckers(Board b,int player)
+      {   
+      	int sum=0;
+      	for(int i=((1-player)*6+12*player);i<((1-player)*11+17*player);i++)
+          {
+            sum+=player*b.getNumberOfPiecesAt(i)+(1-player)*b.getNumberOfPiecesAt(i);
+      			
+          }
+      	return sum;	
+      }
+      
+      
+    //It returns the number of single checkers from the 0-5 area for the player_0
+      // or from the 18-23 area for the player_1
+      public static int numberOfSingles(Board b,int player)
+      {
+      	int sum=0;	
+      	for(int i=((1-player)*0+18*player);i<((1-player)*5+23*player);i++)
+          {    
+      		sum+=Math.abs(player*b.getNumberOfPiecesAt(i)+(1-player)*b.getNumberOfPiecesAt(i))==1?1:0;
+      			
+          }
+      	return sum;	
        }
       
       

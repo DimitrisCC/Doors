@@ -776,31 +776,6 @@ public class Board {
     	lastPlayedMoves.add(move);
     }
     
-    //It returns the number of checkers 
-    //from the 6-11 area for the player_0 or from the 12-17 area for the player_1 
-    public int numberOfcheckers(int player)
-    {   
-    	int sum=0;
-    	for(int i=((1-player)*6+12*player);i<((1-player)*11+17*player);i++)
-        {
-          sum+=player*getNumberOfPiecesAt(i)+(1-player)*getNumberOfPiecesAt(i);
-    			
-        }
-    	return sum;	
-    }
-    
-    //It returns the number of single checkers from the 0-5 area for the player_0
-    // or from the 18-23 area for the player_1
-    public int numberOfSingles(int player)
-    {
-    	int sum=0;	
-    	for(int i=((1-player)*0+18*player);i<((1-player)*5+23*player);i++)
-        {    
-    		sum+=Math.abs(player*getNumberOfPiecesAt(i)+(1-player)*getNumberOfPiecesAt(i))==1?1:0;
-    			
-        }
-    	return sum;	
-     }
     
     
     /**
