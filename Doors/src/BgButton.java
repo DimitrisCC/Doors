@@ -28,10 +28,10 @@ public class BgButton extends JButton implements ActionListener {
 	@Override
 	public void actionPerformed(ActionEvent e) { //--> giati actionPerformed ki oxi onClick?? //-->>giati etsi legetai h methodos
 		//--> nomizw 8a exei provlima giati oti action kai na ginetai 8a kanei kinisi px
-		System.out.println("acc");
+		System.out.println("acc");//DEBUG
 		BackgammonPanel panel = (BackgammonPanel) this.getParent();
 		//mono otan paizei o an8rwpos prepei na exei dikaiwma na patisei..
-		if(panel.getMyTurn()){ //kapws prepei na valoume sta8eres poion 8ewroume pc kai poion an8rwpo
+		if(panel.isMyTurn()){ //kapws prepei na valoume sta8eres poion 8ewroume pc kai poion an8rwpo
 			//dn to xw valei giati dn exw apofasisei p prepei na mpei
 			if(!panel.isPicked()) panel.pick(number-1);
 			else{
@@ -44,7 +44,7 @@ public class BgButton extends JButton implements ActionListener {
 					//numOfCheckersMoved = 0;
 				//}
 			//}else{
-				if(panel.getJumpsYet() == panel.getGameboard().getTotalJumpsFromDice(panel.getGameboard().getDice())){
+				if(panel.getJumpsYet() == panel.getGameboard().getDice().getTotalJumpsFromDice()){
 					panel.setMyTurn(false);
 				}
 			//}

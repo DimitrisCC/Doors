@@ -8,9 +8,8 @@ import javax.swing.UIManager.LookAndFeelInfo;
  */
 public final class MainGUI {
 
-	private static Player currentPlayer = Player.GREEN;
+	private static Player currentPlayer;
 	private static Board currentGame;
-	private static Dice dice = new Dice(); //maybe should not be here
 	private static BackgammonFrame gameFrame;
 
 	private MainGUI() { }
@@ -31,7 +30,10 @@ public final class MainGUI {
 		//EventQueue.invokeLater(new Runnable() { //gamouse san threading idea, alla dimiourgei provlimata synchronization
 			//public void run() { 
 				//try {
+					currentPlayer = Player.GREEN;
 					currentGame = new Board();
+					gameFrame = new BackgammonFrame(currentGame);
+					gameFrame.setVisible(true);
 					playGame(currentGame);
 				//} catch (Exception e) {
 				//	e.printStackTrace();
@@ -42,7 +44,32 @@ public final class MainGUI {
 	
 	private static void playGame(Board currentGame) {
 		
-		gameFrame = new BackgammonFrame(currentGame);
+		
+		while(currentGame.getWinner() == Player.NONE){
+			if(currentPlayer == Player.GREEN){
+				gameFrame.getGamePanel().setRoll(true);
+				gameFrame.setPlayer(currentPlayer);
+				while(gameFrame.getGamePanel().isMyTurn())
+					System.out.println("me here");//DEBUG
+				currentPlayer = Player.RED;
+			}else{
+				gameFrame.getGamePanel().setRoll(false);
+				gameFrame.setPlayer(currentPlayer);
+				int n = currentPlayer.getSign();
+				currentGame.getDice().roll();
+				gameFrame.getContentPane().repaint();
+				gameFrame.getGame().makeMove(Minimax.MinimaxAlgorithm(gameFrame.getGame(), currentGame.getDice(), Player.RED), n);
+				gameFrame.getContentPane().repaint();
+				gameFrame.getGamePanel().setMyTurn(true);
+				
+				currentPlayer = Player.GREEN;
+			}
+		}
+		
+		
+		
+		
+		/*gameFrame = new BackgammonFrame(currentGame);
 		gameFrame.setVisible(true);
 		//GameGui guiGame = new GameGui();
 		//bf = new BackgammonFrame(currentGame);
@@ -56,26 +83,7 @@ public final class MainGUI {
 			}
 		}
 
-		gameFrame.winnerDialog();
+		gameFrame.winnerDialog(); */
 	}
 	
-	public static void playTurn(Player player)
-	{
-		if(player == Player.RED){
-			System.out.println("REDZZZ");
-			gameFrame.setPlayer(currentPlayer);
-			int n = player.getSign();
-			dice.roll();
-			gameFrame.getContentPane().repaint();
-			gameFrame.getGame().makeMove(Minimax.MinimaxAlgorithm(gameFrame.getGame(), dice, Player.RED), n);
-			gameFrame.repaintAndUpdate("CPU played.");
-			gameFrame.getGamePanel().setMyTurn(true);
-		}else{
-			System.out.println("GRENZNZZ");
-			gameFrame.setPlayer(currentPlayer);
-			new java.util.Scanner(System.in).nextLine();//?????? -->>> debugging pipa
-			
-		}
-	}
-
 }

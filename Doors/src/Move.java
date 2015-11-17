@@ -9,9 +9,9 @@ public class Move {
 	
 	public Move()
 	{
-		move = new int[4][2]; //--->> 4x2 kale oxi 4x4  --->>> na me sigxwras merikes fores kanw pragmata grigora :P
+		move = new int[4][2];
 		for(int i=0; i<move.length; i++)
-			for(int j=0; j<move[0].length; j++) move[i][j] = -1;
+			for(int j=0; j<move[0].length; j++) move[i][j] = -99; //invalid values when it's not used yet
 		score = 0; //prepei na skeftw ena invalide noumero gia edw px to -INF i to INF
 	}
 	
@@ -27,7 +27,7 @@ public class Move {
 		move = new int[4][2];
 		for(int i=0; i<move.length; i++)
 			for(int j=0; j <move[0].length ; j++) 
-				move[i][j] = -1;
+				move[i][j] = -99;
 		score = value;
 	} 
 	
@@ -39,7 +39,7 @@ public class Move {
 	}
 	
 	public Move(Move move){
-		this.move = move.getMove();
+		setMove(move.getMove());
 		score = 0;
 	}
 	
