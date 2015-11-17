@@ -49,6 +49,8 @@ public final class MainGUI {
 			if(currentPlayer == Player.GREEN){
 				gameFrame.getGamePanel().setRoll(true);
 				gameFrame.setPlayer(currentPlayer);
+				while(gameFrame.getGamePanel().isMyTurn())
+					System.out.println("me here");//DEBUG
 				currentPlayer = Player.RED;
 			}else{
 				gameFrame.getGamePanel().setRoll(false);
@@ -84,26 +86,4 @@ public final class MainGUI {
 		gameFrame.winnerDialog(); */
 	}
 	
-	
-	
-	/*
-	public static void playTurn(Player player)
-	{
-		if(player == Player.RED){
-			System.out.println("REDZZZ");
-			gameFrame.setPlayer(currentPlayer);
-			int n = player.getSign();
-			dice.roll();
-			gameFrame.getContentPane().repaint();
-			gameFrame.getGame().makeMove(Minimax.MinimaxAlgorithm(gameFrame.getGame(), dice, Player.RED), n);
-			gameFrame.repaintAndUpdate("CPU played.");
-			gameFrame.getGamePanel().setMyTurn(true);
-		}else{
-			System.out.println("GRENZNZZ");
-			gameFrame.setPlayer(currentPlayer);
-			new java.util.Scanner(System.in).nextLine();//?????? -->>> debugging pipa
-			
-		}
-	}*/
-
 }

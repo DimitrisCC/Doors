@@ -224,27 +224,18 @@ public class BackgammonPanel extends JPanel implements MouseMotionListener  {
 		add(buttonRoll);
 	}
 	
-	//---> twra arkei kapws na periorizetai kai na mn patietai sinexeia....
-	//--> dn 3erw kan an ginetai...
+	
 	class RollButtonListener implements ActionListener {
 		  BackgammonPanel b;
-		  boolean clicked;
 		  RollButtonListener(BackgammonPanel b) { 
-			  //--> logika prepei kapws na ma8ainei poios prepei na pai3ei ki an prepei na pati8ei t koumpi ktl
-			  //---> i mexri na pai3ei o paiktis na e3afanizetai...
 			  this.b = b;
-			  clicked = false;
 		  }
 
 		  public void actionPerformed(ActionEvent e) {
-			if(!b.getMyTurn()){ 
-				clicked = false;
-				return;
-			}
-		    if (e.getSource().equals(buttonRoll)&&!clicked) {
+		    if (e.getSource().equals(buttonRoll)) {
 		    	b.getGameboard().getDice().roll();
 		        b.repaint();
-		        clicked = true;
+		        b.setRoll(false);
 		    }
 		  }    
 	}
@@ -446,7 +437,7 @@ public class BackgammonPanel extends JPanel implements MouseMotionListener  {
 	
 	public void setMyTurn(boolean flag){ isItMyTurn = flag;}
 	
-	public boolean getMyTurn(){return isItMyTurn;} //--> dn 3erw an xreiazetai pou8ena
+	public boolean isMyTurn(){return isItMyTurn;} //--> dn 3erw an xreiazetai pou8ena
 	
 	public void pick(int index){
 		
@@ -546,6 +537,7 @@ public class BackgammonPanel extends JPanel implements MouseMotionListener  {
 
 	public void setRoll(boolean b) {
 		buttonRoll.setVisible(b);
+		buttonRoll.setEnabled(b);
 		this.repaint();
 	}
 

@@ -44,8 +44,6 @@ public class BackgammonFrame extends JFrame {
 
 	public void repaintAndUpdate(String status){
 		panel.repaint();
-		//repaint();
-//		/update();
 	}
 
 	public void winnerDialog() {
