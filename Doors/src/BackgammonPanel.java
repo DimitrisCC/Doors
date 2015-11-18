@@ -50,6 +50,7 @@ public class BackgammonPanel extends JPanel implements MouseMotionListener  {
 	private JLabel statusBar;
 	
 	private boolean picked;
+	private boolean hasPlayerRolled;
 	
 	private boolean isItMyTurn; //is it the turn of the player?
 
@@ -69,7 +70,9 @@ public class BackgammonPanel extends JPanel implements MouseMotionListener  {
 		
 		buttons = new ArrayList<BgButton>();
 		picked = false;
+		lastPick = -1;
 		isItMyTurn = true;
+		hasPlayerRolled = false;
 		addMouseMotionListener(this);
 		drawButtons();
 		drawStatusBar();
@@ -79,8 +82,8 @@ public class BackgammonPanel extends JPanel implements MouseMotionListener  {
 		statusBar = new JLabel("LET THE GAME BEGIN!!!", SwingConstants.CENTER);
 		statusBar.setBounds(0, 640, 720, 20);
 		statusBar.setOpaque(true);
-		statusBar.setBackground(Color.black);
-		statusBar.setForeground(Color.yellow);
+		statusBar.setBackground(Color.BLACK);
+		statusBar.setForeground(Color.GREEN);
 		this.add(statusBar);
 	}
 	
@@ -214,12 +217,11 @@ public class BackgammonPanel extends JPanel implements MouseMotionListener  {
 		
 		buttonRoll = new JButton("Roll!");
 		buttonRoll.setBounds(475, 280, 123, 95);
-		buttonRoll.setOpaque(false);
-		buttonRoll.setContentAreaFilled(false);
-		buttonRoll.setBorderPainted(false);
-		buttonRoll.setVerticalAlignment(SwingConstants.BOTTOM);
-		buttonRoll.setForeground(Color.WHITE);
+		
+		buttonRoll.setVerticalAlignment(SwingConstants.CENTER);
+		buttonRoll.setForeground(Color.BLACK);
 		buttonRoll.setFont(new Font("Serif", Font.BOLD, 14));
+		
 		buttonRoll.addActionListener(new RollButtonListener(this));
 		add(buttonRoll);
 	}
@@ -234,8 +236,14 @@ public class BackgammonPanel extends JPanel implements MouseMotionListener  {
 		  public void actionPerformed(ActionEvent e) {
 		    if (e.getSource().equals(buttonRoll)) {
 		    	b.getGameboard().getDice().roll();
+		    	buttonRoll.setOpaque(false);
+				buttonRoll.setContentAreaFilled(false);
+				buttonRoll.setBorderPainted(false);
+				buttonRoll.setVerticalAlignment(SwingConstants.BOTTOM);
+				buttonRoll.setForeground(Color.WHITE);
 		        b.repaint();
 		        b.setRoll(false);
+		        b.setPlayerRolled(true);
 		    }
 		  }    
 	}
@@ -247,8 +255,7 @@ public class BackgammonPanel extends JPanel implements MouseMotionListener  {
 				image = getRedPiece();
 			} else if (game.colorAt(i) == Player.GREEN) {
 				image = getGreenPiece();
-			} else { continue; } ///!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!! //---> mipws ena
-			//---> continue 8a voi8ouse???? -->>distixws oxi
+			} else { continue; } 
 			getCoordinates(g, image, i);
 		}
 	}
@@ -435,9 +442,9 @@ public class BackgammonPanel extends JPanel implements MouseMotionListener  {
 		return game;
 	}
 	
-	public void setMyTurn(boolean flag){ isItMyTurn = flag;}
+	public void setMyTurn(boolean flag){ isItMyTurn = flag; }
 	
-	public boolean isMyTurn(){return isItMyTurn;} 
+	public boolean isMyTurn(){ return isItMyTurn; } 
 	
 	public void pick(int index){
 		
@@ -459,11 +466,11 @@ public class BackgammonPanel extends JPanel implements MouseMotionListener  {
 								continue;
 						}
 					}
-				}else{
+				} else {
 					for(int i = 0; i < moveset.size(); ++i){
 						if(moveset.get(i) == 0) continue;
 						if(game.isValidTarget(index+moveset.get(i), player)){
-							if((moveset.get(i)!= doneMove)&&(jumpsYet + moveset.get(i) <= game.getDice().getTotalJumpsFromDice()))
+							if((moveset.get(i)!= doneMove) && (jumpsYet + moveset.get(i) <= game.getDice().getTotalJumpsFromDice()))
 								buttons.get(index+moveset.get(i)).highlight();
 							else
 								continue;
@@ -473,7 +480,10 @@ public class BackgammonPanel extends JPanel implements MouseMotionListener  {
 				picked = true;
 				lastPick = index;
 			}else{
-				setStatus("Wrong color, bro!");
+				if(game.getTable()[index] < 0)
+					setStatus("Wrong color, bro!");
+				else
+					setStatus("No piece there. Are you blind or something?");
 			}
 		}
 	}
@@ -487,7 +497,7 @@ public class BackgammonPanel extends JPanel implements MouseMotionListener  {
 				if (position + m == index &&
 						m + jumpsYet <= game.getDice().getTotalJumpsFromDice())
 				{//valid move according to number of left jumps and the dice
-					if(game.isValidTarget(index, player)){ //check the gameboard validity of the move
+					if(game.isValidTarget(index, player) && buttons.get(index).isHighlihted()){ //check the gameboard validity of the move
 						int[][] ms = new int[4][2];
 						ms[0][0] = position; ms[0][1] = index;
 						ms[1][0] = -99; ms[1][1] = -99;
@@ -497,13 +507,16 @@ public class BackgammonPanel extends JPanel implements MouseMotionListener  {
 						if(m == 0){} //afairese prwth kinhsh apo statusBar, omoiws gia kathe i
 						jumpsYet += m;
 						doneMove = m;
+						setStatus("Wow. Nice move! ^_^");
+						
 						if((game.getDice().getTotalJumpsFromDice()) == jumpsYet){
 							jumpsYet = 0;
 							doneMove = 0;
 							setMyTurn(false);
+							setStatus("Nice! You're done.");
 							//break: well the if's end, so the outer break does the work
 						}
-					}
+					} else { setStatus("Can't jump there. You've been overoptimistic :/"); }
 					break;
 				}
 			}
@@ -514,10 +527,11 @@ public class BackgammonPanel extends JPanel implements MouseMotionListener  {
 					buttons.get(lastPick+moveset.get(i)).cleanse();
 			}
 			//and remove the pick
-			//false move results to backrolling so its helpfull
+			//false move results to backrolling so its helpful
 			//we should mention it in the manual :P //--MAKE DREAMS
 			picked = false;
-			setStatus("");
+			lastPick = -1;
+
 		}
 	}
 	
@@ -525,7 +539,7 @@ public class BackgammonPanel extends JPanel implements MouseMotionListener  {
 		return picked;
 	}
 	
-	public int getJumpsYet(){return jumpsYet;}
+	public int getJumpsYet(){ return jumpsYet; }
 
 	@Override
 	public void mouseDragged(MouseEvent e) {
@@ -543,6 +557,14 @@ public class BackgammonPanel extends JPanel implements MouseMotionListener  {
 		buttonRoll.setVisible(b);
 		buttonRoll.setEnabled(b);
 		this.repaint();
+	}
+	
+	public boolean hasPlayerRolled(){
+		return hasPlayerRolled;
+	}
+	
+	public void setPlayerRolled(boolean b){
+		hasPlayerRolled = b;
 	}
 
 }
