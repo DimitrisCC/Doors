@@ -62,8 +62,9 @@ public final class MainGUI {
 				gameFrame.getGame().makeMove(Minimax.MinimaxAlgorithm(gameFrame.getGame(), currentGame.getDice(), Player.RED), n);
 				gameFrame.getContentPane().repaint();
 				gameFrame.getGamePanel().setMyTurn(true);
-				
+				gameFrame.getGamePanel().setPlayerRolled(false);
 				currentPlayer = Player.GREEN;
+				gameFrame.getGamePanel().setStatus("Your turn, man. Opponent's done.");
 			}
 		}
 		
