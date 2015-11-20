@@ -21,7 +21,7 @@ public class Minimax {
 		return bestMove;
 	}
 	
-	private static Move minValue(Board b, Dice d, int treeLength, Player player,int alpha, int beta){
+	private static Move minValue(Board b, Dice d, int treeLength, Player player, int alpha, int beta){
 		System.out.println("min");//DEBUG
 		if(treeLength == MAX_LENGTH){
 			//epistrefei to apotelesma tis euretikis sto b

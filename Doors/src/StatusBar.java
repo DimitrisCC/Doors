@@ -1,9 +1,12 @@
 
+import java.awt.Color;
 import java.awt.FlowLayout;
+import java.util.ArrayList;
 
 import javax.swing.BorderFactory;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
+import javax.swing.SwingConstants;
 import javax.swing.border.BevelBorder;
 
 /**
@@ -11,23 +14,44 @@ import javax.swing.border.BevelBorder;
  * current player, moveset, etc
  */
 
-public class StatusBar extends JPanel {
+public class StatusBar extends JLabel {
 
-	private final JLabel statusLabel = new JLabel("");
+	private String status;
+	private String moveVals;
 	private static final long serialVersionUID = 1L;
-
-	public StatusBar() {
-		setLayout(new FlowLayout(FlowLayout.LEFT, 0, 0));
-
+	
+	public StatusBar(String text) {
+		super(text, SwingConstants.CENTER);
+		status = text;
+		moveVals = "()";
 		setBorder(BorderFactory.createBevelBorder(BevelBorder.LOWERED));
-		add(statusLabel);
+		setText(text);
+		setOpaque(true);
+		setBackground(Color.BLACK);
+		setForeground(Color.GREEN);
 	}
 
-	public final void setText(final String text) {
-		statusLabel.setText(" " + text);
+	public final void setStatus(final String status) {
+		this.status = status;
+		setText(status + "     " + moveVals);
+		this.repaint();
+	}
+	
+	public final void setMoveValues(final byte[] dice) {
+		this.moveVals = "(" + dice[0] + "," + dice[1];
+		if(dice[0]==dice[1]) this.moveVals += "," + dice[0] + "," + dice[0];
+		this.moveVals += ")";
+		setText(status + "     " + moveVals);
+		this.repaint();
 	}
 
 	public void clear() {
-		statusLabel.setText(" ");
+		setText(" ");
+		this.repaint();
+	}
+	
+	public void clearDice() {
+		setText(status);
+		this.repaint();
 	}
 }

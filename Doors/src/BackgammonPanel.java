@@ -47,7 +47,7 @@ public class BackgammonPanel extends JPanel implements MouseMotionListener  {
 	
 	private ArrayList<BgButton> buttons;
 	private JButton buttonRoll;
-	private JLabel statusBar;
+	private StatusBar statusBar;
 	
 	private boolean picked;
 	private boolean hasPlayerRolled;
@@ -79,17 +79,13 @@ public class BackgammonPanel extends JPanel implements MouseMotionListener  {
 	}
 	
 	private void drawStatusBar(){
-		statusBar = new JLabel("LET THE GAME BEGIN!!!", SwingConstants.CENTER);
+		statusBar = new StatusBar("LET THE GAME BEGIN!!!");
 		statusBar.setBounds(0, 640, 720, 20);
-		statusBar.setOpaque(true);
-		statusBar.setBackground(Color.BLACK);
-		statusBar.setForeground(Color.GREEN);
 		this.add(statusBar);
 	}
 	
-	public void setStatus(String status){
-		statusBar.setText(status);
-		statusBar.repaint();
+	public StatusBar getStatusBar(){
+		return this.statusBar;
 	}
 	
 	private void drawButtons(){
@@ -228,24 +224,25 @@ public class BackgammonPanel extends JPanel implements MouseMotionListener  {
 	
 	
 	class RollButtonListener implements ActionListener {
-		  BackgammonPanel b;
-		  RollButtonListener(BackgammonPanel b) { 
-			  this.b = b;
-		  }
+		BackgammonPanel b;
+		RollButtonListener(BackgammonPanel b) { 
+			this.b = b;
+		}
 
-		  public void actionPerformed(ActionEvent e) {
-		    if (e.getSource().equals(buttonRoll)) {
-		    	b.getGameboard().getDice().roll();
-		    	buttonRoll.setOpaque(false);
-				buttonRoll.setContentAreaFilled(false);
-				buttonRoll.setBorderPainted(false);
-				buttonRoll.setVerticalAlignment(SwingConstants.BOTTOM);
-				buttonRoll.setForeground(Color.WHITE);
-		        b.repaint();
-		        b.setRoll(false);
-		        b.setPlayerRolled(true);
-		    }
-		  }    
+	    public void actionPerformed(ActionEvent e) {
+	        if (e.getSource().equals(buttonRoll)) {
+	    	    byte[] m = b.getGameboard().getDice().roll();
+	    	    buttonRoll.setOpaque(false);
+			    buttonRoll.setContentAreaFilled(false);
+			    buttonRoll.setBorderPainted(false);
+			    buttonRoll.setVerticalAlignment(SwingConstants.BOTTOM);
+			    buttonRoll.setForeground(Color.WHITE);
+			    b.getStatusBar().setMoveValues(m);
+	            b.repaint();
+	            b.setRoll(false);
+	            b.setPlayerRolled(true);
+	        }
+	    }    
 	}
 	
 	private void drawPieces(Graphics g){
@@ -453,7 +450,7 @@ public class BackgammonPanel extends JPanel implements MouseMotionListener  {
 
 		if(jumpsYet < game.getDice().getTotalJumpsFromDice()){ 
 			if(game.isValidPick(index, player)){
-				setStatus("Got your piece, mate!");
+				statusBar.setStatus("Got your piece, mate!");
 				this.position = index;
 				moveset = game.getDice().getDiceMoveset();
 				if(game.getDice().isDouble()){
@@ -481,9 +478,9 @@ public class BackgammonPanel extends JPanel implements MouseMotionListener  {
 				lastPick = index;
 			}else{
 				if(game.getTable()[index] < 0)
-					setStatus("Wrong color, bro!");
+					statusBar.setStatus("Wrong color, bro!");
 				else
-					setStatus("No piece there. Are you blind or something?");
+					statusBar.setStatus("No piece there. Are you blind or something?");
 			}
 		}
 	}
@@ -507,16 +504,16 @@ public class BackgammonPanel extends JPanel implements MouseMotionListener  {
 						if(m == 0){} //afairese prwth kinhsh apo statusBar, omoiws gia kathe i
 						jumpsYet += m;
 						doneMove = m;
-						setStatus("Wow. Nice move! ^_^");
+						statusBar.setStatus("Wow. Nice move! ^_^");
 						
 						if((game.getDice().getTotalJumpsFromDice()) == jumpsYet){
 							jumpsYet = 0;
 							doneMove = 0;
 							setMyTurn(false);
-							setStatus("Nice! You're done.");
+							statusBar.setStatus("Nice! You're done.");
 							//break: well the if's end, so the outer break does the work
 						}
-					} else { setStatus("Can't jump there. You've been overoptimistic :/"); }
+					} else { statusBar.setStatus("Can't jump there. You've been overoptimistic :/"); }
 					break;
 				}
 			}
