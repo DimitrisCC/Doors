@@ -39,7 +39,7 @@ public class BgButton extends JButton implements ActionListener {
 		BackgammonPanel panel = (BackgammonPanel) this.getParent();
 		//mono otan paizei o an8rwpos prepei na exei dikaiwma na patisei..
 		if(!panel.hasPlayerRolled()){
-			panel.setStatus("Please, roll the dice first.");
+			panel.getStatusBar().setStatus("Please, roll the dice first.");
 			return;
 		}
 		if(panel.isMyTurn()){ 

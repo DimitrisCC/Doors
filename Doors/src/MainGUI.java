@@ -64,7 +64,7 @@ public final class MainGUI {
 				gameFrame.getGamePanel().setMyTurn(true);
 				gameFrame.getGamePanel().setPlayerRolled(false);
 				currentPlayer = Player.GREEN;
-				gameFrame.getGamePanel().setStatus("Your turn, man. Opponent's done.");
+				gameFrame.getGamePanel().getStatusBar().setStatus("Your turn, man. Opponent's done.");
 			}
 		}
 		

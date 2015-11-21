@@ -34,8 +34,6 @@ public class BackgammonFrame extends JFrame {
 		
 		panel = new BackgammonPanel(game);
 		container.add(panel);
-		statusBar = new StatusBar();
-		container.add(statusBar, BorderLayout.SOUTH);
 		
 		setVisible(true);
 		repaint();
