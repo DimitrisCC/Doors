@@ -595,7 +595,20 @@ public class Board {
 		//this position does not contain any of the player's pieces
 		
 		if(!isValidTarget(pos + move, player)) return false;
-
+		
+		byte[] possibleMoves = dice.getValues();
+		if(((possibleMoves[0]+possibleMoves[1])== move)&&
+				!isValidTarget(pos + possibleMoves[0], player) && 
+					!isValidTarget(pos + possibleMoves[0], player) )  return false;
+		
+		//elegxos gia mazema TODO
+		/*
+		 * 1) mporw na kinisw poulia kata tn zaria
+		 * 2) mporw na mazepsw pouli apo tn 8esi stn opoia "deixnei" to zari (me oti auto sinepagetai gia ton green)
+		 * 3) an dn exw poulia stn 8esi p deixnei to zari mporw na mazepsw apo tn megaliteri
+		 * vevaia exw tn ais8isi oti an s er8ei 4 kai dn exeis stn 8esi 4 alla exeis stn 6 dn mporeis na mazepseis 
+		 * apo kei alla mono na metakiniseis...
+		 * */
 		return true;
 	}
 	
@@ -605,7 +618,6 @@ public class Board {
 	 * Checks if you picked a correct piece
 	 */
 	public boolean isValidPick(int pos, Player player){
-		//if (player == null) player = this.player;
 		if(pos >= 0 && pos <= 23){;
 			System.out.println(table[pos]+"SSSSSSSSSIGNNN ON PICK");//DEBUG
 			if(Math.signum(table[pos]) == player.getSign()){
@@ -644,8 +656,8 @@ public class Board {
 			
 			} else if (moveToMake[i][0] < -1) {
 				break; //no other moves //possibly it's a single move by the player
-			} else { //GREEN-PLAYER
-				if(n == 1){
+			} else { 
+				if(n == 1){//GREEN-PLAYER
 					if(moveToMake[i][0] == -1){
 						eaten[0]--;
 					}
@@ -756,24 +768,24 @@ public class Board {
      * @return true if Red has reached the final destination on the board
      */
     public boolean hasRedReachedDestination(){
-    	short reds = 0;
+    	/*short reds = 0;
 		for(int i = 0; i < 6; ++i){
 			if(table[i] < 0)
 				reds += table[i];
-		}
-		return reds == -15;
+		}*/
+        return piecesATdestination[1]+freedPieces[1] == 15;
     }
 
     /**
      * @return true if Green has reached the final destination on the board
      */
     public boolean hasGreenReachedDestination(){
-        short greens = 0;
+       /* short greens = 0;
         for(int i = 18; i < 24; ++i){
         	if(table[i] > 0)
 				greens += table[i];
-        }
-        return greens == 15;
+        }*/
+        return piecesATdestination[0]+freedPieces[0] == 15;
     }
     
     public int getGreensEaten(){
@@ -785,11 +797,15 @@ public class Board {
     }
     
     public int getRedsLeft(){
-    	return PIECE_TOTAL_NUM - eaten[0];
+    	return PIECE_TOTAL_NUM - eaten[0] - freedPieces[0];
+
+    	//return PIECE_TOTAL_NUM - eaten[0];
     }
     
     public int getGreensLeft(){
-    	return PIECE_TOTAL_NUM - eaten[1];
+    	return PIECE_TOTAL_NUM - eaten[1] - freedPieces[1];
+
+    	//return PIECE_TOTAL_NUM - eaten[1];
     }
 
 	
@@ -823,7 +839,7 @@ public class Board {
     	if(freedPieces[0] == 15){ 
     		setWinner(Player.GREEN);
     		return true;
-    	}else if (freedPieces[1] == -15){
+    	}else if (freedPieces[1] == 15){
     		setWinner(Player.RED);
     		return true;
     	}else{
