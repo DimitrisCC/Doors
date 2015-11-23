@@ -38,8 +38,13 @@ public class StatusBar extends JLabel {
 	}
 	
 	public final void setMoveValues(final byte[] dice) {
-		this.moveVals = "(" + dice[0] + "," + dice[1];
-		if(dice[0]==dice[1]) this.moveVals += "," + dice[0] + "," + dice[0];
+		this.moveVals = "-> Moves = (" + dice[0] + ",";
+		if(dice[0]==dice[1]) {
+			this.moveVals += dice[0]*2 + "," + dice[0]*3 + "," + dice[0]*4;
+		}
+		else {
+			this.moveVals += dice[1] + "," + ((int)dice[0]+dice[1]);
+		}
 		this.moveVals += ")";
 		setText(status + "     " + moveVals);
 		this.repaint();

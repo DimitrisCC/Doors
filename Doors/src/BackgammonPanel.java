@@ -467,7 +467,8 @@ public class BackgammonPanel extends JPanel implements MouseMotionListener  {
 					for(int i = 0; i < moveset.size(); ++i){
 						if(moveset.get(i) == 0) continue;
 						if(game.isValidTarget(index+moveset.get(i), player)){
-							if((moveset.get(i)!= doneMove) && (jumpsYet + moveset.get(i) <= game.getDice().getTotalJumpsFromDice()))
+							if((moveset.get(i)!= doneMove) && (jumpsYet + moveset.get(i) <= game.getDice().getTotalJumpsFromDice()) && 
+									(index+moveset.get(i) < 24) && (index+moveset.get(i) > 0))
 								buttons.get(index+moveset.get(i)).highlight();
 							else
 								continue;
@@ -476,13 +477,13 @@ public class BackgammonPanel extends JPanel implements MouseMotionListener  {
 				}
 				picked = true;
 				lastPick = index;
-			}else{
+			} else {
 				if(game.getTable()[index] < 0)
 					statusBar.setStatus("Wrong color, bro!");
 				else
 					statusBar.setStatus("No piece there. Are you blind or something?");
 			}
-		}
+		} else statusBar.setStatus("Pick a correct piece, already");
 	}
 	
 	public void jump(int index){ 
@@ -501,7 +502,7 @@ public class BackgammonPanel extends JPanel implements MouseMotionListener  {
 						ms[2][0] = -99; ms[2][1] = -99;
 						ms[3][0] = -99; ms[3][1] = -99;
 						game.makeMove(new Move(ms), player.getSign()); //make the move finally
-						if(m == 0){} //afairese prwth kinhsh apo statusBar, omoiws gia kathe i
+						//if(m == 0){} //afairese prwth kinhsh apo statusBar, omoiws gia kathe i -->vareto kai dyskolo :P
 						jumpsYet += m;
 						doneMove = m;
 						statusBar.setStatus("Wow. Nice move! ^_^");
