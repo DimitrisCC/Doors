@@ -107,6 +107,8 @@ public class Board {
 	
 	public int[] getHomeCheckers() { return piecesATdestination; }
 	
+	public int[] getfreedPieces(){ return freedPieces; }
+	
 	
 	
 	//if returned list is empty, no valid moves can be done

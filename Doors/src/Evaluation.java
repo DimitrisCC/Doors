@@ -30,7 +30,7 @@ public class Evaluation {
     	   if(penalisedHitting_2(b,player)==0)//Check if player loses the game
     	   {
     		   score+=(b.getEaten()[1-player]*80);//Player's score increases depending on the number of eaten checkers. 
-    	   }
+    	   }                                      //because player delays opponent's move. 
     	   else
     	   {
     		   score-=(b.getEaten()[1-player]*penalisedHitting_2(b,player));////Player's score decreases depending on the number of eaten checkers.    
@@ -57,10 +57,10 @@ public class Evaluation {
 		 int [] board = b.getTable();
 		 for (int i=0;i<positions;i++)
 	     {
-	        if(board[i]<0)
-	           score1= score1+player*board[i]*i-(1-player)*board[i]*i;
+	        if(board[i]>0)
+	           score1= score1+(1-player)*board[i]*i-player*board[i]*i;
 	        else
-	           score1= score1-player*board[i]*(positions-i-1)+(1-player)*board[i]*(positions-i-1);
+	           score1= score1+(1-player)*board[i]*(positions-i-1)-player*board[i]*(positions-i-1);
 	      }
 		  return score1+(20*b.getHomeCheckers()[player])-(20*b.getHomeCheckers()[1-player])-(20*b.getEaten()[player]);//----->NEW prosthesa varos gia ta poulia pou einai sth home area 
 	 }                                                                                   //******kai afairw gia ta poulia tou antipalou pou einai sth dikh tou home
@@ -68,8 +68,8 @@ public class Evaluation {
 	 /*
 	  * 
 	  * atLeastTwoCheckersPerPoint-> each time contains the number of doors that are in row.If there's a gap it becomes zero
-	  * doors-> numbers of green checkers doors at 4-10 region(player_0) or 
-	  *         numbers of red checkers doors at 13-19 region(player_1)  
+	  * doors-> numbers of green checkers doors at 13-19 region(player_0) or 
+	  *         numbers of red checkers doors at 4-10 region(player_1)  
 	  * inrow-> contains the maximum number of doors that  are in row 
 	  * 
 	  * This function calculates the score depending on the maximum number 
@@ -83,7 +83,7 @@ public class Evaluation {
 	     int inrow=0;
 	     int atLeastTwoCheckersPerPoint=0;
 	     int [] board = b.getTable();
-	     for(int i=((1-player)*4+13*player);i<((1-player)*10+19*player);i++)
+	     for(int i=(player*4+13*(1-player));i<(player*10+19*(1-player));i++)
 	     {
 	    	 if((player*board[i]+1-player)<(-player+(1-player)*board[i]))
 	    	 {
@@ -110,15 +110,15 @@ public class Evaluation {
 	 {
 		 int singles=0;
 		 int [] board = b.getTable();
-		 if(player==1)
+		 if(player==0)
 	     {
 	            int i=positions-1;
 	            //skip checkers that cannot be threatened
-	            while(i>=0 && board[i]<=0)
+	            while(i>=0 && board[i]>=0)
 	                i--;
 	            for(int y=0;y<i;y++)
 	            {
-	                if(board[i]==-1)
+	                if(board[i]==1)
 	                	singles++;
 	            }
 	      }
@@ -126,11 +126,11 @@ public class Evaluation {
 	        {
 	            int i=0;
 	            //skip checkers that cannot be threatened
-	            while(i<positions && board[i]>=0)
+	            while(i<positions && board[i]<=0)
 	                i++;
 	            for(int y=(i+1);y<positions;y++)
 	            {
-	                if(board[i]==1)
+	                if(board[i]==-1)
 	                    singles++;
 	            }
 	        }
@@ -147,7 +147,7 @@ public class Evaluation {
 	 {  
     	int [] home = b.getHomeCheckers();
     	int singles=0;
-		if(1<=home[player] && home[player]>=10)//If player has 1-10 checkers at his/her area
+		if(1<=home[player] && home[player]<=10)//If player has 1-10 checkers at his/her area
 		{
 		   singles = numberOfSingles(b,player);//take the player's single checkers of his/her home area 
 		   return singles*20;
@@ -194,7 +194,7 @@ public class Evaluation {
     	  int [] home = b.getHomeCheckers();
     	  if(home[player]>=5)
     	  {
-    		  for(int i=((1-player)*0+18*player);i<((1-player)*5+23*player);i++)
+    		  for(int i=(player*0+18*(1-player));i<(player*5+23*(1-player));i++)
     		  {
     			  if((player*board[i]+1-player)<(-player+(1-player)*board[i]))
     			  {
@@ -212,12 +212,12 @@ public class Evaluation {
       public static int getNumberOf_OpponentsCheckers(Board b,int player)
       {   
       	int sum=0;
-      	int pieces=0;
-      	for(int i=((1-player)*0+18*player);i<((1-player)*5+23*player);i++)
+      	for(int i=(player*0+18*(1-player));i<(player*5+23*(1-player));i++)
           {
-      		pieces =Math.abs(player*b.getNumberOfPiecesAt(i)+(1-player)*b.getNumberOfPiecesAt(i));
-      		sum+=pieces>=1?pieces:0;
-      			
+      		if (colorAt(b,i)==(1-player))
+      		{
+      			sum+=Math.abs(player*b.getNumberOfPiecesAt(i)+(1-player)*b.getNumberOfPiecesAt(i));
+       		}	
           }
       	return sum;	
       }
@@ -225,31 +225,47 @@ public class Evaluation {
       
       
     //It returns the number of checkers 
-      //from the 6-11 area for the player_0 or from the 12-17 area for the player_1 
+      //from the 12-17 area for the player_0(green) or from the 6-11 area for the player_1(red) 
       public static int numberOfcheckers(Board b,int player)
       {   
       	int sum=0;
-      	for(int i=((1-player)*6+12*player);i<((1-player)*11+17*player);i++)
+      	for(int i=(player*6+12*(1-player));i<(player*11+17*(1-player));i++)
           {
-            sum+=player*b.getNumberOfPiecesAt(i)+(1-player)*b.getNumberOfPiecesAt(i);
-      			
+      		if (colorAt(b,i)==player){
+              sum+=player*b.getNumberOfPiecesAt(i)+(1-player)*b.getNumberOfPiecesAt(i);
+      		}	
           }
       	return sum;	
       }
       
       
-    //It returns the number of single checkers from the 0-5 area for the player_0
-      // or from the 18-23 area for the player_1
+    //It returns the number of green single checkers from the 18-23 area for the player_0(green)
+    // or the number of red singles from the 0-5 area for the player_1(red)
       public static int numberOfSingles(Board b,int player)
       {
       	int sum=0;	
-      	for(int i=((1-player)*0+18*player);i<((1-player)*5+23*player);i++)
-          {    
-      		sum+=Math.abs(player*b.getNumberOfPiecesAt(i)+(1-player)*b.getNumberOfPiecesAt(i))==1?1:0;
-      			
-          }
+      	for(int i=(player*0+18*(1-player));i<(player*5+23*(1-player));i++)
+        { 
+      		if (colorAt(b,i)==player)
+      		{
+      		  sum+=Math.abs(player*b.getNumberOfPiecesAt(i)+(1-player)*b.getNumberOfPiecesAt(i))==1?1:0;
+      		} 
+      	}
       	return sum;	
        }
+      
+      
+      //*************NEW******************
+      //Return 1 for red or 0 for green or -1 for none 
+      public static int colorAt(Board b,int pos)
+      {
+    	int [] board = b.getTable();  
+      	if(board[pos] < 0) 
+      		return 1;//red
+      	else if (board[pos] > 0) 
+      		return 0;//green
+      	else return -1;//none
+      }
       
       
     }

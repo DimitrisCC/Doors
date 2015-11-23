@@ -47,6 +47,7 @@ public class BackgammonPanel extends JPanel implements MouseMotionListener  {
 	
 	private ArrayList<BgButton> buttons;
 	private JButton buttonRoll;
+	private JButton btnBearOff;
 	private StatusBar statusBar;
 	
 	private boolean picked;
@@ -220,6 +221,34 @@ public class BackgammonPanel extends JPanel implements MouseMotionListener  {
 		
 		buttonRoll.addActionListener(new RollButtonListener(this));
 		add(buttonRoll);
+		
+		
+		//******************************************************************
+		//THELEI FTIAXIMO..
+		btnBearOff = new JButton("Bear off");
+		btnBearOff.addActionListener(new ActionListener() 
+		{
+			public void actionPerformed(ActionEvent e) 
+			{//Ta player panw den exoun arxikopoihthei.GENIKA H METHODOS AYTH THA PREPEI NA KALEITAI OTAN EPILEGEI ENA POULI.EINAI LATHOS
+		     //EDW POU THN EXW.EPISHS DEN XERW PWS NA TSEKARW AN TO POULI POU EPELEXA 
+		     // VRISKETAI SE THESH ZARIOU GT OPWS EIPA PRIN DEN XERW ME POIA METHODO EPILEGW ENA POULI
+			//KAI PWS APO AYTH MOU ERXETAI H THESH TOU.
+			  byte[] dices= game.dice.getValues();
+			  if(isItMyTurn && player.getSign()==1 && (game.getHomeCheckers()[0]==15 || game.getfreedPieces()[0]>0))//green
+			  {
+				  
+                  if(game.colorAt(24-dices[0])==Player.GREEN){
+                	  game.getTable()[24-dices[0]]+=-1;//afairesh pouliou apo th board
+                	  game.getfreedPieces()[0]+=1;
+              }	 
+				  
+			  }
+		    }
+		});
+		
+		btnBearOff.setBounds(720, 308, 75, 23);
+		add(btnBearOff);
+	//*********************************************************************
 	}
 	
 	
