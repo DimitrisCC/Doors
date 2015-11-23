@@ -864,4 +864,8 @@ public class Board {
 	public void setWinner(Player w){
 		winner = w;
 	}
+
+	public int[] getFreedPieces() {
+		return this.freedPieces;
+	}
 }
