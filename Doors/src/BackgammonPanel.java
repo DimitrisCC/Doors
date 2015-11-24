@@ -620,7 +620,12 @@ public class BackgammonPanel extends JPanel implements MouseMotionListener  {
 		}
 	}
 	
+	public void forEaten(){
+		
+	}
+	
 	public void enterEaten(int index){
+		//if() ///****************************** NA DW GIA EATEN AFOU ROLLAREI
 		this.game.fluctuateEaten(Player.GREEN, -1, index);
 	}
 	
