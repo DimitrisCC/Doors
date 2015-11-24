@@ -107,9 +107,10 @@ public class Board {
 	
 	public int[] getHomeCheckers() { return piecesATdestination; }
 	
-	public int[] getfreedPieces(){ return freedPieces; }
-	
-	
+	public void fluctuateEaten(Player player, int amount, int index){
+		if(isValidTarget(index, player))
+			eaten[player.ordinal()] += amount;
+	}
 	
 	//if returned list is empty, no valid moves can be done
 	public ArrayList<Board> getChildren(Dice dice, Player player){
@@ -828,10 +829,7 @@ public class Board {
     			lastPlayedMove[i][j] = move[i][j];*/
     	lastPlayedMoves.add(move);
     }
-    
-
-    
-    
+      
     /**
      * Checks if this board is a terminal state.
      * If it is then someone has won the game.
@@ -858,7 +856,6 @@ public class Board {
     	return dice;
     }
     
-
 	public Player getWinner() {
 		return winner;
 	}

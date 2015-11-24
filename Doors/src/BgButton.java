@@ -35,14 +35,25 @@ public class BgButton extends JButton implements ActionListener {
 
 	@Override
 	public void actionPerformed(ActionEvent e) { 
-		System.out.println("acc");//DEBUG
+		
 		BackgammonPanel panel = (BackgammonPanel) this.getParent();
-		//mono otan paizei o an8rwpos prepei na exei dikaiwma na patisei..
+		//mono otan paizei o an8rwpos prepei na exei dikaiwma na patisei...
 		if(!panel.hasPlayerRolled()){
 			panel.getStatusBar().setStatus("Please, roll the dice first.");
 			return;
 		}
+		
 		if(panel.isMyTurn()){ 
+			
+			if(panel.getGameboard().getEaten()[0] > 0){ //you have to get the eaten in first
+				panel.getStatusBar().setStatus("Please, enter the eaten pieces first.");
+				
+				panel.enterEaten(number-1);
+				return; //don't enter the picking phase unless all eaten are entered
+			}
+			
+			panel.getStatusBar().setStatus("Pick'n'jump!");
+			
 			if(!panel.isPicked()) panel.pick(number-1);
 			else{
 				panel.jump(number-1);
@@ -50,8 +61,8 @@ public class BgButton extends JButton implements ActionListener {
 			if(panel.getJumpsYet() == panel.getGameboard().getDice().getTotalJumpsFromDice()){
 				panel.setMyTurn(false);
 			}
-		
 		}
+		
 	}
 	
 }

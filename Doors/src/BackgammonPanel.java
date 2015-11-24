@@ -224,33 +224,65 @@ public class BackgammonPanel extends JPanel implements MouseMotionListener  {
 		
 		
 		//******************************************************************
-		//THELEI FTIAXIMO..
+		//THELEI FTIAXIMO..AFORA MONO TON GREEN
 		btnBearOff = new JButton("Bear off");
-		btnBearOff.addActionListener(new ActionListener() 
-		{
-			public void actionPerformed(ActionEvent e) 
-			{//Ta player panw den exoun arxikopoihthei.GENIKA H METHODOS AYTH THA PREPEI NA KALEITAI OTAN EPILEGEI ENA POULI.EINAI LATHOS
-		     //EDW POU THN EXW.EPISHS DEN XERW PWS NA TSEKARW AN TO POULI POU EPELEXA 
-		     // VRISKETAI SE THESH ZARIOU GT OPWS EIPA PRIN DEN XERW ME POIA METHODO EPILEGW ENA POULI
-			//KAI PWS APO AYTH MOU ERXETAI H THESH TOU.
-			  byte[] dices= game.dice.getValues();
-			  if(isItMyTurn && player.getSign()==1 && (game.getHomeCheckers()[0]==15 || game.getfreedPieces()[0]>0))//green
-			  {
-				  
-                  if(game.colorAt(24-dices[0])==Player.GREEN){
-                	  game.getTable()[24-dices[0]]+=-1;//afairesh pouliou apo th board
-                	  game.getfreedPieces()[0]+=1;
-              }	 
-				  
-			  }
-		    }
-		});
-		
 		btnBearOff.setBounds(720, 308, 75, 23);
-		add(btnBearOff);
-	//*********************************************************************
+		this.add(btnBearOff);
+	/*	if(isMyTurn() && ((game.getHomeCheckers()[0]==15 || game.getFreedPieces()[0]>0)))//green
+		{   byte[] dices= game.dice.getValues();
+		    if(dices[0]==(24-number) || dices[1]==(24-number))
+		    {
+		      if(game.colorAt(24-number)==Player.GREEN)
+		      {
+		    	  setBackground(Color.YELLOW);
+		    	  btnBearOff.addActionListener(new BearOffListener(this)); 
+		      }
+		      else
+		      {
+		    	  System.out.println("You do not have checkers at this position!");
+		      }
+		    }
+		}
+	*/
 	}
-	
+		
+	class BearOffListener implements ActionListener 
+	{
+		BackgammonPanel b;
+		BearOffListener(BackgammonPanel b)
+		{
+			this.b=b;
+		}
+		
+		public void actionPerformed(ActionEvent e) 
+		{ /* int unbearedOff=0;
+		  byte[] dices= b.game.dice.getValues();
+		  if(dices[0]==dices[1])//diples
+		  {
+			if(b.getNumberOfPieceAt(24-number)>=4)//an uparxoun perissotera apo 4 poulia se ayth th thesh
+			{
+			  b.game.getTable()[24-number]+=-4;//afairesh pouliou apo th board
+	      	  b.game.getFreedPieces()[0]+=4;//prosthiki sto freedpieces table	
+			}
+			else
+			{
+				b.game.getTable()[24-number]+=-b.getNumberOfPieceAt(24-number);//afairesh pouliou apo th board
+		      	b.game.getFreedPieces()[0]+=b.getNumberOfPieceAt(24-number);//prosthiki sto freedpieces table	
+			    //GIA TA POULIA POU EXOUN MEINEI KAI DEN EXOUN MAZEUTEI:unbearedOff
+		      	//Ayta tha xreiastei na ta pairnw apo tis megaluteres theseis
+		      	unbearedOff = 4-b.getNumberOfPieceAt(24-number);
+			}
+		  }
+		  //mones
+		  else
+		  {
+		    b.game.getTable()[24-number]+=-1;//afairesh pouliou apo th board
+      	    b.game.getFreedPieces()[0]+=1;//prosthiki sto freedpieces table	
+		  }
+		  btnBearOff.setBackground(null);*/
+		}
+	}
+	//*************************************************************	
 	
 	class RollButtonListener implements ActionListener {
 		BackgammonPanel b;
@@ -586,6 +618,10 @@ public class BackgammonPanel extends JPanel implements MouseMotionListener  {
 		}
 	}
 	
+	public void enterEaten(int index){
+		this.game.fluctuateEaten(Player.GREEN, -1, index);
+	}
+	
 	public boolean isPicked(){
 		return picked;
 	}
@@ -595,13 +631,11 @@ public class BackgammonPanel extends JPanel implements MouseMotionListener  {
 	@Override
 	public void mouseDragged(MouseEvent e) {
 		// TODO Auto-generated method stub
-		
 	}
 
 	@Override
 	public void mouseMoved(MouseEvent e) {
 		// TODO Auto-generated method stub
-		
 	}
 
 	public void setRoll(boolean b) {
