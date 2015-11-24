@@ -1,6 +1,9 @@
 public class Evaluation {
   
 	private static final int  positions= 24;
+
+	public static final int Vmax = 10000;
+	public static final int Vmin = -10000;
 	
 	/*
 	 * player->0 for green checkers 

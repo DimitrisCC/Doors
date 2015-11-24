@@ -76,7 +76,7 @@ public class Board {
         dice = new Dice();
     }
 	
-	public Board(Board board){
+    public Board(Board board){
 		table = new int[24];
 		setTable(board.getTable());
 		eaten = new int[2];
@@ -84,13 +84,16 @@ public class Board {
         freedPieces = new int[2];
 		
 		lastPlayedMoves = new ArrayList<Move>();
+		lastPlayedMoves.addAll(board.getLastPlayedMoves());
 		
 		/* for(int i=0; i<lastPlayedMove.length; i++)
 	        	for(int j=0; j<lastPlayedMove[0].length; j++)
 	        		lastPlayedMove[i][j] = -99;*/
 		//player = board.getPlayer();
 		dice = new Dice();
+		dice.setValues(board.getDice().getValues());
 	}
+	
 	
 	public void setTable(int[] t){ 
 		try {

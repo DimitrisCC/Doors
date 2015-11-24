@@ -2,9 +2,6 @@ import java.util.ArrayList;
 
 public class Minimax {
 	
-	// auta 8a figoun apo dw! deite tin ilopoiisi tou chanceValue
-	private static int Vmax = 100;
-	private static int Vmin = 0;
 	
 	private static int MAX_LENGTH = 2; // 3ekinaei apo to 0 (opote en teli 3 einai ta epipeda...)
 	private static int INF = 100000;
@@ -76,16 +73,16 @@ public class Minimax {
 				currentP  = 1/(roll.isDouble()? 36:18);
 				Move max = maxValue(b, roll, treeLength+1, P, alpha, beta);
 				s += max.getScore()*currentP;
-				p += currentP;
-				expectedValue = s + (1-currentP)*Vmax; //----> auto kanonika 8a oristei opws kai to Vmin stn klassi tis euretikis..
+				//p += currentP;
+				//expectedValue = s + (1-currentP)*Evaluation.Vmax; //----> auto kanonika 8a oristei opws kai to Vmin stn klassi tis euretikis..
 				//---> antiproswpeuei tin kaliteri dinati timi p mporei na parei o max (isws mesw tis euretikis dld poia 8a itan i kaliteri timi genika
 				//---> pou 8a epestrefe gia auton)
 				//---> gia na mn vgazei error pros t paron to dilwnw kapws edw
-				roundedValue = Math.round(expectedValue); // gia na mn to ipologizw sinexeia
-				if(roundedValue < alpha) return roundedValue; //prionisma a
-				//alpha = (roundedValue > alpha) ? roundedValue : alpha;
+			//	roundedValue = Math.round(expectedValue); // gia na mn to ipologizw sinexeia
+			//	if(roundedValue < alpha) return roundedValue; //prionisma a
+				////alpha = (roundedValue > alpha) ? roundedValue : alpha;
 				//pio apla
-				if(roundedValue > alpha) alpha = roundedValue;
+				//if(roundedValue > alpha) alpha = roundedValue;
 			}
 			
 		}else if(P == Player.GREEN){
@@ -93,19 +90,20 @@ public class Minimax {
 			for(Dice roll: possibleRolls){
 				currentP  = 1/(roll.isDouble()? 36:18);
 				Move min = minValue(b, roll, treeLength+1,P, alpha, beta);
-				expectedValue += min.getScore()*currentP;
-				p += currentP;
-				expectedValue = s + (1-currentP)*Vmin;
-				roundedValue = Math.round(expectedValue); // gia na mn to ipologizw sinexeia
-				if(roundedValue > beta) return roundedValue; //prionisma a
+				s += min.getScore()*currentP;
+				//p += currentP;
+				//expectedValue = s + (1-currentP)*Evaluation.Vmin;
+				//roundedValue = Math.round(expectedValue); // gia na mn to ipologizw sinexeia
+				//if(roundedValue > beta) return roundedValue; //prionisma a
 				//alpha = (roundedValue > alpha) ? roundedValue : alpha;
 				//pio apla
-				if(roundedValue < beta) beta = roundedValue;
+				//if(roundedValue < beta) beta = roundedValue;
 			}
 		}
 		
-		return roundedValue;
+		return Math.round(s); 
 	}
 	
 
 }
+
