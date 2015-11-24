@@ -24,7 +24,7 @@ public class BgButton extends JButton implements ActionListener {
 		highlighted = true;
 	}
 	
-	public boolean isHighlihted(){
+	public boolean isHighlighted(){
 		return highlighted;
 	}
 	

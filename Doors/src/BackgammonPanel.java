@@ -580,7 +580,9 @@ public class BackgammonPanel extends JPanel implements MouseMotionListener  {
 				if (position + m == index &&
 						m + jumpsYet <= game.getDice().getTotalJumpsFromDice())
 				{//valid move according to number of left jumps and the dice
-					if(game.isValidTarget(index, player) && buttons.get(index).isHighlihted()){ //check the gameboard validity of the move
+					if(//game.isValidTarget(index, player) && 
+							buttons.get(index).isHighlighted())
+					{ //check the gameboard validity of the move
 						int[][] ms = new int[4][2];
 						ms[0][0] = position; ms[0][1] = index;
 						ms[1][0] = -99; ms[1][1] = -99;

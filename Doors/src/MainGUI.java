@@ -48,8 +48,8 @@ public final class MainGUI {
 			if(currentPlayer == Player.GREEN){
 				gameFrame.getGamePanel().setRoll(true);
 				gameFrame.setPlayer(currentPlayer);
-				while(gameFrame.getGamePanel().isMyTurn())
-					System.out.print("");
+				while(gameFrame.getGamePanel().isMyTurn()) {;}
+					//System.out.print("");
 				currentPlayer = Player.RED;
 			}else{
 				gameFrame.getGamePanel().setRoll(false);
