@@ -1,4 +1,5 @@
 import java.util.ArrayList;
+import java.util.HashSet;
 
 public class Minimax {
 	
@@ -26,7 +27,7 @@ public class Minimax {
 		}
 		
 		Move min = new Move(INF);
-		ArrayList<Board> succ = b.getChildren(d, player);
+		HashSet<Board> succ = b.getChildren(d, player);
 		int value;
 		for(Board current : succ){
 			value = chanceValue(current, d, player.getOpponent(), treeLength+1, alpha, beta);
@@ -46,7 +47,7 @@ public class Minimax {
 		}
 		
 		Move max = new Move(-INF);
-		ArrayList<Board> succ = b.getChildren(d, player);
+		HashSet<Board> succ = b.getChildren(d, player);
 		int value;
 		for(Board current : succ){
 			value = chanceValue(current, d, player.getOpponent(), treeLength+1, alpha, beta);
