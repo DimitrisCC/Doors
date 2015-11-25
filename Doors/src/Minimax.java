@@ -4,7 +4,7 @@ import java.util.HashSet;
 public class Minimax {
 	
 	
-	private static int MAX_LENGTH = 2; // 3ekinaei apo to 0 (opote en teli 3 einai ta epipeda...)
+	private static int MAX_LENGTH = 4; // 3ekinaei apo to 0 (opote en teli 3 einai ta epipeda...)
 	private static int INF = 100000;
 	private static ArrayList<Dice> possibleRolls; // isws kalo na alla3ei se oura proteraiotitas me pio panw osa exoun pi8anotita 1/18 kai pio katw osa 1/36
 	
@@ -24,7 +24,7 @@ public class Minimax {
 	}
 	
 	private static Move minValue(Board b, Dice d, int treeLength, Player player, int alpha, int beta){
-		System.out.println("min");//DEBUG
+		//System.out.println("min");//DEBUG
 		if(treeLength == MAX_LENGTH){
 			//epistrefei to apotelesma tis euretikis sto b
 			return new Move(b.getLastPlayedMove().getMove(), (int)Evaluation.boardScore(b,0)); 
@@ -44,7 +44,7 @@ public class Minimax {
 	}
 	
 	private static Move maxValue(Board b, Dice d, int treeLength, Player player, int alpha, int beta){
-		System.out.println("max");//DEBUG
+		//System.out.println("max");//DEBUG
 		if(treeLength == MAX_LENGTH){
 			//epistrefei to apotelesma tis euretikis sto b
 			return new Move(b.getLastPlayedMove().getMove(), (int)Evaluation.boardScore(b,1)); 
@@ -78,16 +78,16 @@ public class Minimax {
 				currentP  = 1/(roll.isDouble()? 36:18);
 				Move max = maxValue(b, roll, treeLength+1, P, alpha, beta);
 				s += max.getScore()*currentP;
-				//p += currentP;
-				//expectedValue = s + (1-currentP)*Evaluation.Vmax; //----> auto kanonika 8a oristei opws kai to Vmin stn klassi tis euretikis..
+				p += currentP;
+				expectedValue = s + (1-currentP)*Evaluation.Vmax; //----> auto kanonika 8a oristei opws kai to Vmin stn klassi tis euretikis..
 				//---> antiproswpeuei tin kaliteri dinati timi p mporei na parei o max (isws mesw tis euretikis dld poia 8a itan i kaliteri timi genika
 				//---> pou 8a epestrefe gia auton)
 				//---> gia na mn vgazei error pros t paron to dilwnw kapws edw
-			//	roundedValue = Math.round(expectedValue); // gia na mn to ipologizw sinexeia
-			//	if(roundedValue < alpha) return roundedValue; //prionisma a
+				roundedValue = Math.round(expectedValue); // gia na mn to ipologizw sinexeia
+				if(roundedValue < alpha) return roundedValue; //prionisma a
 				////alpha = (roundedValue > alpha) ? roundedValue : alpha;
 				//pio apla
-				//if(roundedValue > alpha) alpha = roundedValue;
+				if(roundedValue > alpha) alpha = roundedValue;
 			}
 			
 		}else if(P == Player.GREEN){
@@ -96,17 +96,17 @@ public class Minimax {
 				currentP  = 1/(roll.isDouble()? 36:18);
 				Move min = minValue(b, roll, treeLength+1,P, alpha, beta);
 				s += min.getScore()*currentP;
-				//p += currentP;
-				//expectedValue = s + (1-currentP)*Evaluation.Vmin;
-				//roundedValue = Math.round(expectedValue); // gia na mn to ipologizw sinexeia
-				//if(roundedValue > beta) return roundedValue; //prionisma a
+				p += currentP;
+				expectedValue = s + (1-currentP)*Evaluation.Vmin;
+				roundedValue = Math.round(expectedValue); // gia na mn to ipologizw sinexeia
+				if(roundedValue > beta) return roundedValue; //prionisma a
 				//alpha = (roundedValue > alpha) ? roundedValue : alpha;
 				//pio apla
-				//if(roundedValue < beta) beta = roundedValue;
+				if(roundedValue < beta) beta = roundedValue;
 			}
 		}
 		
-		return Math.round(s); 
+		return roundedValue; 
 	}
 	
 

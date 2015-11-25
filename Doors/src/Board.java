@@ -158,8 +158,10 @@ public class Board {
 		child = new Board(this);
 		int i=0;
 		int j=0;
+		
+		int eatens_before = eaten[playerNum];
 
-		while((eaten[playerNum] > 0 || i < 4)){
+		while((eaten[playerNum] > 0 && i < 4)){
 			//---> PROSOXI!!! To eaten meiwnetai stn makeMove!!!!
 			if(allMoves[i] == 0) break; //this means that for simple moves you will stop iterations with i=3 and you wont try more moves...
 			//this will help you to decide whether you ignored one move or the other in the next step (see if statement that follows)
@@ -200,11 +202,11 @@ public class Board {
 				}else{// j==1 because you had just only one checker eaten
 					if(i==1){ //this means you stopped iterations at the first move
 						//therefore you must continue the move and then see if the reversed move can be done
-						boolean one_at_leat = false;
+						boolean one_at_least = false;
 						for(int k=0; k < 24-allMoves[1]; ++k){
 							fMove += n;
 							if(child.isValidMove(fMove, n*allMoves[1], player)){
-								one_at_leat = true;
+								one_at_least = true;
 								Board child2 = new Board(child);
 								pos = fMove;
 								target = fMove + n*allMoves[1];
@@ -220,7 +222,7 @@ public class Board {
 							}
 						}
 						
-						if(!one_at_leat){ // if no other move could be done you shoud still add child in children
+						if(!one_at_least){ // if no other move could be done you shoud still add child in children
 							child.setLastPlayedMove(new Move(totalMove));
 							children.add(child);
 						}
@@ -237,11 +239,11 @@ public class Board {
 							totalMove[0][1] = target;
 							
 							fMove = pN - n; //init again
-							one_at_leat = false;
+							one_at_least = false;
 							for(int k=0; k < 24-allMoves[0]; ++k){
 								fMove += n;
 								if(child.isValidMove(fMove, n*allMoves[0],player)){
-									one_at_leat = true;
+									one_at_least = true;
 									Board child2 = new Board(child);
 									pos = fMove;
 									target = fMove + n*allMoves[0];
@@ -257,7 +259,7 @@ public class Board {
 								}
 							}
 							
-							if(!one_at_leat){ // if no other move could be done you shoud still add child in children
+							if(!one_at_least){ // if no other move could be done you shoud still add child in children
 								child.setLastPlayedMove(new Move(totalMove));
 								children.add(child);
 							}
@@ -297,9 +299,10 @@ public class Board {
 			}
 			
 		}else{
-			child.setLastPlayedMove(new Move(totalMove));
-			children.add(child);
-			
+			if(eatens_before != eaten[playerNum]){
+				child.setLastPlayedMove(new Move(totalMove));
+				children.add(child);
+			}
 		} 
 		
 	}
@@ -325,6 +328,7 @@ public class Board {
 		
 		int n = player.getSign();
 		int fMove = pN - n; //fMove -> first move
+		System.out.println("YOUR FUCKING POOOOOS "+fMove);
 		int sMove = pN - n; //sMove -> second move
 		int tMove = pN - n;
 		int foMove = pN - n;
@@ -368,7 +372,8 @@ public class Board {
 				
 				
 				if(dice.isDouble()){  //-->twra autos o elegxos prepei na ginetai sinexeia...
-					
+
+					System.out.println("in DOUBLE");	
 					Board child3;
 					Board child4;
 					
@@ -407,19 +412,27 @@ public class Board {
 							child4.setLastPlayedMove(new Move(totalMove));
 							children.add(child4);
 						}
+						
+						foMove = pN - n;
 					}
+					
+
+					tMove = pN - n;
 					
 				} else {
 					child2.setLastPlayedMove(new Move(totalMove));
 					children.add(child2);
 				}
+				
+
+				sMove = pN - n;
 			}
 			
 		}
 		
 		//children with the reversed move
 		if(!dice.isDouble()){
-			
+			System.out.println("NOT DOUBLE");
 			fMove = pN - n; //fMove -> first move
 			sMove = pN - n; //sMove -> second move
 			//******************************* reverse child *******
@@ -459,6 +472,9 @@ public class Board {
 					child2.setLastPlayedMove(new Move(totalMove));
 					children.add(child2);
 				}
+				
+
+				sMove = pN - n;
 			}
 	
 		}
@@ -669,6 +685,7 @@ public class Board {
 		//if(player == null) player = this.player;
 
 		// if wrong direction false
+
 		if(!checkDirection(pos, pos + move, player)) return false;
 		
 		if(!isValidPick(pos, player)) return false;

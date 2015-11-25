@@ -47,7 +47,7 @@ public class BackgammonPanel extends JPanel implements MouseMotionListener  {
 	
 	private ArrayList<BgButton> buttons;
 	private JButton buttonRoll;
-	private JButton btnBearOff;
+	private BgButton btnBearOff;
 	private StatusBar statusBar;
 	
 	private boolean picked;
