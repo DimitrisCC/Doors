@@ -40,7 +40,7 @@ public class BackgammonPanel extends JPanel implements MouseMotionListener  {
 	private Board game;
 	private Player player;
 	private int position;
-	private ArrayList<Integer> moveset;
+	private byte[] moves;
 	private byte jumpsYet;
 	private int lastPick; //to cleanse the highlight
 	private int doneMove; 
@@ -535,71 +535,47 @@ public class BackgammonPanel extends JPanel implements MouseMotionListener  {
 		picked = false; //for when you reconsider the pick
 		//maybe unnecessary
 
-		if(jumpsYet < game.getDice().getTotalJumpsFromDice()){ 
-			if(game.isValidPick(index, player)){
-				statusBar.setStatus("Got your piece, mate!");
-				this.position = index;
-				moveset = game.getDice().getDiceMoveset();
-				if(game.getDice().isDouble()){
-					for(int i = 0; i < moveset.size(); ++i){
-						if(moveset.get(i) == 0) continue;
-						if(game.isValidTarget(index+moveset.get(i), player)){
-							if(moveset.get(i)  <= (game.getDice().getTotalJumpsFromDice() - jumpsYet)){
-								if((index+moveset.get(i) < 24)&&(index+moveset.get(i) > -1))
-									buttons.get(index+moveset.get(i)).highlight();
-								if((index+moveset.get(i) == 24)||(index+moveset.get(i) == -1)){}
-									//btnBearOff.highlight();
-							}else
-								continue;
+		if(game.isValidPick(index, player)){
+			statusBar.setStatus("Got your piece, mate!");
+			this.position = index;
+			
+			moves = game.getDice().getValues();
+			for(int i = 0; i < moves.length; ++i){
+				//if(moves[0] == 0) continue;
+				if(game.isValidTarget(index+moves[i], player)){
+					if(((!game.getDice().isDouble()) && moves[i] != doneMove)
+							|| (game.getDice().isDouble() && jumpsYet < game.getDice().getTotalJumpsFromDice())){
+						if(index+moves[i] < 24 && index+moves[i] > -1)
+							buttons.get(index+moves[i]).highlight();
+						else if((index+moves[i] == 24) || (index+moves[i] == -1)){
+							//((BgButton) btnBearOff).highlight();
 						}
 					}
-				} else {
-					for(int i = 0; i < moveset.size(); ++i){
-						if(moveset.get(i) == 0) continue;
-						if(game.isValidTarget(index+moveset.get(i), player)){
-							if((moveset.get(i)!= doneMove) && (jumpsYet + moveset.get(i) <= game.getDice().getTotalJumpsFromDice())){
-									if((index+moveset.get(i) < 24)&&(index+moveset.get(i) > -1))
-										buttons.get(index+moveset.get(i)).highlight();
-									if(index+moveset.get(i) == 24){}
-										//btnBearOff.highlight();
-							}
-						}else{
-							if(index+moveset.get(i) > 24 && game.hasGreenReachedDestination())
-							{
-							 	
-							}	
-						}	
-						
-					}
 				}
-				picked = true;
-				lastPick = index;
-			} else {
-				if(game.getTable()[index] < 0)
-					statusBar.setStatus("Wrong color, bro!");
-				else
-					statusBar.setStatus("No piece there. Are you blind or something?");
 			}
-		} else statusBar.setStatus("Pick a correct piece, already");
+				
+			picked = true;
+			lastPick = index;
+			
+		} else	
+			if(game.getTable()[index] < 0)
+				statusBar.setStatus("Wrong color, bro!");
+			else
+				statusBar.setStatus("No piece there. Are you blind or something?");
+		
+		//statusBar.setStatus("Pick a correct piece, already");
 	}
 	
 	public void jump(int index){ 
 		
 		int m = 0;
 		if(picked){
-			for(int i = 0; i < moveset.size(); ++i){
-				m = moveset.get(i);
-				if (position + m == index &&
-						m + jumpsYet <= game.getDice().getTotalJumpsFromDice())
+			for(int i = 0; i < moves.length; ++i){
+				m = moves[i];
+				if (position + m == index)
 				{//valid move according to number of left jumps and the dice
-					if(game.isValidTarget(index, player) && buttons.get(index).isHighlighted()){ //check the gameboard validity of the move
-						int[][] ms = new int[4][2];
-						ms[0][0] = position; ms[0][1] = index;
-						ms[1][0] = -99; ms[1][1] = -99;
-						ms[2][0] = -99; ms[2][1] = -99;
-						ms[3][0] = -99; ms[3][1] = -99;
-						game.makeMove(new Move(ms), player.getSign()); //make the move finally
-						//if(m == 0){} //afairese prwth kinhsh apo statusBar, omoiws gia kathe i -->vareto kai dyskolo :P
+					if(buttons.get(index).isHighlighted()){ //check the gameboard validity of the move
+						game.makeMove(this.position, index, player.getSign()); //make the move finally
 						jumpsYet += m;
 						doneMove = m;
 						statusBar.setStatus("Wow. Nice move! ^_^");
@@ -617,9 +593,9 @@ public class BackgammonPanel extends JPanel implements MouseMotionListener  {
 			}
 		
 			//in any case, cleanse the highlights
-			for(int i = 0; i < moveset.size(); ++i){
-				if(lastPick+moveset.get(i) < 24)
-					buttons.get(lastPick+moveset.get(i)).cleanse();
+			for(int i = 0; i < moves.length; ++i){
+				if(lastPick+moves[i] < 24)
+					buttons.get(lastPick+moves[i]).cleanse();
 			}
 			//and remove the pick
 			//false move results to backrolling so its helpful

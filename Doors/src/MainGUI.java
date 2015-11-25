@@ -60,7 +60,7 @@ public final class MainGUI {
 				currentGame.getDice().roll();
 				gameFrame.getContentPane().repaint();
 				System.out.println("HEARE");
-				gameFrame.getGame().makeMove(Minimax.MinimaxAlgorithm(gameFrame.getGame(), currentGame.getDice(), Player.RED), n);
+				gameFrame.getGame().makeTotalMove(Minimax.MinimaxAlgorithm(gameFrame.getGame(), currentGame.getDice(), Player.RED), n);
 				gameFrame.getContentPane().repaint();
 				gameFrame.getGamePanel().setMyTurn(true);
 				gameFrame.getGamePanel().setPlayerRolled(false);

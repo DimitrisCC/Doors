@@ -9,12 +9,17 @@ public class BgButton extends JButton implements ActionListener {
 	private static final long serialVersionUID = 1L;
 	
 	private int number;
+	private String text;
 	private static int jumpsYet;
 	private boolean highlighted;
 
 	public BgButton(String text){
 		super(text);
-		number = Integer.parseInt(text);
+		try{
+			number = Integer.parseInt(text);
+		} catch (NumberFormatException e){
+			this.text = text; 
+		}
 		addActionListener(this);
 		highlighted = false;
 	}
