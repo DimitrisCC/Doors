@@ -16,6 +16,10 @@ public class Minimax {
 	{System.out.println("minimaxAlgo");//DEBUG
 		possibleRolls = Dice.allPossibleRolls(); //initialize possibleRolls
 		Move bestMove = maxValue(root, d, 0, player, -INF, INF);
+		System.out.println("CHILD USED");
+		for(int i=0; i<4; i++){
+			System.out.println("from "+bestMove.getMove()[i][0]+" to "+bestMove.getMove()[i][1]);
+		}
 		return bestMove;
 	}
 	
@@ -23,7 +27,7 @@ public class Minimax {
 		System.out.println("min");//DEBUG
 		if(treeLength == MAX_LENGTH){
 			//epistrefei to apotelesma tis euretikis sto b
-			return new Move(b.getLastPlayedMoves().get(b.getLastPlayedMoves().size()-1).getMove(), (int)Evaluation.boardScore(b,0)); 
+			return new Move(b.getLastPlayedMove().getMove(), (int)Evaluation.boardScore(b,0)); 
 		}
 		
 		Move min = new Move(INF);
@@ -32,7 +36,7 @@ public class Minimax {
 		for(Board current : succ){
 			value = chanceValue(current, d, player.getOpponent(), treeLength+1, alpha, beta);
 			if (value < min.getScore()){
-				min.setMove(current.getLastPlayedMoves().get(current.getLastPlayedMoves().size()-1).getMove());
+				min.setMove(current.getLastPlayedMove().getMove());
 				min.setScore(value);
 			}
 		}
@@ -43,7 +47,7 @@ public class Minimax {
 		System.out.println("max");//DEBUG
 		if(treeLength == MAX_LENGTH){
 			//epistrefei to apotelesma tis euretikis sto b
-			return new Move(b.getLastPlayedMoves().get(b.getLastPlayedMoves().size()-1).getMove(), (int)Evaluation.boardScore(b,1)); 
+			return new Move(b.getLastPlayedMove().getMove(), (int)Evaluation.boardScore(b,1)); 
 		}
 		
 		Move max = new Move(-INF);
@@ -52,7 +56,7 @@ public class Minimax {
 		for(Board current : succ){
 			value = chanceValue(current, d, player.getOpponent(), treeLength+1, alpha, beta);
 			if (value > max.getScore()) {
-				max.setMove(current.getLastPlayedMoves().get(current.getLastPlayedMoves().size()-1).getMove());
+				max.setMove(current.getLastPlayedMove().getMove());
 				max.setScore(value);
 			}
 		}

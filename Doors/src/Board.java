@@ -51,7 +51,7 @@ public class Board {
     private int[] piecesATdestination;
     
     //private int[][] lastPlayedMove;
-    private ArrayList<Move> lastPlayedMoves;
+    private Move lastPlayedMove;
     
     //the dice of the game
     Dice dice;
@@ -68,12 +68,8 @@ public class Board {
         eaten = new int[2];
         piecesATdestination = new int[2];
         freedPieces = new int[2];
-        lastPlayedMoves = new ArrayList<Move>();
+        lastPlayedMove = new Move();
         
-       /* for(int i=0; i<lastPlayedMove.length; i++)
-        	for(int j=0; j<lastPlayedMove[0].length; j++)
-        		lastPlayedMove[i][j] = -99;*/
-       // player = Player.NONE;
         dice = new Dice();
     }
 	
@@ -84,13 +80,8 @@ public class Board {
         piecesATdestination = new int[2];
         freedPieces = new int[2];
 		
-		lastPlayedMoves = new ArrayList<Move>();
-		lastPlayedMoves.addAll(board.getLastPlayedMoves());
+		lastPlayedMove = new Move();
 		
-		/* for(int i=0; i<lastPlayedMove.length; i++)
-	        	for(int j=0; j<lastPlayedMove[0].length; j++)
-	        		lastPlayedMove[i][j] = -99;*/
-		//player = board.getPlayer();
 		dice = new Dice();
 		dice.setValues(board.getDice().getValues());
 	}
@@ -124,15 +115,17 @@ public class Board {
 		int pN = (player == Player.RED)? RED_START_POS : GREEN_START_POS;
 		
 		if(eaten[player.ordinal()] > 0 ){
+			System.out.println("eeeeeeaten"); //DEBUG
 			Eaten_getChildren(dice.getValues(), children, pN, player);
 		}else if((player == player.GREEN)? hasGreenReachedDestination() : hasRedReachedDestination()){
 			pN = (player == Player.RED)? 5 : 18;
+			System.out.println("bearOffffff"); //DEBUG
 			BearOff_getChildren(dice.getValues(), children, pN, player);
 		}else{
 			System.out.println("NORMALLLLLLLLLLLLLLLl"); //DEBUG
 			Normal_getChildren(dice.getValues(), children, pN, player);
 		}
-		
+		System.out.println("Children num: "+children.size());
 		return children;
 		
 	}
@@ -146,17 +139,14 @@ public class Board {
 		System.out.println("ax"); //DEBUG
 	
 		Board child;
-		//Move theMove = new Move();
+		Move theMove = new Move();
 		//int[][] playedMove = theMove.getMove();
-		//int[][] totalMove = theMove.getMove();
-		int[][] totalMove = new int[4][2];
+		int[][] totalMove = theMove.getMove();
+		//int[][] totalMove = new int[4][2];
 		int pos = 0;
 		int target = 0;
 		int n = player.getSign();
 		int fMove = pN - n; //fMove -> first move
-		int sMove = pN - n; //sMove -> second move
-		int tMove = pN - n;
-		int foMove = pN - n;
 		int playerNum = player.ordinal(); // xreiazetai gia to eaten
 		int posOfEaten = pN - n;
 		
@@ -174,7 +164,7 @@ public class Board {
 			if(allMoves[i] == 0) break; //this means that for simple moves you will stop iterations with i=3 and you wont try more moves...
 			//this will help you to decide whether you ignored one move or the other in the next step (see if statement that follows)
 			
-			if(child.isValidMove(posOfEaten, posOfEaten + n*allMoves[i], player)){
+			if(child.isValidMove(posOfEaten, n*allMoves[i], player)){
 				pos  = posOfEaten;
 				target = posOfEaten + n*allMoves[i];
 				
@@ -213,7 +203,7 @@ public class Board {
 						boolean one_at_leat = false;
 						for(int k=0; k < 24-allMoves[1]; ++k){
 							fMove += n;
-							if(child.isValidMove(fMove, fMove + n*allMoves[1], player)){
+							if(child.isValidMove(fMove, n*allMoves[1], player)){
 								one_at_leat = true;
 								Board child2 = new Board(child);
 								pos = fMove;
@@ -236,7 +226,7 @@ public class Board {
 						}
 						
 						//the reversed move
-						if(child.isValidMove(posOfEaten, posOfEaten + n*allMoves[1], player)){
+						if(child.isValidMove(posOfEaten, n*allMoves[1], player)){
 							pos = posOfEaten;
 							target = posOfEaten + n*allMoves[1];
 							
@@ -250,7 +240,7 @@ public class Board {
 							one_at_leat = false;
 							for(int k=0; k < 24-allMoves[0]; ++k){
 								fMove += n;
-								if(child.isValidMove(fMove, fMove + n*allMoves[0],player)){
+								if(child.isValidMove(fMove, n*allMoves[0],player)){
 									one_at_leat = true;
 									Board child2 = new Board(child);
 									pos = fMove;
@@ -280,7 +270,7 @@ public class Board {
 						boolean one_at_leat = false;
 						for(int k=0; k < 24-skipedMove; ++k){
 							fMove += n;
-							if(child.isValidMove(fMove, fMove + n*skipedMove, player)){
+							if(child.isValidMove(fMove, n*skipedMove, player)){
 								one_at_leat = true;
 								Board child2 = new Board(child);
 								pos = fMove;
@@ -323,14 +313,15 @@ public class Board {
 		System.out.println("ax"); //DEBUG
 	
 		Board child;
-		//Move theMove = new Move();
+		Board child2;
+		Move theMove = new Move();
 		//int[][] playedMove = theMove.getMove(); //---> den katalavainw ti prospatheis na kaneis
-		//int[][] totalMove = theMove.getMove(); //---> giati idio antikeimeno??
+		int[][] totalMove = theMove.getMove(); //---> giati idio antikeimeno??
 		//--> twra oti kai na allazeis sta dyo de tha allazei sto idio antikeimeno?
 		//int[][] playedMove = new int[4][2];
 		int pos = 0;
 		int target = 0;
-		int[][] totalMove = new int[4][2];
+		//int[][] totalMove = new int[4][2];
 		
 		int n = player.getSign();
 		int fMove = pN - n; //fMove -> first move
@@ -364,29 +355,35 @@ public class Board {
 				
 				if(!child.isValidMove(sMove, n*move[1], player)) continue;
 				
+				child2 = new Board(child);
+				
 				pos = sMove;
 				target = sMove + n*move[0];
 				
 				//theMove.setMove(playedMove);
-				child.makeMove(pos, target, n);
+				child2.makeMove(pos, target, n);
 				
 				totalMove[1][0] = pos;
 				totalMove[1][1] = target;
 				
 				
 				if(dice.isDouble()){  //-->twra autos o elegxos prepei na ginetai sinexeia...
-
+					
+					Board child3;
+					Board child4;
+					
 					for(int k=0; k < 24-move[0]; ++k){
 						
 						tMove += n;
 						
-						if(!child.isValidMove(tMove, n*move[0], player)) continue;
+						if(!child2.isValidMove(tMove, n*move[0], player)) continue;
+						child3 = new Board(child2);
 						
 						pos = tMove;
 						target = tMove + n*move[0];
 						
 						//theMove.setMove(playedMove);
-						child.makeMove(pos, target, n);
+						child3.makeMove(pos, target, n);
 						
 						totalMove[2][0] = pos;
 						totalMove[2][1] = target;
@@ -395,26 +392,26 @@ public class Board {
 							
 							foMove += n;
 							
-							if(!child.isValidMove(foMove, n*move[0], player)) continue;
-							
+							if(!child3.isValidMove(foMove, n*move[0], player)) continue;
+							child4 = new Board(child3);
 							pos = foMove;
 							target = foMove + n*move[0];
 							
 							//theMove.setMove(playedMove);
-							child.makeMove(pos, target, n);
+							child4.makeMove(pos, target, n);
 							
 							totalMove[3][0] = pos;
 							totalMove[3][1] = target;
 							
 							//-----> prepei na ginetai kai edw!
-							child.setLastPlayedMove(new Move(totalMove));
-							children.add(child);
+							child4.setLastPlayedMove(new Move(totalMove));
+							children.add(child4);
 						}
 					}
 					
 				} else {
-					child.setLastPlayedMove(new Move(totalMove));
-					children.add(child);
+					child2.setLastPlayedMove(new Move(totalMove));
+					children.add(child2);
 				}
 			}
 			
@@ -449,18 +446,18 @@ public class Board {
 					sMove += n;
 					
 					if(!child.isValidMove(sMove, n*move[0], player)) continue;
-					
+					child2 = new Board(child);
 					pos = sMove;
 					target = sMove + n*move[0];
 				
 					//theMove.setMove(playedMove);
-					child.makeMove(pos, target, n);
+					child2.makeMove(pos, target, n);
 
 					totalMove[1][0] = pos;
 					totalMove[1][1] = target;
 					
-					child.setLastPlayedMove(new Move(totalMove));
-					children.add(child);
+					child2.setLastPlayedMove(new Move(totalMove));
+					children.add(child2);
 				}
 			}
 	
@@ -485,8 +482,8 @@ public class Board {
 		System.out.println("ax"); //DEBUG
 		
 		Board child;
+		Board child2;
 		Move theMove = new Move();
-		int[][] playedMove = theMove.getMove();
 		int[][] totalMove = theMove.getMove();
 		int n = player.getSign();
 		int fMove = pN - n; //fMove -> first move
@@ -501,7 +498,6 @@ public class Board {
 			child = new Board(this);
 			
 			if(!child.isValidMove(fMove, n*move[0], player)) continue;
-			
 			int pos = fMove;
 			int target = fMove + n*move[0];
 			
@@ -513,6 +509,8 @@ public class Board {
 			
 			
 			if(child.isTerminal()){
+				totalMove[1][0] = -99;
+				totalMove[1][1] = -99;
 				child.setLastPlayedMove(new Move(totalMove));
 				children.add(child);
 				continue; //pianei an einai mesa sto if????
@@ -524,41 +522,49 @@ public class Board {
 				sMove += n;
 				
 				if(!child.isValidMove(sMove, n*move[1], player)) continue;
-				
+				child2 = new Board(child);
 				pos = sMove;
 				target = sMove + n*move[0];
 				
 				//theMove.setMove(playedMove);
-				child.makeMove(pos, target, n);
+				child2.makeMove(pos, target, n);
 				
 				totalMove[1][0] = pos;
 				totalMove[1][1] = target;
 				
-				if(child.isTerminal()){
-					child.setLastPlayedMove(new Move(totalMove));
-					children.add(child);
+				if(child2.isTerminal()){
+					totalMove[2][0] = -99;
+					totalMove[2][1] = -99;
+					child2.setLastPlayedMove(new Move(totalMove));
+					children.add(child2);
 					continue; //pianei an einai mesa sto if????
 				}
 				
 				if(dice.isDouble()){  //-->twra autos o elegxos prepei na ginetai sinexeia...
+					Board child3;
+					Board child4;
 					for(int k=0; k <6; ++k){
 						
 						tMove += n;
 						
-						if(!child.isValidMove(tMove, n*move[0], player)) continue;
-						
+						if(!child2.isValidMove(tMove, n*move[0], player)) continue;
+						child3 = new Board(child2);
+
 						pos = tMove;
 						target = tMove + n*move[0];
 						
 						//theMove.setMove(playedMove);
-						child.makeMove(pos, target, n);
+						child3.makeMove(pos, target, n);
 						
 						totalMove[2][0] = pos;
 						totalMove[2][1] = target;
 						
-						if(child.isTerminal()){
-							child.setLastPlayedMove(new Move(totalMove));
-							children.add(child);
+						if(child3.isTerminal()){
+
+							totalMove[3][0] = -99;
+							totalMove[3][1] = -99;
+							child3.setLastPlayedMove(new Move(totalMove));
+							children.add(child3);
 							continue; //pianei an einai mesa sto if????
 						}
 						
@@ -566,27 +572,28 @@ public class Board {
 							
 							foMove += n;
 							
-							if(!child.isValidMove(foMove, n*move[0], player)) continue;
+							if(!child3.isValidMove(foMove, n*move[0], player)) continue;
 							
+							child4 = new Board(child3);
 							pos = foMove;
-							target = n*move[0];
+							target =foMove+ n*move[0];
 							
 							//theMove.setMove(playedMove);
-							child.makeMove(pos, target, n);
+							child4.makeMove(pos, target, n);
 							
 							totalMove[3][0] = pos;
 							totalMove[3][1] = target;
 							
 							//edw kai terminal na einai to paidi prosti8etai kanonika, dn xreiazetai elegxos, giati exoun ginei 2 kiniseis...
 							//-----> prepei na ginetai kai edw!
-							child.setLastPlayedMove(new Move(totalMove));
-							children.add(child);
+							child4.setLastPlayedMove(new Move(totalMove));
+							children.add(child4);
 						}
 					}
 					
 				}else{
-					child.setLastPlayedMove(new Move(totalMove));
-					children.add(child);
+					child2.setLastPlayedMove(new Move(totalMove));
+					children.add(child2);
 					
 					if(isValidMove(fMove, n*move[1], player)){
 						
@@ -600,6 +607,9 @@ public class Board {
 						totalMove[0][1] = target;
 						
 						if(child.isTerminal()){
+
+							totalMove[1][0] = -99;
+							totalMove[1][1] = -99;
 							child.setLastPlayedMove(new Move(totalMove));
 							children.add(child);
 						}
@@ -611,10 +621,14 @@ public class Board {
 							target = sMove + n*move[0];
 							
 							//theMove.setMove(playedMove);
-							child.makeMove(pos, target, n);
+							reversedChild.makeMove(pos, target, n);
 							
 							totalMove[1][0] = pos;
 							totalMove[1][1] = target;
+
+							reversedChild.setLastPlayedMove(new Move(totalMove));
+							children.add(reversedChild);
+							
 						}
 					}
 				}
@@ -737,10 +751,13 @@ public class Board {
 	
 	protected void makeMove(int pos, int target, int n){
 		//validity of the move is already checked
-		
+		System.out.println("pos "+pos+" target "+target);
 		if((pos > -1) && (pos < 24)){
+			
 			//normal move
 			table[pos] -= n; //pick that piece 
+
+			System.out.println("pick "+pos+" table "+table[pos]);
 		
 		} else if (pos < -1) {
 			return; //no other moves //possibly it's a single move by the player
@@ -748,12 +765,14 @@ public class Board {
 			if(n == 1){//GREEN-PLAYER
 				if(pos == -1){
 					eaten[0]--;
+					System.out.println("eaten gotten. green eatens left: "+ eaten[0]);
 				}
 					//else no move happens...positions wrong
 				//but the validity is checked already...
 			}else{//n == -1 RED-CPU
 				if(pos == 24){
 					eaten[1]--;
+					System.out.println("eaten gotten. reds eatens left: "+ eaten[1]);
 				}
 				//else no move happens...positions wrong
 				//but the validity is checked already...
@@ -763,11 +782,14 @@ public class Board {
 		if((target > -1) && (target < 24)){
 			
 			table[target] += n; //move that piece here
+			System.out.println("target "+target+" table "+table[target]);
 			if(table[target] == 0){//because of the checked validity this means one of the opponents piece was hit
 				table[target] += n;
-				eaten[(n+1)/2]++;
 
-				//eating time
+				System.out.println(" table now "+table[target]);
+				eaten[(n+1)/2]++; //eating time
+
+				System.out.println("eaten!!! player eaten: "+(n+1)/2+" his eatens now: "+eaten[(n+1)/2]);
 				if((n+1)/2 == 1){
 					if(target < 6)
 						piecesATdestination[1]--; //one red piece from this area got eaten
@@ -777,21 +799,26 @@ public class Board {
 				}
 			}
 			
+			
 			//check if a piece reached destination
 			if(n == 1){ 
 				if( target > 17 ) piecesATdestination[0]++;
 			}else{
 				if( target < 6 ) piecesATdestination[1]++;
 			}
+			
 		}else{
 			if(n == 1){
-				if(target == 24)
+				if(target >= 24)
 					freedPieces[0]++;
 			}else{ // n==-1
-				if(target == -1)
+				if(target <= -1)
 					freedPieces[1]++;
 			}
 		}
+		
+		
+		
 		isTerminal();
 	}
 	
@@ -880,9 +907,9 @@ public class Board {
 				return true;
 			else 
 				return false;
-		}else if (moveTarget == -1){ // o kokkinos mazeuei
+		}else if (moveTarget < 0){ // o kokkinos mazeuei
 			return hasRedReachedDestination();
-		}else if (moveTarget == 24){ // o prasinos mazeuei
+		}else if (moveTarget > 23){ // o prasinos mazeuei
 			return hasGreenReachedDestination();
 		}else{
 			return false;
@@ -892,8 +919,8 @@ public class Board {
 	/**
 	 * Check if the moving direction is correct
 	 */
-	protected boolean checkDirection(int pos, int move, Player player) {
-		if ((player == Player.RED && move >= pos) || (player == Player.GREEN && move <= pos)) {
+	protected boolean checkDirection(int pos, int target, Player player) {
+		if ((player == Player.RED && target >= pos) || (player == Player.GREEN && target <= pos)) {
 			//setStatus("You're going in the wrong direction!");
 			return false;
 		}
@@ -974,13 +1001,10 @@ public class Board {
 		else return 0;
 	}
   
-    public ArrayList<Move> getLastPlayedMoves(){ return lastPlayedMoves; }
+    public Move getLastPlayedMove(){ return lastPlayedMove; }
     
     public void setLastPlayedMove(Move move){
-    	/*for(int i=0; i<lastPlayedMove.length; i++)
-    		for(int j=0; j<lastPlayedMove[0].length; j++)
-    			lastPlayedMove[i][j] = move[i][j];*/
-    	lastPlayedMoves.add(move);
+    	lastPlayedMove = move; //*mipws 8elei copy consrtuctor?
     }
       
     /**
