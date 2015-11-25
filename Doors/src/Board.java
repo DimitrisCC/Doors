@@ -107,7 +107,30 @@ public class Board {
 			eaten[player.ordinal()] += amount;
 	}
 	
+	/**
+	 * Breeds a new child board
+	 * @param child the child to breed from
+	 * 			the manipulation acts directly on this instance
+	 * 			if someone wants a new instance of the Board to be bred
+	 * 			he/she must call the function as breed(new Board(someChild),...)
+	 * @param pos the position of the piece
+	 * @param move the move to make
+	 * @param player the player
+	 * @return false if the move is not valid
+	 */
+	private boolean breed(Board child, int pos, int move, Player player, ArrayList<Integer> totalMove){
+		int n = player.getSign();
+		
+		if(!child.isValidMove(pos, n*move, player)) return false; //in getChildren: if (!breed(...)) continue
 
+		int target = pos + n*move; 
+		
+		child.makeMove(pos, target, n);
+		
+		totalMove.add(pos); totalMove.add(target);
+		
+		return true;
+	}
 	
 	//if returned list is empty, no valid moves can be done
 	public HashSet<Board> getChildren(Dice dice, Player player){
@@ -320,6 +343,7 @@ public class Board {
 		Move theMove = new Move();
 		//int[][] playedMove = theMove.getMove(); //---> den katalavainw ti prospatheis na kaneis
 		int[][] totalMove = theMove.getMove(); //---> giati idio antikeimeno??
+		ArrayList<Integer> totalMoveList = new ArrayList<Integer>();
 		//--> twra oti kai na allazeis sta dyo de tha allazei sto idio antikeimeno?
 		//int[][] playedMove = new int[4][2];
 		int pos = 0;
@@ -337,41 +361,32 @@ public class Board {
 		
 		
 		for(int i=0; i < 24-move[0]; ++i){
-
+			
 			fMove += n;
+			child = new Board(this); //--->telika to dimiourgw kai apla to paizw mesa sth breed gia na mhn to epistrefw
 			
-			child = new Board(this);
-			
-			if(!child.isValidMove(fMove, n*move[0], player)) continue; //-->ithele sketo n*move[0] kai oxi thesi
-			
-			pos = fMove;
-			target = fMove + n*move[0];
-			
-			//theMove.setMove(playedMove);
-			child.makeMove(pos, target, n);
-
-			totalMove[0][0] = pos;
-			totalMove[0][1] = target;
+			//************** EXAMPLE *******************//
+			if(!breed(child, fMove, move[0], player, totalMoveList)) continue;
 			
 			for(int j=0; j < 24-move[1]; ++j){
 	
-				sMove += n;
+				sMove += n; 
 				
-				if(!child.isValidMove(sMove, n*move[1], player)) continue;
+				if(!child.isValidMove(sMove, n*move[1], player)) continue; 
 				
 				child2 = new Board(child);
 				
 				pos = sMove;
-				target = sMove + n*move[0];
+				target = sMove + n*move[0]; 
 				
-				//theMove.setMove(playedMove);
-				child2.makeMove(pos, target, n);
 				
-				totalMove[1][0] = pos;
+				child2.makeMove(pos, target, n); //idio ok
+				
+				totalMove[1][0] = pos; 
 				totalMove[1][1] = target;
 				
 				
-				if(dice.isDouble()){  //-->twra autos o elegxos prepei na ginetai sinexeia...
+				if(dice.isDouble()){  
 
 					System.out.println("in DOUBLE");	
 					Board child3;
@@ -420,6 +435,10 @@ public class Board {
 					tMove = pN - n;
 					
 				} else {
+					//********************* EXAMPLE **********************//
+					/*
+					 *evala constructor gia arraylists sthn Move
+					 */
 					child2.setLastPlayedMove(new Move(totalMove));
 					children.add(child2);
 				}

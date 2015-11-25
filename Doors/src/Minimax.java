@@ -4,7 +4,7 @@ import java.util.HashSet;
 public class Minimax {
 	
 	
-	private static int MAX_LENGTH = 4; // 3ekinaei apo to 0 (opote en teli 3 einai ta epipeda...)
+	private static int MAX_LENGTH = 2; // 3ekinaei apo to 0 (opote en teli 3 einai ta epipeda...)
 	private static int INF = 100000;
 	private static ArrayList<Dice> possibleRolls; // isws kalo na alla3ei se oura proteraiotitas me pio panw osa exoun pi8anotita 1/18 kai pio katw osa 1/36
 	

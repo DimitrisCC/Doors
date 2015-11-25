@@ -1,3 +1,4 @@
+import java.util.ArrayList;
 
 public class Move {
 	
@@ -20,6 +21,16 @@ public class Move {
 		move = new int[4][2];
 		setMove(moves);
 		score = 0;
+	}
+	
+	public Move(ArrayList<Integer> moves)
+	{
+		move = new int[4][2];
+		if(moves.size() <= 8) //max 4 moves
+			for(int i = 0; i < moves.size(); i+=2){
+				move[i/2][0] = moves.get(i); //even are the positions
+				move[i/2][1] = moves.get(i+1);//odd are the targets
+			}
 	}
 	
 	public Move(int value)
