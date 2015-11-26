@@ -346,16 +346,16 @@ public class BackgammonPanel extends JPanel implements MouseMotionListener  {
 		} else {
 			switch (pos) {
 			case 24:
-				paintPieces(g, image, EATEN_LEFT_BORDER, 35, game.getEaten()[0], false);
+				paintPieces(g, image, EATEN_LEFT_BORDER, 35, pos, game.getEaten()[0], false);
 				break;
 			case 25:
-				paintPieces(g, image, EATEN_LEFT_BORDER, 575, game.getEaten()[1], false);
+				paintPieces(g, image, EATEN_LEFT_BORDER, 575, pos, game.getEaten()[1], false);
 				break;
 			case 26:
-				paintPieces(g, image, GOTTEN_OUT_BORDER, 35, game.getFreedPieces()[0], false);
+				paintPieces(g, image, GOTTEN_OUT_BORDER, 35, pos, game.getFreedPieces()[0], false);
 				break;
 			case 27:
-				paintPieces(g, image, GOTTEN_OUT_BORDER, 575, game.getFreedPieces()[1], false);
+				paintPieces(g, image, GOTTEN_OUT_BORDER, 575, pos, game.getFreedPieces()[1], false);
 				break;
 			default:
 				//something from outer space
@@ -366,29 +366,27 @@ public class BackgammonPanel extends JPanel implements MouseMotionListener  {
 		if (pos < 12) {
 			yCoordinate = 35;
 			xCoordinate -= (pos % 12) * POS_SIZE_PXL;
-			paintPieces(g, image, xCoordinate, yCoordinate, pos, true);
+			paintPieces(g, image, xCoordinate, yCoordinate, pos, 0, true);
 		} else if (pos > 11 && pos < 24) {
 			yCoordinate = 565;
 			xCoordinate -= ((23 - pos) % 12) * POS_SIZE_PXL;
-			paintPieces(g, image, xCoordinate, yCoordinate, pos, true);
+			paintPieces(g, image, xCoordinate, yCoordinate, pos, 0, true);
 		}
 
 	}
 	
-	public void paintPieces(Graphics g, Image image, int x, int y, int pos, boolean ingame) {
-		if(ingame)
-			for (int i = 0; i < game.getNumberOfPiecesAt(pos); i++) {
-				if (pos < 12 || pos == GREENS_EATEN || pos == POS_END_GREEN) {
-					g.drawImage(image, x, y + i * PIECE_STEP, null);
-				} else {
-					g.drawImage(image, x, y - i * PIECE_STEP, null);
-				}
-			}
-		else
-			for (int i = 0; i < pos; ++i){
+	public void paintPieces(Graphics g, Image image, int x, int y, int pos, int num, boolean ingame) {
+		int until;
+		if(ingame) until = game.getNumberOfPiecesAt(pos);
+		else until = num;
+		
+		for (int i = 0; i < until; i++) {
+			if (pos < 12 || pos == GREENS_EATEN || pos == POS_END_GREEN) {
 				g.drawImage(image, x, y + i * PIECE_STEP, null);
+			} else {
+				g.drawImage(image, x, y - i * PIECE_STEP, null);
 			}
-			
+		}
 	}
 	
 	public void paintComponent(Graphics g) {
@@ -639,8 +637,8 @@ public class BackgammonPanel extends JPanel implements MouseMotionListener  {
 	public void setPlayerRolled(boolean b){
 		hasPlayerRolled = b;
 		if(b && player == player.GREEN){
-			//highlightEaten();
-			pick(-1);
+			if(game.getGreensEaten() > 0)
+				pick(-1);
 		}
 	}
 
