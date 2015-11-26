@@ -529,12 +529,12 @@ public class BackgammonPanel extends JPanel implements MouseMotionListener  {
 	
 	public boolean isMyTurn(){ return isItMyTurn; } 
 	
-
-	public void pick(int index){
+	public void pick(int index){ //if index = -1, the pick stands for the highlighting of the eaten
 		
 		picked = false; //for when you reconsider the pick
 		//maybe unnecessary
 
+		//if the player picked a valid checker then the buttons he can
 		if(game.isValidPick(index, player)){
 			statusBar.setStatus("Got your piece, mate!");
 			this.position = index;
@@ -543,14 +543,18 @@ public class BackgammonPanel extends JPanel implements MouseMotionListener  {
 			for(int i = 0; i < moves.length; ++i){
 				//if(moves[0] == 0) continue;
 				if(game.isValidTarget(index+moves[i], player)){
+					
 					if(((!game.getDice().isDouble()) && moves[i] != doneMove)
 							|| (game.getDice().isDouble() && jumpsYet < game.getDice().getTotalJumpsFromDice())){
+						
 						if(index+moves[i] < 24 && index+moves[i] > -1)
 							buttons.get(index+moves[i]).highlight();
 						else if((index+moves[i] == 24) || (index+moves[i] == -1)){
 							//((BgButton) btnBearOff).highlight();
 						}
+						
 					}
+					
 				}
 			}
 				
@@ -594,7 +598,7 @@ public class BackgammonPanel extends JPanel implements MouseMotionListener  {
 		
 			//in any case, cleanse the highlights
 			for(int i = 0; i < moves.length; ++i){
-				if(lastPick+moves[i] < 24)
+				if(lastPick+moves[i] < 24 && lastPick+moves[i] > -1)
 					buttons.get(lastPick+moves[i]).cleanse();
 			}
 			//and remove the pick
@@ -604,17 +608,6 @@ public class BackgammonPanel extends JPanel implements MouseMotionListener  {
 			lastPick = -1;
 
 		}
-	}
-	
-
-	
-	public void forEaten(){
-		
-	}
-	
-	public void enterEaten(int index){
-		//if() ///****************************** NA DW GIA EATEN AFOU ROLLAREI
-		this.game.fluctuateEaten(Player.GREEN, -1, index);
 	}
 	
 	public boolean isPicked(){
@@ -645,6 +638,10 @@ public class BackgammonPanel extends JPanel implements MouseMotionListener  {
 	
 	public void setPlayerRolled(boolean b){
 		hasPlayerRolled = b;
+		if(b && player == player.GREEN){
+			//highlightEaten();
+			pick(-1);
+		}
 	}
 
 }

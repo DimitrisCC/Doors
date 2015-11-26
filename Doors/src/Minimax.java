@@ -15,7 +15,7 @@ public class Minimax {
 	public static Move MinimaxAlgorithm(Board root, Dice d, Player player) //--> AUTO T PLAYER DN XRISIMOPOIEITAI 
 	{System.out.println("minimaxAlgo");//DEBUG
 		possibleRolls = Dice.allPossibleRolls(); //initialize possibleRolls
-		Move bestMove = maxValue(root, d, 0, player, -INF, INF);
+		Move bestMove = maxValue(root, d, 0, player, Evaluation.Vmin, Evaluation.Vmax);
 		System.out.println("CHILD USED");
 		for(int i=0; i<4; i++){
 			System.out.println("from "+bestMove.getMove()[i][0]+" to "+bestMove.getMove()[i][1]);

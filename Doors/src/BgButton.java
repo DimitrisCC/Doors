@@ -50,10 +50,8 @@ public class BgButton extends JButton implements ActionListener {
 		
 		if(panel.isMyTurn()){ 
 			
-			if(panel.getGameboard().getEaten()[0] > 0){ //you have to get the eaten in first
+			if(panel.getGameboard().getEaten()[0] > 0 && !this.isHighlighted()){ //you have to get the eaten in first
 				panel.getStatusBar().setStatus("Please, enter the eaten pieces first.");
-				
-				panel.enterEaten(number-1);
 				return; //don't enter the picking phase unless all eaten are entered
 			}
 			

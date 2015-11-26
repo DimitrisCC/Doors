@@ -116,9 +116,11 @@ public class Board {
 	 * @param pos the position of the piece
 	 * @param move the move to make
 	 * @param player the player
+	 * @param totalMove the totalMove of the player
+	 * @param where what position stands for the move
 	 * @return false if the move is not valid
 	 */
-	private boolean breed(Board child, int pos, int move, Player player, ArrayList<Integer> totalMove){
+	private boolean breed(Board child, int pos, int move, Player player, int[][] totalMove, int where){
 		int n = player.getSign();
 		
 		if(!child.isValidMove(pos, n*move, player)) return false; //in getChildren: if (!breed(...)) continue
@@ -127,7 +129,8 @@ public class Board {
 		
 		child.makeMove(pos, target, n);
 		
-		totalMove.add(pos); totalMove.add(target);
+		totalMove[where][0] = pos;
+		totalMove[where][1] = target;
 		
 		return true;
 	}
@@ -343,7 +346,7 @@ public class Board {
 		Move theMove = new Move();
 		//int[][] playedMove = theMove.getMove(); //---> den katalavainw ti prospatheis na kaneis
 		int[][] totalMove = theMove.getMove(); //---> giati idio antikeimeno??
-		ArrayList<Integer> totalMoveList = new ArrayList<Integer>();
+		//ArrayList<Integer> totalMoveList = new ArrayList<Integer>();
 		//--> twra oti kai na allazeis sta dyo de tha allazei sto idio antikeimeno?
 		//int[][] playedMove = new int[4][2];
 		int pos = 0;
@@ -366,24 +369,14 @@ public class Board {
 			child = new Board(this); //--->telika to dimiourgw kai apla to paizw mesa sth breed gia na mhn to epistrefw
 			
 			//************** EXAMPLE *******************//
-			if(!breed(child, fMove, move[0], player, totalMoveList)) continue;
+			if(!breed(child, fMove, move[0], player, totalMove, 0)) continue;
 			
 			for(int j=0; j < 24-move[1]; ++j){
 	
-				sMove += n; 
-				
-				if(!child.isValidMove(sMove, n*move[1], player)) continue; 
-				
+				sMove += n;
 				child2 = new Board(child);
 				
-				pos = sMove;
-				target = sMove + n*move[0]; 
-				
-				
-				child2.makeMove(pos, target, n); //idio ok
-				
-				totalMove[1][0] = pos; 
-				totalMove[1][1] = target;
+				if(!breed(child2, sMove, move[1], player, totalMove, 1)) continue;
 				
 				
 				if(dice.isDouble()){  
@@ -395,55 +388,33 @@ public class Board {
 					for(int k=0; k < 24-move[0]; ++k){
 						
 						tMove += n;
-						
-						if(!child2.isValidMove(tMove, n*move[0], player)) continue;
 						child3 = new Board(child2);
 						
-						pos = tMove;
-						target = tMove + n*move[0];
-						
-						//theMove.setMove(playedMove);
-						child3.makeMove(pos, target, n);
-						
-						totalMove[2][0] = pos;
-						totalMove[2][1] = target;
+						if(!breed(child3, tMove, move[0], player, totalMove, 2)) continue;
 						
 						for(int h=0; h < 24-move[0]; ++h){
 							
 							foMove += n;
-							
-							if(!child3.isValidMove(foMove, n*move[0], player)) continue;
 							child4 = new Board(child3);
-							pos = foMove;
-							target = foMove + n*move[0];
 							
-							//theMove.setMove(playedMove);
-							child4.makeMove(pos, target, n);
+							if(!breed(child4, foMove, move[0], player, totalMove, 3)) continue;
 							
-							totalMove[3][0] = pos;
-							totalMove[3][1] = target;
-							
-							//-----> prepei na ginetai kai edw!
 							child4.setLastPlayedMove(new Move(totalMove));
 							children.add(child4);
+							totalMove = theMove.getMove();
 						}
 						
 						foMove = pN - n;
 					}
-					
 
 					tMove = pN - n;
 					
 				} else {
-					//********************* EXAMPLE **********************//
-					/*
-					 *evala constructor gia arraylists sthn Move
-					 */
 					child2.setLastPlayedMove(new Move(totalMove));
 					children.add(child2);
+					totalMove = theMove.getMove(); //--> les na mh xreiazetai?
 				}
 				
-
 				sMove = pN - n;
 			}
 			
@@ -459,39 +430,24 @@ public class Board {
 			for(int i=0; i < 24-move[1]; ++i){
 			
 				fMove += n;
-				
 				child = new Board(this);
 				
-				if(!child.isValidMove(fMove, n*move[1], player)) continue;
+				if(!breed(child, fMove, move[1], player, totalMove, 0)) continue;
 				
-				pos = fMove;
-				target = fMove + n*move[1];
-				
-				//theMove.setMove(playedMove);
-				child.makeMove(pos, target, n);
-
-				totalMove[0][0] = pos;
-				totalMove[0][1] = target;
+				child.setLastPlayedMove(new Move(totalMove));
+				children.add(child);
 				
 				for(int j=0; j < 24-move[0]; ++j){
 					
 					sMove += n;
+					child2 = new Board(this);
 					
-					if(!child.isValidMove(sMove, n*move[0], player)) continue;
-					child2 = new Board(child);
-					pos = sMove;
-					target = sMove + n*move[0];
-				
-					//theMove.setMove(playedMove);
-					child2.makeMove(pos, target, n);
-
-					totalMove[1][0] = pos;
-					totalMove[1][1] = target;
+					if(!breed(child, sMove, move[0], player, totalMove, 1)) continue;
 					
 					child2.setLastPlayedMove(new Move(totalMove));
 					children.add(child2);
+					totalMove = theMove.getMove();
 				}
-				
 
 				sMove = pN - n;
 			}
@@ -541,6 +497,7 @@ public class Board {
 
 			totalMove[0][0] = pos;
 			totalMove[0][1] = target;
+			///** --->>> GEORGIA EDW TIS ALLAGES KANTES MONH SOU MHN KANW KAMIA VLAKEIA
 			
 			
 			if(child.isTerminal()){
@@ -724,40 +681,44 @@ public class Board {
 	
 	private boolean isValidBearOff(int pos, int finalPos, Player player){
 		
-		
 		int move = finalPos + player.getSign()*pos;
 		byte[] possibleMoves = dice.getValues();
 		
 		if(finalPos >= 24){
+			//wrong bear off area
 			if(!(player == Player.GREEN)||!hasGreenReachedDestination()) return false;
-			
+			//you moved a checker exactly a number of your dice and got out of board
 			if ((finalPos == 24) && ((move == possibleMoves[0]) || (move == possibleMoves[1]))) return true;
-			
+			//the previous if was not true, so you moved a checker for more steps than the dice ones
+			//if other checker was before the one you chose then your move is not valid
 			for(int i = pos-1 ; i > 17; --i ){
 				if(colorAt(i) != player) return false;
 			}
-			
+			//however to  move the checker with the bigger distance of the bear off area is not always valid
+			//Only if you could not do other moves to move it ON the board
 			if((pos + possibleMoves[0] < 24)|| (pos + possibleMoves[1] < 24)) return false;
 			
-		}else{
+		} else {
+			//wrong bear off area
 			if(!(player == Player.RED)||!hasRedReachedDestination()) return false;
 			
+			//you moved a checker exactly a number of your dice and got out of board
 			if ((finalPos == -1) && ((move == possibleMoves[0]) || (move == possibleMoves[1]))) return true;
-			
+
+			//the previous if was not true, so you moved a checker for more steps than the dice ones
+			//if other checker was before the one you chose then your move is not valid
 			for(int i =  pos+1 ; i < 6; ++i ){
 				if(colorAt(i) != player) return false;
 			}
-			
+
+			//however to  move the checker with the bigger distance of the bear off area is not always valid
+			//Only if you could not do other moves to move it ON the board
 			if((pos - possibleMoves[0] > -1)|| (pos - possibleMoves[1] > -1)) return false;
 			
 		}
 		
 		return true;
 	}
-	
-	
-	
-	
 	
 	/**
 	 * Checks if you picked a correct piece
@@ -835,26 +796,24 @@ public class Board {
 				}
 			}
 			
-			
 			//check if a piece reached destination
 			if(n == 1){ 
 				if( target > 17 ) piecesATdestination[0]++;
-			}else{
+			} else {
 				if( target < 6 ) piecesATdestination[1]++;
 			}
 			
-		}else{
+		} else {
 			if(n == 1){
 				if(target >= 24)
 					freedPieces[0]++;
-			}else{ // n==-1
+			} else { // n==-1
 				if(target <= -1)
 					freedPieces[1]++;
 			}
 		}
 		
-		
-		
+		//ne
 		isTerminal();
 	}
 	
