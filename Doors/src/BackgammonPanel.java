@@ -599,6 +599,12 @@ public class BackgammonPanel extends JPanel implements MouseMotionListener {
 						if ((game.getDice().getTotalJumpsFromDice()) == jumpsYet) {
 							jumpsYet = 0;
 							doneMove = 0;
+							for (int j = 0; j < moves.length; ++j) {
+								if (lastPick + moves[i] < 24 && lastPick + moves[i] > -1){
+									System.out.println("jusst cleansed "+(lastPick +moves[i])+" last Pick "+lastPick);
+									buttons.get(lastPick + moves[i]).cleanse();
+								}
+							}
 							setMyTurn(false);
 							statusBar.setStatus("Nice! You're done.");
 							// break: well the if's end, so the outer break does
