@@ -603,7 +603,10 @@ public class BackgammonPanel extends JPanel implements MouseMotionListener  {
 			//false move results to backrolling so its helpful
 			//we should mention it in the manual :P //--MAKE DREAMS
 			picked = false;
-			lastPick = -1;
+			lastPick = -99;
+			
+			if(game.getGreensEaten() > 0)
+				pick(-1);
 
 		}
 	}
