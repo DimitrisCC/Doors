@@ -132,9 +132,10 @@ public class Board {
 	 */
 	private boolean breed(Board child, int pos, int move, Player player, int[][] totalMove, int where){
 		int n = player.getSign();
-		
+		//System.out.println("table before pick "+table[pos]);
 		if(!child.isValidMove(pos, n*move, player)) return false; //in getChildren: if (!breed(...)) continue
 
+		//System.out.println("pick "+pos+" table "+table[pos]);
 		int target = pos + n*move; 
 		
 		child.makeMove(pos, target, n);
@@ -175,13 +176,14 @@ public class Board {
 		System.out.println("ax"); //DEBUG
 	
 		Board child;
-		//int[][] playedMove = theMove.getMove();
 		int[][] totalMove = new int[4][2];
 
 		Move.resetMove(totalMove,0);
 		//int[][] totalMove = new int[4][2];
 		int n = player.getSign();
 		int fMove = pN - n; //fMove -> first move
+		int sMove = pN - n;
+		int tMove = pN - n;
 		int playerNum = player.ordinal(); // xreiazetai gia to eaten
 		int posOfEaten = pN - n;
 		
@@ -218,11 +220,70 @@ public class Board {
 					//u dont have moves to add...
 					child.setLastPlayedMove(new Move(totalMove));
 					children.add(child);
-				}else{
+				}else{// u still have 4-(j-1) moves to make
 					//vres na kaneis kati edw......exoun meinei alles 4 - (j-1) kiniseis akoma na ginoun alla gia idio zari.....
+					//twra an metakinises toulaxiston ena tote profanws mporouses na metakiniseis osa eixes giati
+					//to move einai idio, opote an ipirxe valid 8esi gia t 1 ipirxe kai gia ta alla
+					//opote en teli exoun meinei oi 4-(j-1) kiniseis(j-1 epeidi to j au3anetai afou xrisimopoii8ei)
+					//opote exoume mexri 3 kiniseis akoma...(i periptwsi kanena fagwmeno na mn mpike mesa einai sto telos t kwdika)
+					int movesLeft = 4 - (j-1);
+					boolean one_at_least = false;
+					for(int k=0; k < 24-allMoves[0]; ++k){
+						fMove += n;
+						Board child2 = new Board(child);
+						if(!breed(child2, fMove, allMoves[0], player, totalMove, 1)) continue;
+						
+						
+						if( movesLeft > 1){
+							
+							for(int l=0; l < 24-allMoves[0]; ++l ){
+								sMove += n;
+								Board child3 = new Board(child2);
+
+								if(!breed(child3, sMove, allMoves[0], player, totalMove, 2)) continue;
+								
+								if(movesLeft > 2){
+									for(int m=0; m < 24-allMoves[0]; ++m ){
+										tMove += n;
+										Board child4 = new Board(child2);
+
+										if(!breed(child4, tMove, allMoves[0], player, totalMove, 3)) continue;
+										
+										child4.setLastPlayedMove(new Move(totalMove));
+										children.add(child4);
+										one_at_least = true;
+										
+									}
+									tMove = pN - n;
+									Move.resetMove(totalMove, 2);	
+									
+								}else{
+									child3.setLastPlayedMove(new Move(totalMove));
+									children.add(child3);
+									one_at_least = true;
+								}
+							}
+							sMove = pN - n;
+							Move.resetMove(totalMove, 1);						
+						}else{
+							child2.setLastPlayedMove(new Move(totalMove));
+							children.add(child2);
+							one_at_least = true;
+						}
+						
+					}
+
+					if(!one_at_least){ // if no other move could be done you shoud still add child in children
+						child.setLastPlayedMove(new Move(totalMove));
+						children.add(child);
+
+						System.out.println("child added");
+					}
 				}
 				
+				
 			}else{
+				System.out.println("j = "+j);
 				// j will never be 3....(see while statement above)
 				if(j == 2){ // u moved exactly two checkers, the ones eaten
 					//u dont have moves to add...
@@ -263,7 +324,7 @@ public class Board {
 							for(int k=0; k < 24-allMoves[0]; ++k){
 								fMove += n;
 								Board child2 = new Board(reversed);
-								if(breed(child, posOfEaten, allMoves[0], player, totalMove, 1)){
+								if(breed(child2, posOfEaten, allMoves[0], player, totalMove, 1)){
 									one_at_least = true;
 									
 									child2.setLastPlayedMove(new Move(totalMove));
@@ -286,12 +347,12 @@ public class Board {
 
 						System.out.println("i == 2");
 						int skipedMove = (totalMove[0][0] == allMoves[1])? allMoves[0] : allMoves[1];
-						boolean one_at_leat = false;
+						boolean one_at_least = false;
 						for(int k=0; k < 24-skipedMove; ++k){
 							fMove += n;
 							Board child2 = new Board(child);
-							if(breed(child, posOfEaten, skipedMove, player, totalMove, 1)){
-								one_at_leat = true;
+							if(breed(child2, posOfEaten, skipedMove, player, totalMove, 1)){
+								one_at_least = true;
 								
 								child2.setLastPlayedMove(new Move(totalMove));
 								children.add(child2);
@@ -300,7 +361,7 @@ public class Board {
 							}
 						}
 						
-						if(!one_at_leat){ // if no other move could be done you shoud still add child in children
+						if(!one_at_least){ // if no other move could be done you shoud still add child in children
 							child.setLastPlayedMove(new Move(totalMove));
 							children.add(child);
 
@@ -448,7 +509,7 @@ public class Board {
 					sMove += n;
 					child2 = new Board(this);
 					
-					if(!breed(child, sMove, move[0], player, totalMove, 1)) continue;
+					if(!breed(child2, sMove, move[0], player, totalMove, 1)) continue;
 					
 					child2.setLastPlayedMove(new Move(totalMove));
 					ch2.add(child2);
