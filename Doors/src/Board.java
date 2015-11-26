@@ -340,11 +340,15 @@ public class Board {
 		//tote dn s dinei kamia kinisi! (la8os dld alla dn antexa na to dw ki auto tr)
 		
 		System.out.println("ax"); //DEBUG
+		
+		HashSet<Board> ch1 = new HashSet<Board>();
+		HashSet<Board> ch2 = new HashSet<Board>();
+		HashSet<Board> ch3 = new HashSet<Board>();
+		HashSet<Board> ch4 = new HashSet<Board>();
 	
 		Board child;
 		Board child2;
 		Move theMove = new Move();
-		//int[][] playedMove = theMove.getMove(); //---> den katalavainw ti prospatheis na kaneis
 		int[][] totalMove = theMove.getMove(); //---> giati idio antikeimeno??
 		//ArrayList<Integer> totalMoveList = new ArrayList<Integer>();
 		//--> twra oti kai na allazeis sta dyo de tha allazei sto idio antikeimeno?
@@ -361,7 +365,7 @@ public class Board {
 		int foMove = pN - n;
 		//int playerNum = player.ordinal(); // xreiazetai gia to eaten
 		//int posOfEaten = pN - n;
-		
+			
 		
 		for(int i=0; i < 24-move[0]; ++i){
 			
@@ -371,13 +375,18 @@ public class Board {
 			//************** EXAMPLE *******************//
 			if(!breed(child, fMove, move[0], player, totalMove, 0)) continue;
 			
+			child.setLastPlayedMove(new Move(totalMove));
+			ch1.add(child);
+			
 			for(int j=0; j < 24-move[1]; ++j){
 	
 				sMove += n;
 				child2 = new Board(child);
 				
 				if(!breed(child2, sMove, move[1], player, totalMove, 1)) continue;
-				
+					
+				child2.setLastPlayedMove(new Move(totalMove));
+				ch2.add(child2);
 				
 				if(dice.isDouble()){  
 
@@ -392,6 +401,10 @@ public class Board {
 						
 						if(!breed(child3, tMove, move[0], player, totalMove, 2)) continue;
 						
+									
+						child3.setLastPlayedMove(new Move(totalMove));
+						ch3.add(child3);
+						
 						for(int h=0; h < 24-move[0]; ++h){
 							
 							foMove += n;
@@ -400,10 +413,11 @@ public class Board {
 							if(!breed(child4, foMove, move[0], player, totalMove, 3)) continue;
 							
 							child4.setLastPlayedMove(new Move(totalMove));
-							children.add(child4);
+							ch4.add(child4);
 							totalMove = theMove.getMove();
 						}
-						
+
+						totalMove = theMove.getMove();
 						foMove = pN - n;
 					}
 
@@ -412,12 +426,13 @@ public class Board {
 				} else {
 					child2.setLastPlayedMove(new Move(totalMove));
 					children.add(child2);
-					totalMove = theMove.getMove(); //--> les na mh xreiazetai?
 				}
-				
-				sMove = pN - n;
+
+				totalMove = theMove.getMove();
 			}
-			
+		
+			totalMove = theMove.getMove();
+			sMove = pN - n;
 		}
 		
 		//children with the reversed move
@@ -435,7 +450,7 @@ public class Board {
 				if(!breed(child, fMove, move[1], player, totalMove, 0)) continue;
 				
 				child.setLastPlayedMove(new Move(totalMove));
-				children.add(child);
+				ch1.add(child);
 				
 				for(int j=0; j < 24-move[0]; ++j){
 					
@@ -445,13 +460,31 @@ public class Board {
 					if(!breed(child, sMove, move[0], player, totalMove, 1)) continue;
 					
 					child2.setLastPlayedMove(new Move(totalMove));
-					children.add(child2);
-					totalMove = theMove.getMove();
+					ch2.add(child2);
 				}
 
+				totalMove = theMove.getMove();
 				sMove = pN - n;
 			}
 	
+		}
+		
+		if(ch4.isEmpty()){
+			if(ch3.isEmpty()){
+				if(ch2.isEmpty()){
+					if(ch1.isEmpty()){
+						return;
+					}else{
+						children.addAll(ch1);
+					}
+				}else{
+					children.addAll(ch2);
+				}
+			}else{
+				children.addAll(ch3);
+			}
+		}else{
+			children.addAll(ch4);
 		}
 		
 	}
@@ -488,24 +521,14 @@ public class Board {
 			
 			child = new Board(this);
 			
-			if(!child.isValidMove(fMove, n*move[0], player)) continue;
-			int pos = fMove;
-			int target = fMove + n*move[0];
-			
-			//theMove.setMove(playedMove);
-			child.makeMove(pos, target, n);
-
-			totalMove[0][0] = pos;
-			totalMove[0][1] = target;
-			///** --->>> GEORGIA EDW TIS ALLAGES KANTES MONH SOU MHN KANW KAMIA VLAKEIA
-			
+			if(!breed(child, fMove, move[0], player, totalMove, 0)) continue;
 			
 			if(child.isTerminal()){
-				totalMove[1][0] = -99;
-				totalMove[1][1] = -99;
+				//totalMove[1][0] = -99;
+				//totalMove[1][1] = -99;
 				child.setLastPlayedMove(new Move(totalMove));
 				children.add(child);
-				continue; //pianei an einai mesa sto if????
+				continue;
 			}
 			
 		
@@ -513,20 +536,12 @@ public class Board {
 				
 				sMove += n;
 				
-				if(!child.isValidMove(sMove, n*move[1], player)) continue;
 				child2 = new Board(child);
-				pos = sMove;
-				target = sMove + n*move[0];
-				
-				//theMove.setMove(playedMove);
-				child2.makeMove(pos, target, n);
-				
-				totalMove[1][0] = pos;
-				totalMove[1][1] = target;
+				if(!breed(child2, sMove, move[1], player, totalMove, 1)) continue;
 				
 				if(child2.isTerminal()){
-					totalMove[2][0] = -99;
-					totalMove[2][1] = -99;
+					//totalMove[2][0] = -99;
+					//totalMove[2][1] = -99;
 					child2.setLastPlayedMove(new Move(totalMove));
 					children.add(child2);
 					continue; //pianei an einai mesa sto if????
@@ -539,22 +554,14 @@ public class Board {
 						
 						tMove += n;
 						
-						if(!child2.isValidMove(tMove, n*move[0], player)) continue;
 						child3 = new Board(child2);
-
-						pos = tMove;
-						target = tMove + n*move[0];
+						if(!breed(child3, tMove, move[0], player, totalMove, 2)) continue;
 						
-						//theMove.setMove(playedMove);
-						child3.makeMove(pos, target, n);
-						
-						totalMove[2][0] = pos;
-						totalMove[2][1] = target;
 						
 						if(child3.isTerminal()){
 
-							totalMove[3][0] = -99;
-							totalMove[3][1] = -99;
+							//totalMove[3][0] = -99;
+							//totalMove[3][1] = -99;
 							child3.setLastPlayedMove(new Move(totalMove));
 							children.add(child3);
 							continue; //pianei an einai mesa sto if????
@@ -564,69 +571,70 @@ public class Board {
 							
 							foMove += n;
 							
-							if(!child3.isValidMove(foMove, n*move[0], player)) continue;
-							
 							child4 = new Board(child3);
-							pos = foMove;
-							target =foMove+ n*move[0];
-							
-							//theMove.setMove(playedMove);
-							child4.makeMove(pos, target, n);
-							
-							totalMove[3][0] = pos;
-							totalMove[3][1] = target;
+							if(!breed(child4, foMove, move[0], player, totalMove, 3)) continue;
 							
 							//edw kai terminal na einai to paidi prosti8etai kanonika, dn xreiazetai elegxos, giati exoun ginei 2 kiniseis...
 							//-----> prepei na ginetai kai edw!
 							child4.setLastPlayedMove(new Move(totalMove));
 							children.add(child4);
 						}
+						foMove = pN - n;
+						totalMove = theMove.getMove();//reseting totalMove
 					}
 					
-				}else{
+					tMove = pN-n;
+				} else {
 					child2.setLastPlayedMove(new Move(totalMove));
 					children.add(child2);
-					
-					if(isValidMove(fMove, n*move[1], player)){
-						
-						pos = fMove;
-						target = fMove + n*move[1];
-						
-						//theMove.setMove(playedMove);
-						child.makeMove(pos, target, n);
-						
-						totalMove[0][0] = pos;
-						totalMove[0][1] = target;
-						
-						if(child.isTerminal()){
-
-							totalMove[1][0] = -99;
-							totalMove[1][1] = -99;
-							child.setLastPlayedMove(new Move(totalMove));
-							children.add(child);
-						}
-						
-						if(child.isValidMove(sMove, n*move[0], player)){
-							Board reversedChild = new Board(this);
-							
-							pos = sMove;
-							target = sMove + n*move[0];
-							
-							//theMove.setMove(playedMove);
-							reversedChild.makeMove(pos, target, n);
-							
-							totalMove[1][0] = pos;
-							totalMove[1][1] = target;
-
-							reversedChild.setLastPlayedMove(new Move(totalMove));
-							children.add(reversedChild);
-							
-						}
-					}
 				}
+				
+				totalMove = theMove.getMove();//reseting totalMove
+				
 			}
-			
+			sMove = pN-n;
+			totalMove = theMove.getMove();//reseting totalMove
 		}
+		
+		if(!dice.isDouble()){
+			System.out.println("NOT DOUBLE");
+			fMove = pN - n; //fMove -> first move
+			sMove = pN - n; //sMove -> second move
+			totalMove = theMove.getMove();
+			//******************************* reverse child *******
+		
+			for(int i=0; i < 6; ++i){
+			
+				fMove += n;
+				child = new Board(this);
+				
+				if(!breed(child, fMove, move[1], player, totalMove, 0)) continue;
+				
+				if(child.isTerminal()){
+					//totalMove[2][0] = -99;
+					//totalMove[2][1] = -99;
+					child.setLastPlayedMove(new Move(totalMove));
+					children.add(child);
+					continue; //pianei an einai mesa sto if????
+				}
+				
+				for(int j=0; j < 6; ++j){
+					
+					sMove += n;
+					child2 = new Board(this);
+					
+					if(!breed(child, sMove, move[0], player, totalMove, 1)) continue;
+					
+					child2.setLastPlayedMove(new Move(totalMove));
+					children.add(child2);
+				}
+
+				totalMove = theMove.getMove();
+				sMove = pN - n;
+			}
+	
+		}
+
 		
 		
 	}
