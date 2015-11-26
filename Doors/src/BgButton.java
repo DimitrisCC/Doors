@@ -25,16 +25,17 @@ public class BgButton extends JButton implements ActionListener {
 	}
 	
 	public void highlight(){
-		setBackground(Color.BLUE);
+		this.setBackground(Color.BLUE);
 		highlighted = true;
 	}
 	
 	public boolean isHighlighted(){
-		return highlighted;
+		return highlighted || getBackground()== Color.BLUE;
 	}
 	
 	public void cleanse(){
-		setBackground(null);
+		this.setBackground(null);
+		System.out.println("fuck yeah***********************************************");
 		highlighted = false;
 	}
 
@@ -61,9 +62,10 @@ public class BgButton extends JButton implements ActionListener {
 			else{
 				panel.jump(number-1);
 			}
+			/*
 			if(panel.getJumpsYet() == panel.getGameboard().getDice().getTotalJumpsFromDice()){
 				panel.setMyTurn(false);
-			}
+			}*/
 		}
 		
 	}
