@@ -210,7 +210,7 @@ public class Board {
 			++i;
 		}
 		
-		if(eaten[playerNum]==0){
+		if(child.getEaten(playerNum)==0){
 			//maybe u have more moves to add!!!
 			if(dice.isDouble()){
 				if(j == 4){ // u moved exactly four checkers, the ones eaten
@@ -230,6 +230,7 @@ public class Board {
 				}else{// j==1 because you had just only one checker eaten
 					if(i==1){ //this means you stopped iterations at the first move
 						//therefore you must continue the move and then see if the reversed move can be done
+						System.out.println("i == 1");
 						boolean one_at_least = false;
 						for(int k=0; k < 24-allMoves[1]; ++k){
 							fMove += n;
@@ -239,39 +240,50 @@ public class Board {
 							one_at_least = true;
 							child2.setLastPlayedMove(new Move(totalMove));
 							children.add(child2);
+
+							System.out.println("child added");
 						}
 						
 						if(!one_at_least){ // if no other move could be done you shoud still add child in children
 							child.setLastPlayedMove(new Move(totalMove));
 							children.add(child);
+
+							System.out.println("child added");
 						}
 						
 						totalMove = theMove.getMove();
 						//the reversed move
-						if(breed(child, posOfEaten, allMoves[1], player, totalMove, 0)){
-							
+						Board reversed = new Board(this);
+						if(breed(reversed, posOfEaten, allMoves[1], player, totalMove, 0)){
+
+							System.out.println("reversed ");
 							fMove = pN - n; //init again
 							one_at_least = false;
 							for(int k=0; k < 24-allMoves[0]; ++k){
 								fMove += n;
-								Board child2 = new Board(child);
+								Board child2 = new Board(reversed);
 								if(breed(child, posOfEaten, allMoves[0], player, totalMove, 1)){
 									one_at_least = true;
 									
 									child2.setLastPlayedMove(new Move(totalMove));
 									children.add(child2);
+
+									System.out.println("child added");
 								}
 							}
 							
 							if(!one_at_least){ // if no other move could be done you shoud still add child in children
 								child.setLastPlayedMove(new Move(totalMove));
 								children.add(child);
+
+								System.out.println("child added");
 							}
 						}
 						
 					}else{ //i==2 (see comments in while statement above)
 						//this  means that you skiped one move because it was not valid, so you must find which one you skiped and make the other one
-						
+
+						System.out.println("i == 2");
 						int skipedMove = (totalMove[0][0] == allMoves[1])? allMoves[0] : allMoves[1];
 						boolean one_at_leat = false;
 						for(int k=0; k < 24-skipedMove; ++k){
@@ -282,12 +294,16 @@ public class Board {
 								
 								child2.setLastPlayedMove(new Move(totalMove));
 								children.add(child2);
+
+								System.out.println("child added");
 							}
 						}
 						
 						if(!one_at_leat){ // if no other move could be done you shoud still add child in children
 							child.setLastPlayedMove(new Move(totalMove));
 							children.add(child);
+
+							System.out.println("child added");
 						}
 					}
 				}
@@ -298,11 +314,17 @@ public class Board {
 			if(eatens_before != eaten[playerNum]){
 				child.setLastPlayedMove(new Move(totalMove));
 				children.add(child);
+				System.out.println("child added");
 			}
 		} 
 		
 	}
 	
+	private int getEaten(int playerNum) {
+		
+		return eaten[playerNum];
+	}
+
 	//pN-> 0 when green plays, 23 when red plays
 	private void Normal_getChildren(byte[] move, HashSet<Board> children, int pN, Player player){
 		
