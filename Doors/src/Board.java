@@ -226,7 +226,7 @@ public class Board {
 					//to move einai idio, opote an ipirxe valid 8esi gia t 1 ipirxe kai gia ta alla
 					//opote en teli exoun meinei oi 4-(j-1) kiniseis(j-1 epeidi to j au3anetai afou xrisimopoii8ei)
 					//opote exoume mexri 3 kiniseis akoma...(i periptwsi kanena fagwmeno na mn mpike mesa einai sto telos t kwdika)
-					int movesLeft = 4 - (j-1);
+					int movesLeft = 4 - (j);
 					boolean one_at_least = false;
 					for(int k=0; k < 24-allMoves[0]; ++k){
 						fMove += n;
@@ -478,7 +478,7 @@ public class Board {
 					
 				} else {
 					child2.setLastPlayedMove(new Move(totalMove));
-					children.add(child2);
+					ch2.add(child2);
 				}
 
 			}
