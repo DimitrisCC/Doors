@@ -76,11 +76,21 @@ public class Board {
     public Board(Board board){
 		table = new int[24];
 		setTable(board.getTable());
+		//init eaten
 		eaten = new int[2];
+		eaten[0] = board.getGreensEaten();
+		eaten[1] = board.getRedsEaten();
+		//init piecesATdestination
         piecesATdestination = new int[2];
+        piecesATdestination[0] = board.getHomeCheckers()[0];
+        piecesATdestination[1] = board.getHomeCheckers()[1];
+        //init freedPieces
         freedPieces = new int[2];
-		
+		freedPieces[0] = board.getFreedPieces()[0];
+		freedPieces[1] = board.getFreedPieces()[1];
+        //init lastPlayedMove
 		lastPlayedMove = new Move();
+		lastPlayedMove.setMove(board.getLastPlayedMove().getMove());
 		
 		dice = new Dice();
 		dice.setValues(board.getDice().getValues());
@@ -169,8 +179,6 @@ public class Board {
 		//int[][] playedMove = theMove.getMove();
 		int[][] totalMove = theMove.getMove();
 		//int[][] totalMove = new int[4][2];
-		int pos = 0;
-		int target = 0;
 		int n = player.getSign();
 		int fMove = pN - n; //fMove -> first move
 		int playerNum = player.ordinal(); // xreiazetai gia to eaten
@@ -186,22 +194,16 @@ public class Board {
 		int j=0;
 		
 		int eatens_before = eaten[playerNum];
-
+		System.out.println(eaten[playerNum]+" "+posOfEaten);
 		while((eaten[playerNum] > 0 && i < 4)){
 			//---> PROSOXI!!! To eaten meiwnetai stn makeMove!!!!
 			if(allMoves[i] == 0) break; //this means that for simple moves you will stop iterations with i=3 and you wont try more moves...
 			//this will help you to decide whether you ignored one move or the other in the next step (see if statement that follows)
-			
-			if(child.isValidMove(posOfEaten, n*allMoves[i], player)){
-				pos  = posOfEaten;
-				target = posOfEaten + n*allMoves[i];
-				
-				//theMove.setMove(playedMove);
-				child.makeMove(pos, target, n);
 
-				totalMove[j][0] = pos;
-				totalMove[j][1] = target;
-				
+			System.out.println("EDWWWWWW "+allMoves[i]);
+			if(breed(child, posOfEaten, allMoves[i], player, totalMove, j)){
+
+				System.out.println("EDWWWWWW paiddi");
 				++j;
 			}
 			
@@ -231,21 +233,12 @@ public class Board {
 						boolean one_at_least = false;
 						for(int k=0; k < 24-allMoves[1]; ++k){
 							fMove += n;
-							if(child.isValidMove(fMove, n*allMoves[1], player)){
-								one_at_least = true;
-								Board child2 = new Board(child);
-								pos = fMove;
-								target = fMove + n*allMoves[1];
-								
-								//theMove.setMove(playedMove);
-								child2.makeMove(pos, target, n);
-
-								totalMove[j][0] = pos;
-								totalMove[j][1] = target;
-								
-								child2.setLastPlayedMove(new Move(totalMove));
-								children.add(child2);
-							}
+							Board child2 = new Board(child);
+							if(!breed(child2, fMove, allMoves[1], player, totalMove, 1)) continue;
+							
+							one_at_least = true;
+							child2.setLastPlayedMove(new Move(totalMove));
+							children.add(child2);
 						}
 						
 						if(!one_at_least){ // if no other move could be done you shoud still add child in children
@@ -253,32 +246,17 @@ public class Board {
 							children.add(child);
 						}
 						
+						totalMove = theMove.getMove();
 						//the reversed move
-						if(child.isValidMove(posOfEaten, n*allMoves[1], player)){
-							pos = posOfEaten;
-							target = posOfEaten + n*allMoves[1];
-							
-							//theMove.setMove(playedMove);
-							child.makeMove(pos, target, n);
-
-							totalMove[0][0] = pos;
-							totalMove[0][1] = target;
+						if(breed(child, posOfEaten, allMoves[1], player, totalMove, 0)){
 							
 							fMove = pN - n; //init again
 							one_at_least = false;
 							for(int k=0; k < 24-allMoves[0]; ++k){
 								fMove += n;
-								if(child.isValidMove(fMove, n*allMoves[0],player)){
+								Board child2 = new Board(child);
+								if(breed(child, posOfEaten, allMoves[0], player, totalMove, 1)){
 									one_at_least = true;
-									Board child2 = new Board(child);
-									pos = fMove;
-									target = fMove + n*allMoves[0];
-									
-									//theMove.setMove(playedMove);
-									child2.makeMove(pos, target, n);
-
-									totalMove[1][0] = pos;
-									totalMove[1][1] = target;
 									
 									child2.setLastPlayedMove(new Move(totalMove));
 									children.add(child2);
@@ -298,17 +276,9 @@ public class Board {
 						boolean one_at_leat = false;
 						for(int k=0; k < 24-skipedMove; ++k){
 							fMove += n;
-							if(child.isValidMove(fMove, n*skipedMove, player)){
+							Board child2 = new Board(child);
+							if(breed(child, posOfEaten, skipedMove, player, totalMove, 1)){
 								one_at_leat = true;
-								Board child2 = new Board(child);
-								pos = fMove;
-								target = fMove + n*skipedMove;
-								
-								//theMove.setMove(playedMove);
-								child2.makeMove(pos, target, n);
-
-								totalMove[j][0] = pos;
-								totalMove[j][1] = target;
 								
 								child2.setLastPlayedMove(new Move(totalMove));
 								children.add(child2);
@@ -741,6 +711,8 @@ public class Board {
 		}else if (pos == -1){ // start position is the bar with eaten pieces for the green player
 			return (eaten[0] > 0);
 		}else if (pos == 24){ // start position is the bar with eaten pieces for the red player
+
+			System.out.println(pos+" "+eaten[1]);
 			return (eaten[1] > 0);
 		}else{
 			return false;
