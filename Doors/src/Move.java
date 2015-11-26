@@ -70,5 +70,12 @@ public class Move {
 	{
 		score = value;
 	}
+	
+	public static void resetMove(int[][] theMove, int fromWhere){
+		for(int i=fromWhere; i < theMove.length; ++i){
+			theMove[i][0] =  -99;
+			theMove[i][1] = -99;
+		}
+	}
 
 }
