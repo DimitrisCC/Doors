@@ -386,7 +386,9 @@ public class Board {
 		
 		return eaten[playerNum];
 	}
-
+	
+	
+	
 	//pN-> 0 when green plays, 23 when red plays
 	private void Normal_getChildren(byte[] move, HashSet<Board> children, int pN, Player player){
 		
