@@ -9,6 +9,7 @@ public enum Player {
 	
 	private byte sign;
 	private Player opponent;
+	private int start;
 	
 	static {
 		Player.RED.sign = -1;
@@ -20,6 +21,11 @@ public enum Player {
 		Player.GREEN.opponent = Player.RED;
 		Player.NONE.opponent = Player.NONE;
 		Player.CHANCE.opponent = Player.CHANCE;
+		
+		Player.RED.start = 23;
+		Player.GREEN.start = 0;
+		Player.NONE.start = -99;
+		Player.CHANCE.start = -99;
 	}
 	
 	public byte getSign(){
@@ -30,4 +36,7 @@ public enum Player {
 		return opponent;
 	}
 	
+	public int getStart(){
+		return start;
+	}
 }

@@ -62,8 +62,11 @@ public class Board {
 
     private Player winner = Player.NONE;
     
+    private int[][] totalMove;
+    
     public Board(){
         table = new int[24];
+        totalMove = new int[4][2];
         initBoard();
         eaten = new int[2];
         piecesATdestination = new int[2];
@@ -91,6 +94,9 @@ public class Board {
         //init lastPlayedMove
 		lastPlayedMove = new Move();
 		lastPlayedMove.setMove(board.getLastPlayedMove().getMove());
+		//int totalMove (moves until now for the children)
+		totalMove = new int[4][2];
+		totalMove = board.getTotalMove();
 		
 		dice = new Dice();
 		dice.setValues(board.getDice().getValues());
@@ -112,10 +118,7 @@ public class Board {
 	
 	public int[] getHomeCheckers() { return piecesATdestination; }
 	
-	public void fluctuateEaten(Player player, int amount, int index){
-		if(isValidTarget(index, player))
-			eaten[player.ordinal()] += amount;
-	}
+	public int[][] getTotalMove(){ return this.totalMove; }
 	
 	/**
 	 * Breeds a new child board
@@ -140,8 +143,8 @@ public class Board {
 		
 		child.makeMove(pos, target, n);
 		
-		totalMove[where][0] = pos;
-		totalMove[where][1] = target;
+		child.getTotalMove()[where][0] = pos;
+		child.getTotalMove()[where][1] = target;
 		
 		return true;
 	}
@@ -149,7 +152,7 @@ public class Board {
 	//if returned list is empty, no valid moves can be done
 	public HashSet<Board> getChildren(Dice dice, Player player){
 		HashSet<Board> children = new HashSet<Board>();
-		int pN = (player == Player.RED)? RED_START_POS : GREEN_START_POS;
+		/*int pN = (player == Player.RED)? RED_START_POS : GREEN_START_POS;
 		
 		if(eaten[player.ordinal()] > 0 ){
 			System.out.println("eeeeeeaten"); //DEBUG
@@ -161,7 +164,10 @@ public class Board {
 		}else{
 			System.out.println("NORMALLLLLLLLLLLLLLLl"); //DEBUG
 			Normal_getChildren(dice.getValues(), children, pN, player);
-		}
+		}*/
+		
+		yolo_getChildren(dice.getValues(), children, player);
+		
 		System.out.println("Children num: "+children.size());
 		return children;
 		
@@ -387,7 +393,101 @@ public class Board {
 		return eaten[playerNum];
 	}
 	
+	private void multiBreed(int move, Board parent, Player player, int[][] totalMove, int where, HashSet<Board> level){
+		Board child;
+		int n = player.getSign();
+		int pos = player.getStart() - n; //-->>> pN - n
+		
+		if(parent.getGreensEaten() > 0){
+			child = new Board(parent);
+			breed(child, pos, move, player, totalMove, where);
+			child.setLastPlayedMove(new Move(totalMove));
+			level.add(child);
+		} else {
+			for(int i = 0; i < 24-move; ++i){
+				pos += n;
+				child = new Board(parent);
+				
+				if(!breed(child, pos, move, player, child.getTotalMove(), where)) continue;
+				
+				child.setLastPlayedMove(new Move(child.getTotalMove()));
+				level.add(child);
+			}
+		}
+	}
 	
+	private void yolo_getChildren(byte[] move, HashSet<Board> children, Player player){
+		
+		HashSet<Board> level1 = new HashSet<Board>();
+		HashSet<Board> level1_r = new HashSet<Board>(); //reversed
+		HashSet<Board> level2 = new HashSet<Board>();
+		HashSet<Board> level2_r = new HashSet<Board>();
+		
+		HashSet<Board> level3 = new HashSet<Board>();
+		HashSet<Board> level4 = new HashSet<Board>();
+		
+		Move.resetMove(this.totalMove, 0);
+		
+		while(true){
+			//first move
+			multiBreed(move[0], this, player, this.getTotalMove(), 0, level1);
+			
+			System.out.println("************* LEVEL 1 " + level1.size());
+			
+			//second move
+			if(!level1.isEmpty()){
+				for(Board parent : level1){
+					multiBreed(move[1], parent, player, parent.getTotalMove(), 1, level2);
+				}
+				System.out.println("************* LEVEL 2 " + level2.size());
+			} else { break; }
+			
+			if(dice.isDouble()){
+				//third move
+				if(!level2.isEmpty()){
+					for(Board parent : level2){
+						multiBreed(move[0], parent, player, parent.getTotalMove(), 2, level3);
+					}
+					System.out.println("************* LEVEL 3 " + level3.size());
+				} else { children.addAll(level1); break; }
+				
+				//fourth move
+				if(!level3.isEmpty()){
+					for(Board parent : level3){
+						multiBreed(move[0], parent, player, parent.getTotalMove(), 3, level4);
+					}
+					System.out.println("************* LEVEL 4 " + level4.size());
+				} else { children.addAll(level2); break; }
+				
+				if(level4.isEmpty()){ children.addAll(level3); break; }
+				
+				//finally
+				children.addAll(level4);
+				break;
+				
+			} else { //do the reverse
+				//first move - reversed
+				multiBreed(move[1], this, player, this.getTotalMove(), 0, level1_r);
+				
+				System.out.println("************* LEVEL 1_r " + level1_r.size());
+				
+				//second move
+				if(!level1_r.isEmpty()){
+					for(Board parent : level1_r){
+						multiBreed(move[0], parent, player, parent.getTotalMove(), 1, level2_r);
+					}
+					System.out.println("************* LEVEL 2_r " + level2_r.size());
+				}
+				
+				if(level2_r.isEmpty()){ children.addAll(level1_r); break; }
+				
+				//finally
+				children.addAll(level2_r);
+				break;
+			}
+		}
+		
+	}
 	
 	//pN-> 0 when green plays, 23 when red plays
 	private void Normal_getChildren(byte[] move, HashSet<Board> children, int pN, Player player){
