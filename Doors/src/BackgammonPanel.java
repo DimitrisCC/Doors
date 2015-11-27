@@ -5,6 +5,7 @@ import java.awt.event.ActionListener;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseMotionListener;
 import java.util.ArrayList;
+import java.util.HashSet;
 
 import javax.swing.*;
 
@@ -54,6 +55,9 @@ public class BackgammonPanel extends JPanel implements MouseMotionListener {
 	private boolean hasPlayerRolled;
 
 	private boolean isItMyTurn; // is it the turn of the player?
+
+	private int numOfMoves = 0;
+	private int numOfMovesDone = 0;
 
 	public BackgammonPanel(Board game) {
 		this.game = game;
@@ -294,7 +298,25 @@ public class BackgammonPanel extends JPanel implements MouseMotionListener {
 				buttonRoll.setBorderPainted(false);
 				buttonRoll.setVerticalAlignment(SwingConstants.BOTTOM);
 				buttonRoll.setForeground(Color.WHITE);
-				b.getStatusBar().setMoveValues(m);
+				HashSet<Board> ch = b.getGameboard().getChildren(b.getGameboard().getDice(), Player.GREEN);
+				if(ch.isEmpty()){
+					b.getStatusBar().setStatus("You have no moves to make. You loose your turn. Opponet plays!");
+					try {
+						Thread.sleep(2000);
+					} catch (InterruptedException e1) {
+						e1.printStackTrace();
+					}
+					b.setMyTurn(false);
+				}else{
+					Board child = ch.iterator().next();
+					int[][] move = child.getLastPlayedMove().getMove();
+					int i =1;
+					for(; i < move.length; ++i){
+						if(move[i-1][0] == move[i-1][1]) b.setNumOfMoves(i-1); //i-1 giati an px ginei true to if stn i=2
+						//tote mporouses na kaneis mono mia kinisi opote i-1
+					}
+					b.getStatusBar().setMoveValues(m);
+				}
 				b.repaint();
 				b.setRoll(false);
 				b.setPlayerRolled(true);
@@ -332,6 +354,11 @@ public class BackgammonPanel extends JPanel implements MouseMotionListener {
 		for (int i = 0; i < freed[1]; ++i) {
 			getCoordinates(g, image, 27);
 		}
+	}
+
+	public void setNumOfMoves(int i) {
+		numOfMoves = i;
+		
 	}
 
 	private void getCoordinates(Graphics g, Image image, int pos) {
@@ -545,18 +572,18 @@ public class BackgammonPanel extends JPanel implements MouseMotionListener {
 		if (game.isValidPick(index, player)) {
 			statusBar.setStatus("Got your piece, mate!");
 			this.position = index;
-
+			boolean getInTheGame = false;
 			moves = game.getDice().getValues();
 			for (int i = 0; i < moves.length; ++i) {
 				// if(moves[0] == 0) continue;
 				if (game.isValidTarget(index + moves[i], player)) {
-
 					if (((!game.getDice().isDouble()) && moves[i] != doneMove)
 							|| (game.getDice().isDouble() && jumpsYet < game.getDice().getTotalJumpsFromDice())) {
 
-						if (index + moves[i] < 24 && index + moves[i] > -1)
+						if (index + moves[i] < 24 && index + moves[i] > -1){
+							if(index == -1) getInTheGame = true;
 							buttons.get(index + moves[i]).highlight();
-						else if (index + moves[i] == 24) {
+						}else if (index + moves[i] == 24) {
 							// ((BgButton) btnBearOff).highlight();
 						}
 
@@ -564,7 +591,14 @@ public class BackgammonPanel extends JPanel implements MouseMotionListener {
 
 				}
 			}
-
+			
+			System.out.println(getInTheGame);
+			
+			if(!getInTheGame && (index == -1)){
+				System.out.println("well u lost ur turn fucking asswhole");
+				setMyTurn(false);
+			}
+			
 			picked = true;
 			lastPick = index;
 
@@ -591,14 +625,17 @@ public class BackgammonPanel extends JPanel implements MouseMotionListener {
 						game.makeMove(this.position, index, player.getSign()); // make
 																				// the
 																				// move
-																				// finally
+						numOfMovesDone++;													// finally
 						jumpsYet += m;
 						doneMove = m;
 						statusBar.setStatus("Wow. Nice move! ^_^");
 
-						if ((game.getDice().getTotalJumpsFromDice()) == jumpsYet) {
+						if (((game.getDice().getTotalJumpsFromDice()) == jumpsYet) || numOfMovesDone == numOfMoves) {
 							jumpsYet = 0;
 							doneMove = 0;
+							numOfMovesDone = 0;
+							numOfMoves = 0;//dn eimai sigouri edw
+							
 							for (int j = 0; j < moves.length; ++j) {
 								if (lastPick + moves[i] < 24 && lastPick + moves[i] > -1){
 									System.out.println("jusst cleansed "+(lastPick +moves[i])+" last Pick "+lastPick);
