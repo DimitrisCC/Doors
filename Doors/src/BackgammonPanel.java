@@ -556,7 +556,7 @@ public class BackgammonPanel extends JPanel implements MouseMotionListener {
 
 						if (index + moves[i] < 24 && index + moves[i] > -1)
 							buttons.get(index + moves[i]).highlight();
-						else if ((index + moves[i] == 24) || (index + moves[i] == -1)) {
+						else if (index + moves[i] == 24) {
 							// ((BgButton) btnBearOff).highlight();
 						}
 

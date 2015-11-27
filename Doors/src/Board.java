@@ -786,9 +786,12 @@ public class Board {
 				return false;
 			}
 		}else if (pos == -1){ // start position is the bar with eaten pieces for the green player
+			
+			if(player != Player.GREEN) return false;
+			
 			return (eaten[0] > 0);
 		}else if (pos == 24){ // start position is the bar with eaten pieces for the red player
-
+			if(player != Player.RED) return false;
 			System.out.println(pos+" "+eaten[1]);
 			return (eaten[1] > 0);
 		}else{
@@ -908,8 +911,11 @@ public class Board {
 			else 
 				return false;
 		}else if (moveTarget < 0){ // o kokkinos mazeuei
+			if(player != Player.RED) return false;
 			return hasRedReachedDestination();
 		}else if (moveTarget > 23){ // o prasinos mazeuei
+
+			if(player != Player.GREEN) return false;
 			return hasGreenReachedDestination();
 		}else{
 			return false;
