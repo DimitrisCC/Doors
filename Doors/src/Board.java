@@ -178,239 +178,31 @@ public class Board {
 		
 	}
 	
-	//pN-> 0 when green plays, 23 when red plays
-	private void Eaten_getChildren(byte[] move, HashSet<Board> children, int pN, Player player){
-		
-		//-----> auti ti stigmi dn kanei to e3is: an dn mporeis na kaneis px 4 kiniseis alla mono mexri 3 me oti tropo ki an prospa8eis
-		//tote dn s dinei kamia kinisi! (la8os dld alla dn antexa na to dw ki auto tr)
-		
-		System.out.println("ax"); //DEBUG
 	
-		Board child;
-		int[][] totalMove = new int[4][2];
-
-		Move.resetMove(totalMove,0);
-		//int[][] totalMove = new int[4][2];
-		int n = player.getSign();
-		int fMove = pN - n; //fMove -> first move
-		int sMove = pN - n;
-		int tMove = pN - n;
-		int playerNum = player.ordinal(); // xreiazetai gia to eaten
-		int posOfEaten = pN - n;
+	
+	private int getEaten(Player p) {
 		
-		int[] allMoves = {move[0], move[1], 0, 0};
-		if(dice.isDouble()){
-			allMoves[2] = allMoves[3] = move[0];
-		}
-		
-		child = new Board(this);
-		int i=0;
-		int j=0;
-		
-		int eatens_before = eaten[playerNum];
-		System.out.println(eaten[playerNum]+" "+posOfEaten);
-		while((eaten[playerNum] > 0 && i < 4)){
-			//---> PROSOXI!!! To eaten meiwnetai stn makeMove!!!!
-			if(allMoves[i] == 0) break; //this means that for simple moves you will stop iterations with i=3 and you wont try more moves...
-			//this will help you to decide whether you ignored one move or the other in the next step (see if statement that follows)
-
-			System.out.println("EDWWWWWW "+allMoves[i]);
-			if(breed(child, posOfEaten, allMoves[i], player, totalMove, j)){
-
-				System.out.println("EDWWWWWW paiddi");
-				++j;
-			}
-			
-			++i;
-		}
-		
-		if(child.getEaten(playerNum)==0){
-			//maybe u have more moves to add!!!
-			if(dice.isDouble()){
-				if(j == 4){ // u moved exactly four checkers, the ones eaten
-					//u dont have moves to add...
-					child.setLastPlayedMove(new Move(totalMove));
-					children.add(child);
-				}else{// u still have 4-(j-1) moves to make
-					//vres na kaneis kati edw......exoun meinei alles 4 - (j-1) kiniseis akoma na ginoun alla gia idio zari.....
-					//twra an metakinises toulaxiston ena tote profanws mporouses na metakiniseis osa eixes giati
-					//to move einai idio, opote an ipirxe valid 8esi gia t 1 ipirxe kai gia ta alla
-					//opote en teli exoun meinei oi 4-(j-1) kiniseis(j-1 epeidi to j au3anetai afou xrisimopoii8ei)
-					//opote exoume mexri 3 kiniseis akoma...(i periptwsi kanena fagwmeno na mn mpike mesa einai sto telos t kwdika)
-					int movesLeft = 4 - (j);
-					boolean one_at_least = false;
-					for(int k=0; k < 24-allMoves[0]; ++k){
-						fMove += n;
-						Board child2 = new Board(child);
-						if(!breed(child2, fMove, allMoves[0], player, totalMove, 1)) continue;
-						
-						
-						if( movesLeft > 1){
-							
-							for(int l=0; l < 24-allMoves[0]; ++l ){
-								sMove += n;
-								Board child3 = new Board(child2);
-
-								if(!breed(child3, sMove, allMoves[0], player, totalMove, 2)) continue;
-								
-								if(movesLeft > 2){
-									for(int m=0; m < 24-allMoves[0]; ++m ){
-										tMove += n;
-										Board child4 = new Board(child2);
-
-										if(!breed(child4, tMove, allMoves[0], player, totalMove, 3)) continue;
-										
-										child4.setLastPlayedMove(new Move(totalMove));
-										children.add(child4);
-										one_at_least = true;
-										
-									}
-									tMove = pN - n;
-									Move.resetMove(totalMove, 2);	
-									
-								}else{
-									child3.setLastPlayedMove(new Move(totalMove));
-									children.add(child3);
-									one_at_least = true;
-								}
-							}
-							sMove = pN - n;
-							Move.resetMove(totalMove, 1);						
-						}else{
-							child2.setLastPlayedMove(new Move(totalMove));
-							children.add(child2);
-							one_at_least = true;
-						}
-						
-					}
-
-					if(!one_at_least){ // if no other move could be done you shoud still add child in children
-						child.setLastPlayedMove(new Move(totalMove));
-						children.add(child);
-
-						System.out.println("child added");
-					}
-				}
-				
-				
-			}else{
-				System.out.println("j = "+j);
-				// j will never be 3....(see while statement above)
-				if(j == 2){ // u moved exactly two checkers, the ones eaten
-					//u dont have moves to add...
-					child.setLastPlayedMove(new Move(totalMove));
-					children.add(child);
-				}else{// j==1 because you had just only one checker eaten
-					if(i==1){ //this means you stopped iterations at the first move
-						//therefore you must continue the move and then see if the reversed move can be done
-						System.out.println("i == 1");
-						boolean one_at_least = false;
-						for(int k=0; k < 24-allMoves[1]; ++k){
-							fMove += n;
-							Board child2 = new Board(child);
-							if(!breed(child2, fMove, allMoves[1], player, totalMove, 1)) continue;
-							
-							one_at_least = true;
-							child2.setLastPlayedMove(new Move(totalMove));
-							children.add(child2);
-
-							System.out.println("child added");
-						}
-						
-						if(!one_at_least){ // if no other move could be done you shoud still add child in children
-							child.setLastPlayedMove(new Move(totalMove));
-							children.add(child);
-
-							System.out.println("child added");
-						}
-
-						Move.resetMove(totalMove,0);
-						//the reversed move
-						Board reversed = new Board(this);
-						if(breed(reversed, posOfEaten, allMoves[1], player, totalMove, 0)){
-
-							System.out.println("reversed ");
-							fMove = pN - n; //init again
-							one_at_least = false;
-							for(int k=0; k < 24-allMoves[0]; ++k){
-								fMove += n;
-								Board child2 = new Board(reversed);
-								if(breed(child2, posOfEaten, allMoves[0], player, totalMove, 1)){
-									one_at_least = true;
-									
-									child2.setLastPlayedMove(new Move(totalMove));
-									children.add(child2);
-
-									System.out.println("child added");
-								}
-							}
-							
-							if(!one_at_least){ // if no other move could be done you shoud still add child in children
-								child.setLastPlayedMove(new Move(totalMove));
-								children.add(child);
-
-								System.out.println("child added");
-							}
-						}
-						
-					}else{ //i==2 (see comments in while statement above)
-						//this  means that you skiped one move because it was not valid, so you must find which one you skiped and make the other one
-
-						System.out.println("i == 2");
-						int skipedMove = (totalMove[0][0] == allMoves[1])? allMoves[0] : allMoves[1];
-						boolean one_at_least = false;
-						for(int k=0; k < 24-skipedMove; ++k){
-							fMove += n;
-							Board child2 = new Board(child);
-							if(breed(child2, posOfEaten, skipedMove, player, totalMove, 1)){
-								one_at_least = true;
-								
-								child2.setLastPlayedMove(new Move(totalMove));
-								children.add(child2);
-
-								System.out.println("child added");
-							}
-						}
-						
-						if(!one_at_least){ // if no other move could be done you shoud still add child in children
-							child.setLastPlayedMove(new Move(totalMove));
-							children.add(child);
-
-							System.out.println("child added");
-						}
-					}
-				}
-				
-			}
-			
-		}else{
-			if(eatens_before != eaten[playerNum]){
-				child.setLastPlayedMove(new Move(totalMove));
-				children.add(child);
-				System.out.println("child added");
-			}
-		} 
-		
+		return eaten[p.ordinal()];
 	}
 	
-	private int getEaten(int playerNum) {
-		
-		return eaten[playerNum];
+	private boolean hasReachedDestination(Player p) {
+			
+		return (p == Player.GREEN)? hasGreenReachedDestination() : hasGreenReachedDestination();
 	}
 	
-	private void multiBreed(int move, Board parent, Player player, int where, HashSet<Board> level){
+	private void multiBreed(int move, Board parent, Player player, int where, HashSet<Board> level, boolean inDestination){
 		Board child;
 		int n = player.getSign();
-		int pos = player.getStart() - n; //-->>> pN - n
+		int pos = (inDestination? player.getBearOffPos() : player.getStart()) - n; //-->>> pN - n
 		
-		if((player == Player.GREEN && parent.getGreensEaten() > 0)  ||
-				(player == Player.RED && parent.getRedsEaten() > 0)	){
+		if(parent.getEaten(player) > 0){
 			child = new Board(parent);
 			if(!breed(child, pos, move, player, child.getTotalMove(), where)) return;
 			child.setLastPlayedMove(new Move( child.getTotalMove()));
 			level.add(child);
 		} else {
-			for(int i = 0; i < 24-move; ++i){
+			int iterateUntil = inDestination? 6 : 24-move;
+			for(int i = 0; i < iterateUntil; ++i){
 				pos += n;
 				child = new Board(parent);
 				
@@ -436,14 +228,14 @@ public class Board {
 		
 		while(true){
 			//first move
-			multiBreed(move[0], this, player, 0, level1);
+			multiBreed(move[0], this, player, 0, level1, hasReachedDestination(player));
 			
 			System.out.println("************* LEVEL 1 " + level1.size());
 			
 			//second move
 			if(!level1.isEmpty()){
 				for(Board parent : level1){
-					multiBreed(move[1], parent, player, 1, level2);
+					multiBreed(move[1], parent, player, 1, level2, hasReachedDestination(player));
 				}
 				System.out.println("************* LEVEL 2 " + level2.size());
 			}
@@ -452,7 +244,7 @@ public class Board {
 				//third move
 				if(!level2.isEmpty()){
 					for(Board parent : level2){
-						multiBreed(move[0], parent, player, 2, level3);
+						multiBreed(move[0], parent, player, 2, level3, hasReachedDestination(player));
 					}
 					System.out.println("************* LEVEL 3 " + level3.size());
 				} else { children.addAll(level1); break; }
@@ -460,7 +252,7 @@ public class Board {
 				//fourth move
 				if(!level3.isEmpty()){
 					for(Board parent : level3){
-						multiBreed(move[0], parent, player, 3, level4);
+						multiBreed(move[0], parent, player, 3, level4, hasReachedDestination(player));
 					}
 					System.out.println("************* LEVEL 4 " + level4.size());
 				} else { children.addAll(level2); break; }
@@ -475,14 +267,14 @@ public class Board {
 				
 				Move.resetMove(this.getTotalMove(), 0);
 				//first move - reversed
-				multiBreed(move[1], this, player, 0, level1_r);
+				multiBreed(move[1], this, player, 0, level1_r, hasReachedDestination(player));
 				
 				System.out.println("************* LEVEL 1_r " + level1_r.size());
 				
 				//second move
 				if(!level1_r.isEmpty()){
 					for(Board parent : level1_r){
-						multiBreed(move[0], parent, player, 1, level2);
+						multiBreed(move[0], parent, player, 1, level2, hasReachedDestination(player));
 					}
 					System.out.println("************* LEVEL 2_r " + level2.size());
 				}
@@ -497,159 +289,7 @@ public class Board {
 		
 	}
 	
-	//pN-> 0 when green plays, 23 when red plays
-	private void Normal_getChildren(byte[] move, HashSet<Board> children, int pN, Player player){
-		
-		//-----> auti ti stigmi dn kanei to e3is: an dn mporeis na kaneis px 4 kiniseis alla mono mexri 3 me oti tropo ki an prospa8eis
-		//tote dn s dinei kamia kinisi! (la8os dld alla dn antexa na to dw ki auto tr)
-		
-		System.out.println("ax"); //DEBUG
-		
-		HashSet<Board> ch1 = new HashSet<Board>();
-		HashSet<Board> ch2 = new HashSet<Board>();
-		HashSet<Board> ch3 = new HashSet<Board>();
-		HashSet<Board> ch4 = new HashSet<Board>();
 	
-		Board child;
-		Board child2;
-		int[][] totalMove = new int[4][2]; //---> giati idio antikeimeno??
-
-		Move.resetMove(totalMove,0);
-		//ArrayList<Integer> totalMoveList = new ArrayList<Integer>();
-		//--> twra oti kai na allazeis sta dyo de tha allazei sto idio antikeimeno?
-		//int[][] playedMove = new int[4][2];
-		//int[][] totalMove = new int[4][2];
-		
-		int n = player.getSign();
-		int fMove = pN - n; //fMove -> first move
-		System.out.println("YOUR FUCKING POOOOOS "+fMove);
-		int sMove = pN - n; //sMove -> second move
-		int tMove = pN - n;
-		int foMove = pN - n;
-		//int playerNum = player.ordinal(); // xreiazetai gia to eaten
-		//int posOfEaten = pN - n;
-			
-		
-		for(int i=0; i < 24-move[0]; ++i){
-			
-			fMove += n;
-			child = new Board(this); //--->telika to dimiourgw kai apla to paizw mesa sth breed gia na mhn to epistrefw
-			
-			//************** EXAMPLE *******************//
-			if(!breed(child, fMove, move[0], player, totalMove, 0)) continue;
-			
-			child.setLastPlayedMove(new Move(totalMove));
-			ch1.add(child);
-			
-			for(int j=0; j < 24-move[1]; ++j){
-	
-				sMove += n;
-				child2 = new Board(child);
-				
-				if(!breed(child2, sMove, move[1], player, totalMove, 1)) continue;
-					
-				child2.setLastPlayedMove(new Move(totalMove));
-				ch2.add(child2);
-				
-				if(dice.isDouble()){  
-
-					System.out.println("in DOUBLE");	
-					Board child3;
-					Board child4;
-					
-					for(int k=0; k < 24-move[0]; ++k){
-						
-						tMove += n;
-						child3 = new Board(child2);
-						
-						if(!breed(child3, tMove, move[0], player, totalMove, 2)) continue;
-						
-									
-						child3.setLastPlayedMove(new Move(totalMove));
-						ch3.add(child3);
-						
-						for(int h=0; h < 24-move[0]; ++h){
-							
-							foMove += n;
-							child4 = new Board(child3);
-							
-							if(!breed(child4, foMove, move[0], player, totalMove, 3)) continue;
-							
-							child4.setLastPlayedMove(new Move(totalMove));
-							ch4.add(child4);
-						}
-
-						Move.resetMove(totalMove,3);
-						foMove = pN - n;
-					}
-
-					Move.resetMove(totalMove,2);
-					tMove = pN - n;
-					
-				} else {
-					child2.setLastPlayedMove(new Move(totalMove));
-					ch2.add(child2);
-				}
-
-			}
-
-			Move.resetMove(totalMove,1);
-			sMove = pN - n;
-		}
-		
-		//children with the reversed move
-		if(!dice.isDouble()){
-			System.out.println("NOT DOUBLE");
-			fMove = pN - n; //fMove -> first move
-			sMove = pN - n; //sMove -> second move
-			//******************************* reverse child *******
-		
-			for(int i=0; i < 24-move[1]; ++i){
-			
-				fMove += n;
-				child = new Board(this);
-				
-				if(!breed(child, fMove, move[1], player, totalMove, 0)) continue;
-				
-				child.setLastPlayedMove(new Move(totalMove));
-				ch1.add(child);
-				
-				for(int j=0; j < 24-move[0]; ++j){
-					
-					sMove += n;
-					child2 = new Board(this);
-					
-					if(!breed(child2, sMove, move[0], player, totalMove, 1)) continue;
-					
-					child2.setLastPlayedMove(new Move(totalMove));
-					ch2.add(child2);
-				}
-
-				Move.resetMove(totalMove,1);
-				sMove = pN - n;
-			}
-	
-		}
-		
-		if(ch4.isEmpty()){
-			if(ch3.isEmpty()){
-				if(ch2.isEmpty()){
-					if(ch1.isEmpty()){
-						return;
-					}else{
-						children.addAll(ch1);
-					}
-				}else{
-					children.addAll(ch2);
-				}
-			}else{
-				children.addAll(ch3);
-			}
-		}else{
-			children.addAll(ch4);
-		}
-		
-	}
 	
 	//pN->18 when green playes, 5 when red plays
 	private void BearOff_getChildren(byte[] move, HashSet<Board> children, int pN, Player player){
