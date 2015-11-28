@@ -393,15 +393,16 @@ public class Board {
 		return eaten[playerNum];
 	}
 	
-	private void multiBreed(int move, Board parent, Player player, int[][] totalMove, int where, HashSet<Board> level){
+	private void multiBreed(int move, Board parent, Player player, int where, HashSet<Board> level){
 		Board child;
 		int n = player.getSign();
 		int pos = player.getStart() - n; //-->>> pN - n
 		
-		if(parent.getGreensEaten() > 0){
+		if((player == Player.GREEN && parent.getGreensEaten() > 0)  ||
+				(player == Player.RED && parent.getRedsEaten() > 0)	){
 			child = new Board(parent);
-			breed(child, pos, move, player, totalMove, where);
-			child.setLastPlayedMove(new Move(totalMove));
+			if(!breed(child, pos, move, player, child.getTotalMove(), where)) return;
+			child.setLastPlayedMove(new Move( child.getTotalMove()));
 			level.add(child);
 		} else {
 			for(int i = 0; i < 24-move; ++i){
@@ -421,7 +422,7 @@ public class Board {
 		HashSet<Board> level1 = new HashSet<Board>();
 		HashSet<Board> level1_r = new HashSet<Board>(); //reversed
 		HashSet<Board> level2 = new HashSet<Board>();
-		HashSet<Board> level2_r = new HashSet<Board>();
+	//	HashSet<Board> level2_r = new HashSet<Board>();
 		
 		HashSet<Board> level3 = new HashSet<Board>();
 		HashSet<Board> level4 = new HashSet<Board>();
@@ -430,23 +431,23 @@ public class Board {
 		
 		while(true){
 			//first move
-			multiBreed(move[0], this, player, this.getTotalMove(), 0, level1);
+			multiBreed(move[0], this, player, 0, level1);
 			
 			System.out.println("************* LEVEL 1 " + level1.size());
 			
 			//second move
 			if(!level1.isEmpty()){
 				for(Board parent : level1){
-					multiBreed(move[1], parent, player, parent.getTotalMove(), 1, level2);
+					multiBreed(move[1], parent, player, 1, level2);
 				}
 				System.out.println("************* LEVEL 2 " + level2.size());
-			} else { break; }
+			}
 			
 			if(dice.isDouble()){
 				//third move
 				if(!level2.isEmpty()){
 					for(Board parent : level2){
-						multiBreed(move[0], parent, player, parent.getTotalMove(), 2, level3);
+						multiBreed(move[0], parent, player, 2, level3);
 					}
 					System.out.println("************* LEVEL 3 " + level3.size());
 				} else { children.addAll(level1); break; }
@@ -454,7 +455,7 @@ public class Board {
 				//fourth move
 				if(!level3.isEmpty()){
 					for(Board parent : level3){
-						multiBreed(move[0], parent, player, parent.getTotalMove(), 3, level4);
+						multiBreed(move[0], parent, player, 3, level4);
 					}
 					System.out.println("************* LEVEL 4 " + level4.size());
 				} else { children.addAll(level2); break; }
@@ -466,23 +467,25 @@ public class Board {
 				break;
 				
 			} else { //do the reverse
+				
+				Move.resetMove(this.getTotalMove(), 0);
 				//first move - reversed
-				multiBreed(move[1], this, player, this.getTotalMove(), 0, level1_r);
+				multiBreed(move[1], this, player, 0, level1_r);
 				
 				System.out.println("************* LEVEL 1_r " + level1_r.size());
 				
 				//second move
 				if(!level1_r.isEmpty()){
 					for(Board parent : level1_r){
-						multiBreed(move[0], parent, player, parent.getTotalMove(), 1, level2_r);
+						multiBreed(move[0], parent, player, 1, level2);
 					}
-					System.out.println("************* LEVEL 2_r " + level2_r.size());
+					System.out.println("************* LEVEL 2_r " + level2.size());
 				}
 				
-				if(level2_r.isEmpty()){ children.addAll(level1_r); break; }
+				if(level2.isEmpty()){ children.addAll(level1); children.addAll(level1_r); break; }
 				
 				//finally
-				children.addAll(level2_r);
+				children.addAll(level2);
 				break;
 			}
 		}
@@ -819,41 +822,79 @@ public class Board {
 
 		// if wrong direction false
 
-		if(!checkDirection(pos, pos + move, player)) return false;
+		if(!checkDirection(pos, pos + move, player)) {
+
+			System.out.println("wrong direction bro?");
+			return false;
+		}
 		
-		if(!isValidPick(pos, player)) return false;
+		if(!isValidPick(pos, player)){
+
+			System.out.println("not valid pick bro?");
+			return false;
+		}
 		//this position does not contain any of the player's pieces
 		
-		if(!isValidTarget(pos + move, player)) return false;
+		if(!isValidTarget(pos + move, player)){
+
+			System.out.println("wrong target bro?");
+			return false;
+		}
 		
-		byte[] possibleMoves = dice.getValues();
-		if(((possibleMoves[0]+possibleMoves[1])== move)&&
-				!isValidTarget(pos + possibleMoves[0], player) && 
-					!isValidTarget(pos + possibleMoves[0], player) )  return false;
+		//byte[] possibleMoves = dice.getValues();
 		
-		if((pos+move <= -1)||(pos+move >= 24)) return isValidBearOff(pos, pos+move, player);
+		/*if(((possibleMoves[0]+possibleMoves[1])== move)&&
+				(this.getTable()[pos + possibleMoves[0]]  )&& 
+					!isValidTarget(pos + possibleMoves[0], player) ) {
+
+			System.out.println("idk bro!!!!");
+			return false;
+		}*/
+		
+		if((pos+move <= -1)||(pos+move >= 24)){
+
+			System.out.println("are u valid bear off bro??");
+			return isValidBearOff(pos, pos+move, player);
+		}
 		
 		return true;
 	}
 	
-	private boolean isValidBearOff(int pos, int finalPos, Player player){
+private boolean isValidBearOff(int pos, int finalPos, Player player){
 		
-		int move = finalPos + player.getSign()*pos;
+		int move = player.getSign()*(finalPos - pos);
+
+		System.out.println("ur move is "+move);
 		byte[] possibleMoves = dice.getValues();
 		
 		if(finalPos >= 24){
+			System.out.println("final position > 24 : "+finalPos);
 			//wrong bear off area
-			if(!(player == Player.GREEN)||!hasGreenReachedDestination()) return false;
+			if(!(player == Player.GREEN)||!hasGreenReachedDestination()){
+				
+
+				System.out.println("wrong player/direction");
+				
+				return false;
+			}
 			//you moved a checker exactly a number of your dice and got out of board
-			if ((finalPos == 24) && ((move == possibleMoves[0]) || (move == possibleMoves[1]))) return true;
+			if (finalPos == 24) return true;
 			//the previous if was not true, so you moved a checker for more steps than the dice ones
 			//if other checker was before the one you chose then your move is not valid
 			for(int i = pos-1 ; i > 17; --i ){
-				if(colorAt(i) != player) return false;
+				if(colorAt(i) == player) {
+
+					System.out.println("other checker existed");
+					return false;
+				}
 			}
 			//however to  move the checker with the bigger distance of the bear off area is not always valid
 			//Only if you could not do other moves to move it ON the board
-			if((pos + possibleMoves[0] < 24)|| (pos + possibleMoves[1] < 24)) return false;
+			if((pos + possibleMoves[0] < 24)|| (pos + possibleMoves[1] < 24)){ 
+
+				System.out.println("other moves existed");
+				return false;
+			}
 			
 		} else {
 			//wrong bear off area
@@ -865,7 +906,7 @@ public class Board {
 			//the previous if was not true, so you moved a checker for more steps than the dice ones
 			//if other checker was before the one you chose then your move is not valid
 			for(int i =  pos+1 ; i < 6; ++i ){
-				if(colorAt(i) != player) return false;
+				if(colorAt(i) == player) return false;
 			}
 
 			//however to  move the checker with the bigger distance of the bear off area is not always valid
@@ -877,29 +918,35 @@ public class Board {
 		return true;
 	}
 	
-	/**
-	 * Checks if you picked a correct piece
-	 */
-	public boolean isValidPick(int pos, Player player){
-		if(pos >= 0 && pos <= 23){;
-			if(Math.signum(table[pos]) == player.getSign()){
-				return true;
-			} else {
-				return false;
-			}
-		}else if (pos == -1){ // start position is the bar with eaten pieces for the green player
-			
-			if(player != Player.GREEN) return false;
-			
-			return (eaten[0] > 0);
-		}else if (pos == 24){ // start position is the bar with eaten pieces for the red player
-			if(player != Player.RED) return false;
-			System.out.println(pos+" "+eaten[1]);
-			return (eaten[1] > 0);
-		}else{
+
+/**
+ * Checks if you picked a correct piece
+ */
+public boolean isValidPick(int pos, Player player){
+	if(pos >= 0 && pos <= 23){;
+		if(colorAt(pos) == player){
+			return true;
+		} else {
+
+			if(player == Player.GREEN) System.out.println("WTF");
 			return false;
 		}
+	}else if (pos == -1){ // start position is the bar with eaten pieces for the green player
+
+		System.out.println("green eaten wants to get in board!!! hide");
+		if(player != Player.GREEN) return false;
+		
+		return (eaten[0] > 0);
+	}else if (pos == 24){ // start position is the bar with eaten pieces for the red player
+
+		System.out.println("red eaten wants to get in board!!! hide");
+		if(player != Player.RED) return false;
+		//System.out.println(pos+" "+eaten[1]);
+		return (eaten[1] > 0);
+	}else{
+		return false;
 	}
+}
 	
 	/** Performs the move
 	 * @param pos current position of the piece to move
@@ -1002,7 +1049,7 @@ public class Board {
 		return Math.abs(table[pos]);
 	}
 	
-	public boolean isValidTarget(int moveTarget, Player player){
+public boolean isValidTarget(int moveTarget, Player player){
 		
 		if(moveTarget >= 0 && moveTarget <= 23){
 			int n = player.getSign();
@@ -1017,7 +1064,13 @@ public class Board {
 			return hasRedReachedDestination();
 		}else if (moveTarget > 23){ // o prasinos mazeuei
 
-			if(player != Player.GREEN) return false;
+			if(player != Player.GREEN){
+
+				System.out.println("la8os paiktis");
+				return false;
+			}
+
+			System.out.println("STON PROORISMO: "+hasGreenReachedDestination());
 			return hasGreenReachedDestination();
 		}else{
 			return false;

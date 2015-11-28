@@ -465,99 +465,193 @@ public class BackgammonPanel extends JPanel implements MouseMotionListener {
 					.println("BackgammonPanel:drawDices, something's not ok. You are totally noob at Doors sorry! :/ ");
 		}
 	}
-
+	
+	/**
+	 * Sets the current player of the game
+	 * @param the current player of the game
+	 */
 	public void setPlayer(Player p) {
 		player = p;
 	}
 
+	/**
+	 * Returns the current player of the game
+	 * @return the current player of the game
+	 */
 	public Player getPlayer() {
 		return player;
 	}
 
+	/**
+	 * Sets the image for the dice with number 1
+	 * @param dice's first image
+	 */
 	private void setDice1(Image newImage) {
 		dice1 = newImage;
 	}
 
+	/**
+	 * Sets the image for the dice with number 2
+	 * @param dice's second image
+	 */
 	private void setDice2(Image newImage) {
 		dice2 = newImage;
 	}
 
+	/**
+	 * Sets the image for the dice with number 3
+	 * @param dice's third image
+	 */
 	private void setDice3(Image newImage) {
 		dice3 = newImage;
 	}
 
+	/**
+	 * Sets the image for the dice with number 4
+	 * @param dice's fourth image
+	 */
 	private void setDice4(Image newImage) {
 		dice4 = newImage;
 	}
 
+	/**
+	 * Sets the image for the dice with number 5
+	 * @param dice's fifth image
+	 */
 	private void setDice5(Image newImage) {
 		dice5 = newImage;
 	}
 
+	/**
+	 * Sets the image for the dice with number 6
+	 * @param dice's sixth image
+	 */
 	private void setDice6(Image newImage) {
 		dice6 = newImage;
 	}
 
+	/**
+	 * Sets the image for the green checker
+	 * @param green checker's image
+	 */
 	private void setGreenPiece(Image newImage) {
 		green = newImage;
 	}
 
+	/**
+	 * Sets the image for the red checker
+	 * @param red checker's image
+	 */
 	private void setRedPiece(Image newImage) {
 		red = newImage;
 	}
 
+	/**
+	 * Sets the image for the game's background
+	 * @param background's image
+	 */
 	private void setBackground(Image newImage) {
 		background = newImage;
 	}
 
+	/**
+	 * Returns the image for the dice with number 1
+	 * @return dice's first image
+	 */
 	private Image getDice1() {
 		return dice1;
 	}
 
+	/**
+	 * Returns the image for the dice with number 2
+	 * @return dice's second image
+	 */
 	private Image getDice2() {
 		return dice2;
 	}
 
+	/**
+	 * Returns the image for the dice with number 3
+	 * @return dice's third image
+	 */
 	private Image getDice3() {
 		return dice3;
 	}
 
+	/**
+	 * Returns the image for the dice with number 4
+	 * @return dice's fourth image
+	 */
 	private Image getDice4() {
 		return dice4;
 	}
-
+	/**
+	 * Returns the image for the dice with number 5
+	 * @return dice's fifth image
+	 */
 	private Image getDice5() {
 		return dice5;
 	}
 
+	/**
+	 * Returns the image for the dice with number 6
+	 * @return dice's sixth image
+	 */
 	private Image getDice6() {
 		return dice6;
 	}
-
+	
+	/**
+	 * Returns the image for the green checker
+	 * @return green checker's image
+	 */
 	private Image getGreenPiece() {
 		return green;
 	}
-
+	
+	/**
+	 * Returns the image for the red checker
+	 * @return red checker's image
+	 */
 	private Image getRedPiece() {
 		return red;
 	}
 
+	/**
+	 * Returns the image for the game's background
+	 * @return background's image
+	 */
 	private Image getBoardBackground() {
 		return background;
 	}
 
+	/**
+	 * Returns the buttons' array
+	 * @return the buttons' array
+	 */
 	public ArrayList<BgButton> getButtons() {
 		return buttons;
 	}
 
+	/**Returns the board of the game
+	 * @return the game board
+	 */
 	public Board getGameboard() {
 		return game;
 	}
 
+	/**
+	 * Setter that sets whether it's the player's turn to play
+	 * @return true if it's the player's turn to play, otherwise false
+	 */
 	public void setMyTurn(boolean flag) {
 		isItMyTurn = flag;
 	}
 
+	/**
+	 * Returns if it's the player's turn to play or not
+	 * @return true if it's the player's turn to play, otherwise false
+	 */
 	public boolean isMyTurn() {
 		return isItMyTurn;
 	}
@@ -673,10 +767,18 @@ public class BackgammonPanel extends JPanel implements MouseMotionListener {
 		}
 	}
 
+	/**
+	 * Returns if there is a picked checker or not
+	 * @return true if the player has picked a checker, otherwise false
+	 */
 	public boolean isPicked() {
 		return picked;
 	}
 
+	/**
+	 * Getter for how many jumps has the player done yet
+	 * @return the number of jumps done 
+	 */
 	public int getJumpsYet() {
 		return jumpsYet;
 	}
@@ -691,16 +793,28 @@ public class BackgammonPanel extends JPanel implements MouseMotionListener {
 		// TODO Auto-generated method stub
 	}
 
+	/**
+	 * Setter that sets whether the dice will be rollable or not
+	 * @param true if the dice can be rolled, otherwise false
+	 */
 	public void setRoll(boolean b) {
 		buttonRoll.setVisible(b);
 		buttonRoll.setEnabled(b);
 		this.repaint();
 	}
-
+	
+	/**
+	 * Returns if the player has rolled the dice
+	 * @return true if the player has rolled the dice, otherwise false
+	 */
 	public boolean hasPlayerRolled() {
 		return hasPlayerRolled;
 	}
-
+	
+	/**
+	 * Setter that sets whether the player rolled the dice or not
+	 * @param true if the player rolled the dice, otherwise false
+	 */
 	public void setPlayerRolled(boolean b) {
 		hasPlayerRolled = b;
 		if (b && player == Player.GREEN) {
