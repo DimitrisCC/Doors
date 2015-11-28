@@ -96,7 +96,12 @@ public class Board {
 		lastPlayedMove.setMove(board.getLastPlayedMove().getMove());
 		//int totalMove (moves until now for the children)
 		totalMove = new int[4][2];
-		totalMove = board.getTotalMove();
+		
+		for(int i=0; i < totalMove.length; ++i){
+
+			totalMove[i][0] = board.getTotalMove()[i][0];
+			totalMove[i][1] = board.getTotalMove()[i][1];
+		}
 		
 		dice = new Dice();
 		dice.setValues(board.getDice().getValues());
