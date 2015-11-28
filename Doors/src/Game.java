@@ -16,18 +16,18 @@ public class Game {
 		gameBoard = bf.getGame();
 	}
 	
-	public byte[] rollDice(){
+	public int[] rollDice(){
     	return dice.roll();
     }
  
 
-    public byte[] getDice(){
+    public int[] getDice(){
     	return dice.getValues();
     }
     
 
     
-    public byte[] getDiceMoveset(){
+    public int[] getDiceMoveset(){
     	Dice dice = new Dice();
     	dice.roll();
     	return getDiceMoveset(dice);
@@ -35,9 +35,9 @@ public class Game {
 
     
     
-    public byte[] getDiceMoveset(Dice dice){
+    public int[] getDiceMoveset(Dice dice){
     	
-    	byte[] moves = new byte[4];
+    	int[] moves = new int[4];
     	moves[0] = dice.getValues()[0];
     	moves[1] = dice.getValues()[1];
     	

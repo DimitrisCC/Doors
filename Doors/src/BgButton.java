@@ -9,8 +9,6 @@ public class BgButton extends JButton implements ActionListener {
 	private static final long serialVersionUID = 1L;
 	
 	private int number;
-	private String text;
-	private static int jumpsYet;
 	private boolean highlighted;
 
 	public BgButton(String text){
@@ -18,7 +16,6 @@ public class BgButton extends JButton implements ActionListener {
 		try{
 			number = Integer.parseInt(text);
 		} catch (NumberFormatException e){
-			this.text = text; 
 		}
 		addActionListener(this);
 		highlighted = false;
@@ -30,7 +27,7 @@ public class BgButton extends JButton implements ActionListener {
 	}
 	
 	public boolean isHighlighted(){
-		return highlighted || getBackground()== Color.BLUE;
+		return highlighted || getBackground() == Color.BLUE;
 	}
 	
 	public void cleanse(){
@@ -43,7 +40,7 @@ public class BgButton extends JButton implements ActionListener {
 	public void actionPerformed(ActionEvent e) { 
 		
 		BackgammonPanel panel = (BackgammonPanel) this.getParent();
-		//mono otan paizei o an8rwpos prepei na exei dikaiwma na patisei...
+		
 		if(!panel.hasPlayerRolled()){
 			panel.getStatusBar().setStatus("Please, roll the dice first.");
 			return;
@@ -62,10 +59,7 @@ public class BgButton extends JButton implements ActionListener {
 			else{
 				panel.jump(number-1);
 			}
-			/*
-			if(panel.getJumpsYet() == panel.getGameboard().getDice().getTotalJumpsFromDice()){
-				panel.setMyTurn(false);
-			}*/
+			
 		}
 		
 	}

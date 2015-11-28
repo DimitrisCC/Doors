@@ -187,7 +187,7 @@ public class Board {
 	
 	private boolean hasReachedDestination(Player p) {
 			
-		return (p == Player.GREEN)? hasGreenReachedDestination() : hasGreenReachedDestination();
+		return (p == Player.GREEN)? _hasGreenReachedDestination() : _hasRedReachedDestination();
 	}
 	
 	private void multiBreed(int move, Board parent, Player player, int where, HashSet<Board> level, boolean inDestination){
@@ -214,7 +214,7 @@ public class Board {
 		}
 	}
 	
-	private void yolo_getChildren(byte[] move, HashSet<Board> children, Player player){
+	private void yolo_getChildren(int[] move, HashSet<Board> children, Player player){
 		
 		HashSet<Board> level1 = new HashSet<Board>();
 		HashSet<Board> level1_r = new HashSet<Board>(); //reversed
@@ -292,7 +292,7 @@ public class Board {
 	
 	
 	//pN->18 when green playes, 5 when red plays
-	private void BearOff_getChildren(byte[] move, HashSet<Board> children, int pN, Player player){
+	private void BearOff_getChildren(int[] move, HashSet<Board> children, int pN, Player player){
 		
 		//-----> o kwdikas moiazei poli me tn Normal_getChildren
 		//parola auta iparxoun merikes megales diafores
@@ -445,14 +445,28 @@ public class Board {
 		//initialization of a doors game
         //GREEN: 0->23 +integer
         //RED: 23->0 -integer
-		table[POS_NUM_0] = 2;
+		/*table[POS_NUM_0] = 2;
 		table[POS_NUM_5] = -5;
 		table[POS_NUM_7] = -3;
 		table[POS_NUM_11] = 5;
 		table[POS_NUM_12] = -5;
 		table[POS_NUM_16] = 3;
 		table[POS_NUM_18] = 5;
-		table[POS_NUM_23] = -2;
+		table[POS_NUM_23] = -2;*/
+		
+		//TEST CODE
+		table[1] = -5;
+		table[2] = -2;
+		table[3] = -3;
+		table[5] = -5;
+		//table[9] = -1;
+		
+		table[23] = 5;
+		table[22] = 2;
+		table[21] = 3;
+		table[19] = 4;
+		table[14] = 1;
+		
 	}
 	
 	
@@ -486,7 +500,7 @@ public class Board {
 			return false;
 		}
 		
-		//byte[] possibleMoves = dice.getValues();
+		//int[] possibleMoves = dice.getValues();
 		
 		/*if(((possibleMoves[0]+possibleMoves[1])== move)&&
 				(this.getTable()[pos + possibleMoves[0]]  )&& 
@@ -510,12 +524,12 @@ private boolean isValidBearOff(int pos, int finalPos, Player player){
 		int move = player.getSign()*(finalPos - pos);
 
 		System.out.println("ur move is "+move);
-		byte[] possibleMoves = dice.getValues();
+		int[] possibleMoves = dice.getValues();
 		
 		if(finalPos >= 24){
 			System.out.println("final position > 24 : "+finalPos);
 			//wrong bear off area
-			if(!(player == Player.GREEN)||!hasGreenReachedDestination()){
+			if(!(player == Player.GREEN)||!_hasGreenReachedDestination()){
 				
 
 				System.out.println("wrong player/direction");
@@ -543,7 +557,7 @@ private boolean isValidBearOff(int pos, int finalPos, Player player){
 			
 		} else {
 			//wrong bear off area
-			if(!(player == Player.RED)||!hasRedReachedDestination()) return false;
+			if(!(player == Player.RED)||!_hasRedReachedDestination()) return false;
 			
 			//you moved a checker exactly a number of your dice and got out of board
 			if ((finalPos == -1) && ((move == possibleMoves[0]) || (move == possibleMoves[1]))) return true;
@@ -659,7 +673,7 @@ public boolean isValidPick(int pos, Player player){
 				if( target < 6 ) piecesATdestination[1]++;
 			}
 			
-		} else {
+		} else { //time to free some pieces
 			if(n == 1){
 				if(target >= 24)
 					freedPieces[0]++;
@@ -706,7 +720,7 @@ public boolean isValidTarget(int moveTarget, Player player){
 				return false;
 		}else if (moveTarget < 0){ // o kokkinos mazeuei
 			if(player != Player.RED) return false;
-			return hasRedReachedDestination();
+			return _hasRedReachedDestination();
 		}else if (moveTarget > 23){ // o prasinos mazeuei
 
 			if(player != Player.GREEN){
@@ -715,8 +729,8 @@ public boolean isValidTarget(int moveTarget, Player player){
 				return false;
 			}
 
-			System.out.println("STON PROORISMO: "+hasGreenReachedDestination());
-			return hasGreenReachedDestination();
+			System.out.println("STON PROORISMO: "+_hasGreenReachedDestination());
+			return _hasGreenReachedDestination();
 		}else{
 			return false;
 		}
@@ -752,6 +766,27 @@ public boolean isValidTarget(int moveTarget, Player player){
     	else if (table[pos] > 0) return Player.GREEN;
     	else return Player.NONE;
     }
+    
+    //DEBUG
+    public boolean _hasRedReachedDestination(){
+    	short reds = 0;
+		for(int i = 0; i < 6; ++i){
+			if(table[i] < 0)
+				reds -= table[i];
+		}
+		return (reds+freedPieces[1] == 15)? true : false;
+    }
+    
+    //DEBUG
+    public boolean _hasGreenReachedDestination(){
+    	short greens = 0;
+		for(int i = 18; i < 24; ++i){
+			if(table[i] > 0)
+				greens += table[i];
+		}
+		return (greens+freedPieces[0] == 15)? true : false;
+    }
+    
 	
     /**
      * @return true if Red has reached the final destination on the board

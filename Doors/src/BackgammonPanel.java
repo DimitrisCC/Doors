@@ -5,6 +5,8 @@ import java.awt.event.ActionListener;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseMotionListener;
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
 import java.util.HashSet;
 
 import javax.swing.*;
@@ -41,22 +43,16 @@ public class BackgammonPanel extends JPanel implements MouseMotionListener {
 	private Board game;
 	private Player player;
 	private int position;
-	private byte[] moves;
-	private byte jumpsYet;
+	private int[] moves;
+	private int jumpsYet;
 	private int lastPick; // to cleanse the highlight
 	private int doneMove;
 
 	private ArrayList<BgButton> buttons;
 	private JButton buttonRoll;
-	//private BgButton btnBearOff;
 	
-	//********************
-	//###################
-	private JButton btnBearOff;
-	//#######################
-	//***********************
+	private BearOffButton btnBearOff;
 		
-	
 	private StatusBar statusBar;
 
 	private boolean picked;
@@ -235,36 +231,30 @@ public class BackgammonPanel extends JPanel implements MouseMotionListener {
 		buttonRoll.addActionListener(new RollButtonListener(this));
 		add(buttonRoll);
 
-		//btnBearOff = new BgButton("Bear off");
-		//btnBearOff.setBounds(720, 308, 75, 23);
-		//this.add(btnBearOff);
+		btnBearOff = new BearOffButton("Bear off");
+		btnBearOff.setBounds(720, 308, 75, 50);
+		add(btnBearOff);
 		
-		// ******************************************************************
-		//################################################################
-		//EKANA TO KOUMPI JBUTTON GT PETAGE EXCEPTION WS BGBUTTON
-		btnBearOff = new JButton("Bear off");
-		btnBearOff.setBounds(720, 308, 75, 23);
-		btnBearOff.addActionListener(new BearOffListener(this));
-		this.add(btnBearOff);
-		//******************************
-        //#################################################################		
-		
+		buttons.add(btnBearOff);
 	}
 
 	//*********************************************************************************
 	//################################################################################
-	class BearOffListener implements ActionListener {
+	/*class BearOffListener implements ActionListener {
 		BackgammonPanel b;
+		
 
 		BearOffListener(BackgammonPanel b) {
 			this.b = b;
 		}
+		
+		
 
 		public void actionPerformed(ActionEvent e) { 
 			
 			if(e.getSource().equals(btnBearOff)){
-				
-				byte[] moves= b.game.dice.getValues();
+						
+				/*int[] moves= b.game.dice.getValues();
 				boolean f=true;
 				int i=0;
 				int g=0;
@@ -279,7 +269,7 @@ public class BackgammonPanel extends JPanel implements MouseMotionListener {
 					  }//if
 					  else{//efoson den exei poulia sthn antistoixh thesh prepei na mazeutoun poulia an uparxoun apo tis 
 						   //amesws megaluteres theseis
-						  g=maxChekcerPosition(game);
+						  g=maxCheckerPosition(game);
 						  b.game.makeMove(g, 24, 1);//bear off checker from the maximum position
 						  f=false;//Ayto ginetai wste na ginei mono mia  zaria
 					    }
@@ -287,12 +277,13 @@ public class BackgammonPanel extends JPanel implements MouseMotionListener {
 				  }
 				   i++; 
 				}//while
-				btnBearOff.setEnabled(false);
+				//btnBearOff.setEnabled(false);
 			}
 		}//endOf_method
 		
 		//epistrefei th megaluterh thesh sthn opoia yparxei estw kai ena pouli
-		private int maxChekcerPosition(Board b){
+		private int maxCheckerPosition(Board b){
+			
 			boolean tr=true;
 			int j=18;
 			int pos=0;
@@ -306,7 +297,7 @@ public class BackgammonPanel extends JPanel implements MouseMotionListener {
 			}//while
 			return pos;
 		}
-	}
+	}*/
 	//###########################################################################
 	// *************************************************************************
 
@@ -319,7 +310,7 @@ public class BackgammonPanel extends JPanel implements MouseMotionListener {
 
 		public void actionPerformed(ActionEvent e) {
 			if (e.getSource().equals(buttonRoll)) {
-				byte[] m = b.getGameboard().getDice().roll();
+				int[] m = b.getGameboard().getDice().roll();
 				buttonRoll.setOpaque(false);
 				buttonRoll.setContentAreaFilled(false);
 				buttonRoll.setBorderPainted(false);
@@ -403,10 +394,10 @@ public class BackgammonPanel extends JPanel implements MouseMotionListener {
 				paintPieces(g, image, EATEN_LEFT_BORDER, 575, pos, game.getEaten()[1], false);
 				break;
 			case 26:
-				paintPieces(g, image, GOTTEN_OUT_BORDER, 35, pos, game.getFreedPieces()[0], false);
+				paintPieces(g, image, GOTTEN_OUT_BORDER, 575, pos, game.getFreedPieces()[0], false);
 				break;
 			case 27:
-				paintPieces(g, image, GOTTEN_OUT_BORDER, 575, pos, game.getFreedPieces()[1], false);
+				paintPieces(g, image, GOTTEN_OUT_BORDER, 35, pos, game.getFreedPieces()[1], false);
 				break;
 			default:
 				// something from outer space
@@ -458,7 +449,7 @@ public class BackgammonPanel extends JPanel implements MouseMotionListener {
 
 		int diceX = DICE_X + i * DICE_SIZE;
 
-		byte[] dices = game.getDice().getValues();
+		int[] dices = game.getDice().getValues();
 
 		if (dices[0] == 0)
 			dices = game.getDice().roll(); // should be gone by the end
@@ -695,25 +686,28 @@ public class BackgammonPanel extends JPanel implements MouseMotionListener {
 			this.position = index;
 			boolean getInTheGame = false;
 			moves = game.getDice().getValues();
+			if(!game.getDice().isDouble()){
+				Arrays.sort(moves);
+				Collections.reverse(Arrays.asList(moves)); //descending order for easing the bearing off process
+			}
+			
 			for (int i = 0; i < moves.length; ++i) {
-				// if(moves[0] == 0) continue;
-				if (game.isValidTarget(index + moves[i], player)) {
+						
+				if (game._hasGreenReachedDestination() || (game.isValidTarget(index + moves[i], player))) {
+					
 					if (((!game.getDice().isDouble()) && moves[i] != doneMove)
 							|| (game.getDice().isDouble() && jumpsYet < game.getDice().getTotalJumpsFromDice())) {
-
+						
+						//pick for normal move
 						if (index + moves[i] < 24 && index + moves[i] > -1){
 							if(index == -1) getInTheGame = true;
 							buttons.get(index + moves[i]).highlight();
-						}else if (index + moves[i] == 24) {
-							//((BgButton) btnBearOff).highlight();
-							 
-							 //***************************************
-							 //###########################################
-							 //******************************************
-							  btnBearOff.setBackground(Color.BLUE);
-							 //*****************************************
-							 //#########################################
 						}
+						//pick for bearing off
+						if(index == 24-moves[i] ||
+								(index == maxCheckerPosition(moves[i]) && !hasHighestNeighbours(moves[i]) && 24-moves[0] < index && 24-moves[1] < index))
+							//--->> den eimai kai sigouros gia KATHE periptwsi
+							btnBearOff.highlight();
 
 					}
 
@@ -723,7 +717,7 @@ public class BackgammonPanel extends JPanel implements MouseMotionListener {
 			System.out.println(getInTheGame);
 			
 			if(!getInTheGame && (index == -1)){
-				System.out.println("well u lost ur turn fucking asswhole");
+				System.out.println("Sorry, bro. No moves available. Your turn's skipped.");
 				setMyTurn(false);
 			}
 			
@@ -738,13 +732,13 @@ public class BackgammonPanel extends JPanel implements MouseMotionListener {
 		// statusBar.setStatus("Pick a correct piece, already");
 	}
 
-	public void jump(int index) {
+	public void jump(int index) { //index = 24 for bear off
 
 		int m = 0;
 		if (picked) {
 			for (int i = 0; i < moves.length; ++i) {
 				m = moves[i];
-				if (position + m == index) {// valid move according to number of
+				if (position + m == index || index == 24) {// valid move according to number of
 											// left jumps and the dice
 					if (buttons.get(index).isHighlighted()) { // check the
 																// gameboard
@@ -758,27 +752,18 @@ public class BackgammonPanel extends JPanel implements MouseMotionListener {
 						doneMove = m;
 						statusBar.setStatus("Wow. Nice move! ^_^");
 
-						if (((game.getDice().getTotalJumpsFromDice()) == jumpsYet) || numOfMovesDone == numOfMoves) {
+						if (((game.getDice().getTotalJumpsFromDice()) == jumpsYet)
+								//|| numOfMovesDone == numOfMoves //-->> se diples, h stis 6ares toulaxiston, den to afine na kanei diples!
+								) {
 							jumpsYet = 0;
 							doneMove = 0;
 							numOfMovesDone = 0;
-							numOfMoves = 0;//dn eimai sigouri edw
+							numOfMoves = 0;
 							
 							for (int j = 0; j < moves.length; ++j) {
 								if (lastPick + moves[i] < 24 && lastPick + moves[i] > -1){
 									System.out.println("jusst cleansed "+(lastPick +moves[i])+" last Pick "+lastPick);
-									buttons.get(lastPick + moves[i]).cleanse();
-									
-									//*********************************************
-									//##############################################
-									//efoson exei kinhsh kai den mazepsei,an to button bear off einai anammeno svhnei
-									if(btnBearOff.getBackground()== Color.BLUE){
-										btnBearOff.setBackground(null);
-									 }
-									 //###############################################
-									//************************************************
-									
-									
+									buttons.get(lastPick + moves[i]).cleanse();							
 								}
 							}
 							setMyTurn(false);
@@ -800,6 +785,7 @@ public class BackgammonPanel extends JPanel implements MouseMotionListener {
 					buttons.get(lastPick + moves[i]).cleanse();
 				}
 			}
+			btnBearOff.cleanse();
 			// and remove the pick
 			// false move results to backrolling so its helpful
 			// we should mention it in the manual :P //--MAKE DREAMS
@@ -810,6 +796,38 @@ public class BackgammonPanel extends JPanel implements MouseMotionListener {
 				pick(-1);
 
 		}
+	}
+	
+	/**
+	 * Checks if the is a position on the right of die with green pieces
+	 * @param die a die value that rolled
+	 * @return the first position it finds
+	 */
+	private int maxCheckerPosition(int die){
+		int j = 24-die;
+		while(j <= 23){
+			if(game.getNumberOfPiecesAt(j) > 0){ //first highest position with pieces after max die roll
+				return j;
+			}
+			++j;
+		}
+		return -99;
+	}
+	
+	/**
+	 * Checks if there is a position on the left of the die with green pieces
+	 * @param die a die value that rolled
+	 * @return true there is at least one
+	 */
+	private boolean hasHighestNeighbours(int die){
+		int j = 18;
+		while(j <= 24-die){
+			if(game.getNumberOfPiecesAt(j) > 0){ //first highest position with pieces after max die roll
+				return true;
+			}
+			++j;
+		}
+		return false;
 	}
 
 	/**

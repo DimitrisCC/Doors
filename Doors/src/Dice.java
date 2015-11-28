@@ -8,28 +8,28 @@ import java.util.Random;
 public class Dice {
 
     private Random random;
-    private byte[] values; //store them as a member variable for further usage
+    private int[] values; //store them as a member variable for further usage
 
     public Dice() {
         random = new Random();
-        values = new byte[2];
+        values = new int[2];
     }
 
-    public Dice(byte[] v) {
+    public Dice(int[] v) {
         random = new Random();
-        values = new byte[2];
+        values = new int[2];
         setValues(v);
     }
     /**
      * Generate random 1-6 values.
      */
-    public byte[] roll() {
-        this.values[0] = (byte) (random.nextInt(6) + 1);
-        this.values[1] = (byte) (random.nextInt(6) + 1);
+    public int[] roll() {
+        this.values[0] = (int) (random.nextInt(6) + 1);
+        this.values[1] = (int) (random.nextInt(6) + 1);
         return values;
     }
     
-    public void setValues(byte[] v){
+    public void setValues(int[] v){
     	try {
 		  System.arraycopy(v, 0, values, 0, v.length);
 		}
@@ -38,17 +38,17 @@ public class Dice {
 		}
     }
 
-    public byte[] getValues(){
+    public int[] getValues(){
         return values;
     }
     
     public static ArrayList<Dice> allPossibleRolls(){
     	
     	ArrayList<Dice> possibleRolls = new ArrayList<Dice>();
-    	byte[] values = new byte[2];
+    	int[] values = new int[2];
     	
-    	for(byte i=1; i<=6; i++){
-    		for(byte j=i; j<=6; j++){ // j=i to not re-use a roll
+    	for(int i=1; i<=6; i++){
+    		for(int j=i; j<=6; j++){ // j=i to not re-use a roll
     			values[0] = i;
     			values[1] = j;
     			possibleRolls.add(new Dice(values));
@@ -60,9 +60,9 @@ public class Dice {
     
     public boolean isDouble(){ return values[0] == values[1];}
     
-    public byte[] getDiceMoves(){
+    public int[] getDiceMoves(){
     	
-    	byte[] moves = new byte[4];
+    	int[] moves = new int[4];
     	moves[0] = getValues()[0];
     	moves[1] = getValues()[1];
     	
@@ -75,7 +75,7 @@ public class Dice {
     }
     
     public ArrayList<Integer> getDiceMoveset(){
-    	byte[] ms = getDiceMoves();
+    	int[] ms = getDiceMoves();
     	ArrayList<Integer> arms = new ArrayList<Integer>();
     	
     	if(isDouble()){
