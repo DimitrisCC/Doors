@@ -48,7 +48,15 @@ public class BackgammonPanel extends JPanel implements MouseMotionListener {
 
 	private ArrayList<BgButton> buttons;
 	private JButton buttonRoll;
-	private BgButton btnBearOff;
+	//private BgButton btnBearOff;
+	
+	//********************
+	//###################
+	private JButton btnBearOff;
+	//#######################
+	//***********************
+		
+	
 	private StatusBar statusBar;
 
 	private boolean picked;
@@ -227,21 +235,24 @@ public class BackgammonPanel extends JPanel implements MouseMotionListener {
 		buttonRoll.addActionListener(new RollButtonListener(this));
 		add(buttonRoll);
 
+		//btnBearOff = new BgButton("Bear off");
+		//btnBearOff.setBounds(720, 308, 75, 23);
+		//this.add(btnBearOff);
+		
 		// ******************************************************************
-		// THELEI FTIAXIMO..AFORA MONO TON GREEN
-		btnBearOff = new BgButton("Bear off");
+		//################################################################
+		//EKANA TO KOUMPI JBUTTON GT PETAGE EXCEPTION WS BGBUTTON
+		btnBearOff = new JButton("Bear off");
 		btnBearOff.setBounds(720, 308, 75, 23);
+		btnBearOff.addActionListener(new BearOffListener(this));
 		this.add(btnBearOff);
-		/*
-		 * if(isMyTurn() && game.hasGreenReachedDestination())//green { byte[]
-		 * dices= game.dice.getValues(); if(dices[0]==(24-number) ||
-		 * dices[1]==(24-number)) { if(game.colorAt(24-number)==Player.GREEN) {
-		 * setBackground(Color.YELLOW); btnBearOff.addActionListener(new
-		 * BearOffListener(this)); } else { System.out.println(
-		 * "You do not have checkers at this position!"); } } }
-		 */
+		//******************************
+        //#################################################################		
+		
 	}
 
+	//*********************************************************************************
+	//################################################################################
 	class BearOffListener implements ActionListener {
 		BackgammonPanel b;
 
@@ -249,39 +260,55 @@ public class BackgammonPanel extends JPanel implements MouseMotionListener {
 			this.b = b;
 		}
 
-		public void actionPerformed(
-				ActionEvent e) { /*
-									 * int unbearedOff=0; byte[] dices=
-									 * b.game.dice.getValues();
-									 * if(dices[0]==dices[1])//diples {
-									 * if(b.getNumberOfPieceAt(24-number)>=4)//
-									 * an uparxoun perissotera apo 4 poulia se
-									 * ayth th thesh {
-									 * b.game.getTable()[24-number]+=-4;//
-									 * afairesh pouliou apo th board
-									 * b.game.getfreedPieces()[0]+=4;//prosthiki
-									 * sto freedpieces table } else {
-									 * b.game.getTable()[24-number]+=-b.
-									 * getNumberOfPieceAt(24-number);//afairesh
-									 * pouliou apo th board
-									 * b.game.getfreedPieces()[0]+=b.
-									 * getNumberOfPieceAt(24-number);//prosthiki
-									 * sto freedpieces table //GIA TA POULIA POU
-									 * EXOUN MEINEI KAI DEN EXOUN
-									 * MAZEUTEI:unbearedOff //Ayta tha xreiastei
-									 * na ta pairnw apo tis megaluteres theseis
-									 * unbearedOff =
-									 * 4-b.getNumberOfPieceAt(24-number); } }
-									 * //mones else {
-									 * b.game.getTable()[24-number]+=-1;//
-									 * afairesh pouliou apo th board
-									 * b.game.getfreedPieces()[0]+=1;//prosthiki
-									 * sto freedpieces table }
-									 * btnBearOff.setBackground(null);
-									 */
+		public void actionPerformed(ActionEvent e) { 
+			
+			if(e.getSource().equals(btnBearOff)){
+				
+				byte[] moves= b.game.dice.getValues();
+				boolean f=true;
+				int i=0;
+				int g=0;
+				while(f && i<moves.length && (b.game.colorAt(moves[i])==Player.GREEN))
+				{ 
+				   if (((!game.getDice().isDouble()) && moves[i] != doneMove) || (game.getDice().isDouble() && jumpsYet < game.getDice().getTotalJumpsFromDice()))
+				   {	//An exw toulaxiston ena prasino pouli sth thesh ths sugkekrimenhs zarias
+					  if((b.game.getNumberOfPiecesAt(24-moves[i])>0))
+					  {
+						b.game.makeMove(24-moves[i], 24, 1);//bear off checker
+						f=false;//Ayto ginetai wste na ginei to mazema mono gia th sugkekrimenh zaria
+					  }//if
+					  else{//efoson den exei poulia sthn antistoixh thesh prepei na mazeutoun poulia an uparxoun apo tis 
+						   //amesws megaluteres theseis
+						  g=maxChekcerPosition(game);
+						  b.game.makeMove(g, 24, 1);//bear off checker from the maximum position
+						  f=false;//Ayto ginetai wste na ginei mono mia  zaria
+					    }
+					  
+				  }
+				   i++; 
+				}//while
+				btnBearOff.setEnabled(false);
+			}
+		}//endOf_method
+		
+		//epistrefei th megaluterh thesh sthn opoia yparxei estw kai ena pouli
+		private int maxChekcerPosition(Board b){
+			boolean tr=true;
+			int j=18;
+			int pos=0;
+			while(tr && (j>=18 && j<=23)){
+				if(b.getNumberOfPiecesAt(j)>0){
+					
+					pos=j;
+					tr=false;
+				}
+				j++;
+			}//while
+			return pos;
 		}
 	}
-	// *************************************************************
+	//###########################################################################
+	// *************************************************************************
 
 	class RollButtonListener implements ActionListener {
 		BackgammonPanel b;
@@ -678,7 +705,14 @@ public class BackgammonPanel extends JPanel implements MouseMotionListener {
 							if(index == -1) getInTheGame = true;
 							buttons.get(index + moves[i]).highlight();
 						}else if (index + moves[i] == 24) {
-							// ((BgButton) btnBearOff).highlight();
+							//((BgButton) btnBearOff).highlight();
+							 
+							 //***************************************
+							 //###########################################
+							 //******************************************
+							  btnBearOff.setBackground(Color.BLUE);
+							 //*****************************************
+							 //#########################################
 						}
 
 					}
@@ -734,6 +768,17 @@ public class BackgammonPanel extends JPanel implements MouseMotionListener {
 								if (lastPick + moves[i] < 24 && lastPick + moves[i] > -1){
 									System.out.println("jusst cleansed "+(lastPick +moves[i])+" last Pick "+lastPick);
 									buttons.get(lastPick + moves[i]).cleanse();
+									
+									//*********************************************
+									//##############################################
+									//efoson exei kinhsh kai den mazepsei,an to button bear off einai anammeno svhnei
+									if(btnBearOff.getBackground()== Color.BLUE){
+										btnBearOff.setBackground(null);
+									 }
+									 //###############################################
+									//************************************************
+									
+									
 								}
 							}
 							setMyTurn(false);
