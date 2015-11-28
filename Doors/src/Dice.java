@@ -39,7 +39,9 @@ public class Dice {
     }
 
     public int[] getValues(){
-        return values;
+    	int[] val = new int[values.length];
+    	System.arraycopy(values, 0, val, 0, values.length );
+        return val;
     }
     
     public static ArrayList<Dice> allPossibleRolls(){

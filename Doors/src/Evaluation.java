@@ -42,6 +42,7 @@ public class Evaluation {
     	   
     	   score+= (getNumberOf_FinalBlocks(b,player)*5);
         }
+	   	score+=b.getFreedPieces()[player]*20;
         return score;
 	 } 
     

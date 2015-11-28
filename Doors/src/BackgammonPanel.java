@@ -22,7 +22,7 @@ public class BackgammonPanel extends JPanel implements MouseMotionListener {
 	private static final int BORDER = 30;
 	private static final int PIECE_STEP = 25;
 	private static final int GREENS_EATEN = 24;
-	private static final int POS_END_GREEN = 26;
+	private static final int POS_END_RED = 27;
 	private static final int POS_SIZE_PXL = 50;
 	private static final int GOTTEN_OUT_BORDER = 690;
 	private static final int EATEN_LEFT_BORDER = 340;
@@ -54,6 +54,8 @@ public class BackgammonPanel extends JPanel implements MouseMotionListener {
 	private BearOffButton btnBearOff;
 		
 	private StatusBar statusBar;
+	
+	private HashSet<Board> children;
 
 	private boolean picked;
 	private boolean hasPlayerRolled;
@@ -86,6 +88,7 @@ public class BackgammonPanel extends JPanel implements MouseMotionListener {
 		addMouseMotionListener(this);
 		drawButtons();
 		drawStatusBar();
+		children = new HashSet<Board>();
 	}
 
 	private void drawStatusBar() {
@@ -310,35 +313,42 @@ public class BackgammonPanel extends JPanel implements MouseMotionListener {
 
 		public void actionPerformed(ActionEvent e) {
 			if (e.getSource().equals(buttonRoll)) {
-				int[] m = b.getGameboard().getDice().roll();
+				b.getGameboard().getDice().roll();
+				b.getGameboard().getDice();
 				buttonRoll.setOpaque(false);
 				buttonRoll.setContentAreaFilled(false);
 				buttonRoll.setBorderPainted(false);
 				buttonRoll.setVerticalAlignment(SwingConstants.BOTTOM);
 				buttonRoll.setForeground(Color.WHITE);
-				HashSet<Board> ch = b.getGameboard().getChildren(b.getGameboard().getDice(), Player.GREEN);
-				if(ch.isEmpty()){
-					b.getStatusBar().setStatus("You have no moves to make. You loose your turn. Opponet plays!");
-					try {
-						Thread.sleep(2000);
-					} catch (InterruptedException e1) {
-						e1.printStackTrace();
-					}
-					b.setMyTurn(false);
-				}else{
-					Board child = ch.iterator().next();
-					int[][] move = child.getLastPlayedMove().getMove();
-					int i =1;
-					for(; i < move.length; ++i){
-						if(move[i-1][0] == move[i-1][1]) b.setNumOfMoves(i-1); //i-1 giati an px ginei true to if stn i=2
-						//tote mporouses na kaneis mono mia kinisi opote i-1
-					}
-					b.getStatusBar().setMoveValues(m);
-				}
+				
+				children = b.getGameboard().getChildren(b.getGameboard().getDice(), Player.GREEN);
+				checkAvailableMoves(null);
+				
 				b.repaint();
 				b.setRoll(false);
 				b.setPlayerRolled(true);
 			}
+		}
+	}
+	
+	private boolean checkAvailableMoves(Board minus){
+		if(minus != null){
+			if(children.contains(minus)) children.remove(minus);
+		}
+		
+		if(children.isEmpty()){
+			statusBar.setStatus("You have no moves to make. You loose your turn. Opponet plays!");
+			try {
+				Thread.sleep(2000);
+			} catch (InterruptedException e1) {
+				e1.printStackTrace();
+			}
+			setMyTurn(false);
+			return false;
+		}else{
+			getStatusBar().setMoveValues(game.getDice().getDiceMoves());
+			setNumOfMoves(game.getDice().isDouble()? 4 : 2);
+			return true;
 		}
 	}
 
@@ -425,7 +435,8 @@ public class BackgammonPanel extends JPanel implements MouseMotionListener {
 			until = num;
 
 		for (int i = 0; i < until; i++) {
-			if (pos < 12 || pos == GREENS_EATEN || pos == POS_END_GREEN) {
+			if (pos < 12 || pos == GREENS_EATEN || pos == POS_END_RED
+					) {
 				g.drawImage(image, x, y + i * PIECE_STEP, null);
 			} else {
 				g.drawImage(image, x, y - i * PIECE_STEP, null);
@@ -705,7 +716,9 @@ public class BackgammonPanel extends JPanel implements MouseMotionListener {
 						}
 						//pick for bearing off
 						if(index == 24-moves[i] ||
-								(index == maxCheckerPosition(moves[i]) && !hasHighestNeighbours(moves[i]) && 24-moves[0] < index && 24-moves[1] < index))
+								(index == maxCheckerPosition(moves[i]) && !hasHighestNeighbours(moves[i])
+								//&& 24-moves[0] < index && 24-moves[1] < index
+								))
 							//--->> den eimai kai sigouros gia KATHE periptwsi
 							btnBearOff.highlight();
 
@@ -746,15 +759,14 @@ public class BackgammonPanel extends JPanel implements MouseMotionListener {
 																// the move
 						game.makeMove(this.position, index, player.getSign()); // make
 																				// the
-																				// move
-						numOfMovesDone++;													// finally
+																				// move finally
+						numOfMovesDone++;												
 						jumpsYet += m;
 						doneMove = m;
 						statusBar.setStatus("Wow. Nice move! ^_^");
 
-						if (((game.getDice().getTotalJumpsFromDice()) == jumpsYet)
-								//|| numOfMovesDone == numOfMoves //-->> se diples, h stis 6ares toulaxiston, den to afine na kanei diples!
-								) {
+						if (((game.getDice().getTotalJumpsFromDice()) == jumpsYet) || numOfMovesDone == numOfMoves 
+								|| !checkAvailableMoves(game)) {
 							jumpsYet = 0;
 							doneMove = 0;
 							numOfMovesDone = 0;
@@ -804,7 +816,7 @@ public class BackgammonPanel extends JPanel implements MouseMotionListener {
 	 * @return the first position it finds
 	 */
 	private int maxCheckerPosition(int die){
-		int j = 24-die;
+		int j = 25-die;
 		while(j <= 23){
 			if(game.getNumberOfPiecesAt(j) > 0){ //first highest position with pieces after max die roll
 				return j;
@@ -821,7 +833,7 @@ public class BackgammonPanel extends JPanel implements MouseMotionListener {
 	 */
 	private boolean hasHighestNeighbours(int die){
 		int j = 18;
-		while(j <= 24-die){
+		while(j < 24-die){
 			if(game.getNumberOfPiecesAt(j) > 0){ //first highest position with pieces after max die roll
 				return true;
 			}

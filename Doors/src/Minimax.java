@@ -7,6 +7,7 @@ public class Minimax {
 	private static int MAX_LENGTH = 2; // 3ekinaei apo to 0 (opote en teli 3 einai ta epipeda...)
 	private static int INF = 100000;
 	private static ArrayList<Dice> possibleRolls; // isws kalo na alla3ei se oura proteraiotitas me pio panw osa exoun pi8anotita 1/18 kai pio katw osa 1/36
+	private static int LastLevelChildren = 0; //DEBUG
 	
 	//pros to paron exw 8ewrisei dedomeno oti o min einai panta o kokkinos
 	//o max einai panta o prasinos kai o chance einai chance telos pantwn
@@ -20,13 +21,16 @@ public class Minimax {
 		for(int i=0; i<4; i++){
 			System.out.println("from "+bestMove.getMove()[i][0]+" to "+bestMove.getMove()[i][1]);
 		}
+		System.out.println("******* MINIMAX CHILDREN: " + LastLevelChildren); //DEBUG
+		LastLevelChildren = 0; //DEBUG
 		return bestMove;
 	}
 	
 	private static Move minValue(Board b, Dice d, int treeLength, Player player, int alpha, int beta){
-		//System.out.println("min");//DEBUG
+		System.out.println("min " + player.ordinal());//DEBUG
 		if(treeLength == MAX_LENGTH){
 			//epistrefei to apotelesma tis euretikis sto b
+			System.out.println("minValue Last level");
 			return new Move(b.getLastPlayedMove().getMove(), (int)Evaluation.boardScore(b,0)); 
 		}
 		
@@ -34,7 +38,7 @@ public class Minimax {
 		HashSet<Board> succ = b.getChildren(d, player);
 		int value;
 		for(Board current : succ){
-			value = chanceValue(current, d, player.getOpponent(), treeLength+1, alpha, beta);
+			value = chanceValue(current, d, player.getOpponent(), treeLength, alpha, beta);
 			if (value < min.getScore()){
 				min.setMove(current.getLastPlayedMove().getMove());
 				min.setScore(value);
@@ -46,7 +50,9 @@ public class Minimax {
 	private static Move maxValue(Board b, Dice d, int treeLength, Player player, int alpha, int beta){
 		//System.out.println("max");//DEBUG
 		if(treeLength == MAX_LENGTH){
+			System.out.println("maxValue Last level");
 			//epistrefei to apotelesma tis euretikis sto b
+			LastLevelChildren++; //DEBUG
 			return new Move(b.getLastPlayedMove().getMove(), (int)Evaluation.boardScore(b,1)); 
 		}
 		
@@ -54,7 +60,7 @@ public class Minimax {
 		HashSet<Board> succ = b.getChildren(d, player);
 		int value;
 		for(Board current : succ){
-			value = chanceValue(current, d, player.getOpponent(), treeLength+1, alpha, beta);
+			value = chanceValue(current, d, player.getOpponent(), treeLength, alpha, beta);
 			if (value > max.getScore()) {
 				max.setMove(current.getLastPlayedMove().getMove());
 				max.setScore(value);
@@ -64,7 +70,7 @@ public class Minimax {
 	} 
 	
 	private static int chanceValue(Board b, Dice d, Player P, int treeLength, int alpha, int beta){
-		System.out.println("gamw tn tixi m"); //DEBUG
+		//System.out.println("gamw tn tixi m"); //DEBUG
 		float expectedValue = 0; //PROSOXIIIIIIII!!!!! edw isws exoume provlima!!!
 		float s = 0;
 		float p = 0;
@@ -111,4 +117,3 @@ public class Minimax {
 	
 
 }
-
