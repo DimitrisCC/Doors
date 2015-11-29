@@ -697,6 +697,7 @@ public class BackgammonPanel extends JPanel implements MouseMotionListener {
 			statusBar.setStatus("Got your piece, mate!");
 			this.position = index;
 			boolean getInTheGame = false;
+			this.toBearOff = 0;
 			moves = game.getDice().getValues();
 			/*if(!game.getDice().isDouble()){
 				Arrays.sort(moves);
@@ -722,9 +723,9 @@ public class BackgammonPanel extends JPanel implements MouseMotionListener {
 							this.toBearOff = moves[i];
 						}
 					}
-					//toBearOff = 0;
+					
 				}
-				toBearOff = 0;
+
 			}
 			
 			System.out.println(getInTheGame);
