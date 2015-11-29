@@ -501,8 +501,7 @@ public class Board {
 			}
 		}
 		
-		//ne
-		//isTerminal();
+		isTerminal();
 	}
 	
 	/**
@@ -522,7 +521,7 @@ public class Board {
 			makeMove(moveToMake[i][0], moveToMake[i][1], n);
 		}
 		
-		//isTerminal();
+		isTerminal();
 		
 	}
 	

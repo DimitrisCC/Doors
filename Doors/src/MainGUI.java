@@ -61,6 +61,11 @@ public final class MainGUI {
 				gameFrame.getGamePanel().getStatusBar().setStatus("Your turn, man. Opponent's done.");
 				gameFrame.getGamePanel().getStatusBar().clearDice();
 			}
+			
+			if(gameFrame.getGame().isTerminal()){
+				gameFrame.getGamePanel().getStatusBar().setStatus("END OF GAME!!! "+gameFrame.getGame().getWinner()+" is the WINNER!!!");
+				gameFrame.getGamePanel().getStatusBar().clearDice();
+			}
 		}
 		
 	}
