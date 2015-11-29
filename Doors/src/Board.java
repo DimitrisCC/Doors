@@ -1,26 +1,8 @@
-import java.util.ArrayList;
 import java.util.HashSet;
-import java.util.Stack;
 
 /**
  * Backgammon board class.
- *
- * **HashMap-like implementation for speed.
- * **Could be done more easily by having a "position" field in each piece but would hurt the speed.
- * ------> oxi den 8a itan pio eukolo giati 8a diskoleue i anazitisi tou "posa poulia einai se mia 8esi"
- * ------> outws i allws ta poulia dn exoun "noumero" opote dn se noiazei i 8esi enos sigkekrimenou pouliou
- * ------> alla ta poulia se ka8e 8esi
- * For more extensibility we could create a class for the data structure and not just use ArrayList<Stack<Piece>>.
- * It looks kinda ugly.
- * ------> nomizw enas pinakas einai arketos kai grigoros gia tis leitourgies pou 8eloume...xwro den pianei poli...
- * ------> parola auta auto voleuei gia to grafiko kommati.....as skeftoume kai an ginetai alliws gia na diaxwrisoume
- * ------> ilopoiisi me grafiki diepafi
  */
-
-////------------->>> THA PARATIRISETE POS XRISIMOPOIW PANTOU ENA n (-1 'h 1) // AFTO GINETAI GIA NA DIEFKOLINTHOUN OI PRAKSEIS AFKSOMIOSIS
-//////////////////// STO TABLE
-////////////----> H DIEFKOLINSI THA ITAN NA FTIAXNAME KLASI Player KAI NA HTAN Player[] table OSTE NA MIN KATHOMASTE NA SKEFTOMASTE OLI TIN ORA AYTO
-///////// DEN KSERO VEVAIA AN THA VOLEYE PANTOU
 
 public class Board {
 	
@@ -32,9 +14,6 @@ public class Board {
 	private static final int POS_NUM_12 = 12;
 	private static final int POS_NUM_18 = 18;
 	private static final int POS_NUM_23 = 23;
-	
-	private static final int RED_START_POS = 23;
-	private static final int GREEN_START_POS = 0;
 	
 	private static final int PIECE_TOTAL_NUM = 15;
 	
@@ -122,22 +101,7 @@ public class Board {
 	public int[] getEaten() { return eaten; }
 	
 	public int[] getHomeCheckers() {
-		//TEST CODE
-		//DEBUG
-		int[] p = new int[2];
-		p[0] = p[1] = 0;
-		
-		for(int i = 0; i < 6; ++i){
-			if(table[i] < 0)
-				p[1]++;
-		}
-		for(int i = 18; i < 24; ++i){
-			if(table[i] > 0)
-				p[0]++;
-		}
-		return p;
-		/////
-		//return piecesATdestination;
+		return piecesATdestination;
 	}
 	
 	public int[][] getTotalMove(){ return this.totalMove; }
@@ -171,75 +135,24 @@ public class Board {
 		return true;
 	}
 	
-	//if returned list is empty, no valid moves can be done
+	/**
+	 * Returns a set of all the states/boards/children that a bred/produced by a dice roll
+	 * @param dice the rolled dice
+	 * @param player the player that rolled
+	 * @return the set of children
+	 */
 	public HashSet<Board> getChildren(Dice dice, Player player){
+		
 		HashSet<Board> children = new HashSet<Board>();
-		/*int pN = (player == Player.RED)? RED_START_POS : GREEN_START_POS;
-		
-		if(eaten[player.ordinal()] > 0 ){
-			System.out.println("eeeeeeaten"); //DEBUG
-			Eaten_getChildren(dice.getValues(), children, pN, player);
-		}else if((player == player.GREEN)? hasGreenReachedDestination() : hasRedReachedDestination()){
-			pN = (player == Player.RED)? 5 : 18;
-			System.out.println("bearOffffff"); //DEBUG
-			BearOff_getChildren(dice.getValues(), children, pN, player);
-		}else{
-			System.out.println("NORMALLLLLLLLLLLLLLLl"); //DEBUG
-			Normal_getChildren(dice.getValues(), children, pN, player);
-		}*/
-		
-		yolo_getChildren(dice.getValues(), children, player);
-		
-		System.out.println("Children num: "+children.size());
-		return children;
-		
-	}
-	
-	
-	
-	private int getEaten(Player p) {
-		
-		return eaten[p.ordinal()];
-	}
-	
-	private boolean hasReachedDestination(Player p) {
-			
-		return (p == Player.GREEN)? _hasGreenReachedDestination() : _hasRedReachedDestination();
-	}
-	
-	private void multiBreed(int move, Board parent, Player player, int where, HashSet<Board> level, boolean inDestination){
-		Board child;
-		int n = player.getSign();
-		int pos = (inDestination? player.getBearOffPos() : player.getStart()) - n; //-->>> pN - n
-		
-		if(parent.getEaten(player) > 0){
-			child = new Board(parent);
-			if(!breed(child, pos, move, player, child.getTotalMove(), where)) return;
-			child.setLastPlayedMove(new Move( child.getTotalMove()));
-			level.add(child);
-		} else {
-			int iterateUntil = inDestination? 6 : 24-move;
-			for(int i = 0; i < iterateUntil; ++i){
-				pos += n;
-				child = new Board(parent);
-				
-				if(!breed(child, pos, move, player, child.getTotalMove(), where)) continue;
-				
-				child.setLastPlayedMove(new Move(child.getTotalMove()));
-				level.add(child);
-			}
-		}
-	}
-	
-	private void yolo_getChildren(int[] move, HashSet<Board> children, Player player){
 		
 		HashSet<Board> level1 = new HashSet<Board>();
 		HashSet<Board> level1_r = new HashSet<Board>(); //reversed
 		HashSet<Board> level2 = new HashSet<Board>();
-	//	HashSet<Board> level2_r = new HashSet<Board>();
 		
 		HashSet<Board> level3 = new HashSet<Board>();
 		HashSet<Board> level4 = new HashSet<Board>();
+		
+		int move[] = dice.getValues();
 		
 		Move.resetMove(this.totalMove, 0);
 		
@@ -304,157 +217,55 @@ public class Board {
 			}
 		}
 		
+		System.out.println("Children num: "+children.size()); //DEBUG
+		return children;
+		
 	}
 	
+	private int getEaten(Player p) {
+		
+		return eaten[p.ordinal()];
+	}
 	
+	private boolean hasReachedDestination(Player p) {
+			
+		return (p == Player.GREEN)? hasGreenReachedDestination() : hasRedReachedDestination();
+	}
 	
-	//pN->18 when green playes, 5 when red plays
-	private void BearOff_getChildren(int[] move, HashSet<Board> children, int pN, Player player){
-		
-		//-----> o kwdikas moiazei poli me tn Normal_getChildren
-		//parola auta iparxoun merikes megales diafores
-		//1) se opoiodipote for mporei na vre8oume se teliki katastasi...opote prepei na mporoume na diakopsoume tn diadikasia se opoiodipote
-		//for kai na pros8esoume to paidi, akoma ki an eixame ki alles kiniseis na kanoume pou profanws dn ginontai
-		//2) ola ta for pane mexri to 6 giati stn perioxi mazematos prepei na elegxoume ola ta poulia an mporoume na ta mazepsoume...
-		//isws se merikes periptwseis (px se gemati perioxi mazematos) einai perrito auto giati px ta perissotera isValidMove 8a vgainoun false/
-		//opote dn xreiazetai na kanoume kai ta panta, omws etsi einai pio aplo.....an skefteite allo pio grigoro tropo ilopoiisis alla3te to
-		//3) epeidi elegxontai kai oi 6 8eseis xwris kati tou stil 6-move[0] px, mporoume to reversed na to ilopoiisoume opws t exw edw
-		//Auti i morfi dn efarmovetai stn Normal_getChildren epeidi akrivws exoume auta ta oria sto for.....parola auta autos o tropos dn einai aparaitita apodotikos
-		//giati 8a dimiourgisei pi8anwn polla paidia p dn 8a proste8oun pote stn children....ki auto mporei na alla3ei, dn exei kai poli simasia...i logiki omws einai idia
-		
-		System.out.println("ax"); //DEBUG
-		
+	/**
+	 * 
+	 * @param move
+	 * @param parent
+	 * @param player
+	 * @param where
+	 * @param level
+	 * @param inDestination
+	 */
+	protected void multiBreed(int move, Board parent, Player player, int where, HashSet<Board> level, boolean inDestination){
 		Board child;
-		Board child2;
-		int[][] totalMove = new int[4][2];
-		Move.resetMove(totalMove,0);
 		int n = player.getSign();
-		int fMove = pN - n; //fMove -> first move
-		int sMove = pN - n; //sMove -> second move
-		int tMove = pN - n;
-		int foMove = pN - n;
+		int pos = (inDestination? player.getBearOffPos() : player.getStart()) - n;
 		
-		for(int i=0; i < 6; ++i){
-			
-			fMove += n;
-			
-			child = new Board(this);
-			
-			if(!breed(child, fMove, move[0], player, totalMove, 0)) continue;
-			
-			if(child.isTerminal()){
-				//totalMove[1][0] = -99;
-				//totalMove[1][1] = -99;
-				child.setLastPlayedMove(new Move(totalMove));
-				children.add(child);
-				continue;
+		if(parent.getEaten(player) > 0){
+			child = new Board(parent);
+			if(!breed(child, pos, move, player, child.getTotalMove(), where)) return;
+			child.setLastPlayedMove(new Move( child.getTotalMove()));
+			level.add(child);
+		} else {
+			int iterateUntil = inDestination? 6 : 24-move;
+			for(int i = 0; i < iterateUntil; ++i){
+				pos += n;
+				child = new Board(parent);
+				
+				if(!breed(child, pos, move, player, child.getTotalMove(), where)) continue;
+				
+				child.setLastPlayedMove(new Move(child.getTotalMove()));
+				level.add(child);
 			}
-			
-		
-			for(int j=0; j < 6; ++j){
-				
-				sMove += n;
-				
-				child2 = new Board(child);
-				if(!breed(child2, sMove, move[1], player, totalMove, 1)) continue;
-				
-				if(child2.isTerminal()){
-					child2.setLastPlayedMove(new Move(totalMove));
-					children.add(child2);
-					continue; //pianei an einai mesa sto if????
-				}
-				
-				if(dice.isDouble()){  //-->twra autos o elegxos prepei na ginetai sinexeia...
-					Board child3;
-					Board child4;
-					for(int k=0; k <6; ++k){
-						
-						tMove += n;
-						
-						child3 = new Board(child2);
-						if(!breed(child3, tMove, move[0], player, totalMove, 2)) continue;
-						
-						
-						if(child3.isTerminal()){
-
-							child3.setLastPlayedMove(new Move(totalMove));
-							children.add(child3);
-							continue; //pianei an einai mesa sto if????
-						}
-						
-						for(int h=0; h < 6; ++h){
-							
-							foMove += n;
-							
-							child4 = new Board(child3);
-							if(!breed(child4, foMove, move[0], player, totalMove, 3)) continue;
-							
-							//edw kai terminal na einai to paidi prosti8etai kanonika, dn xreiazetai elegxos, giati exoun ginei 2 kiniseis...
-							//-----> prepei na ginetai kai edw!
-							child4.setLastPlayedMove(new Move(totalMove));
-							children.add(child4);
-						}
-						foMove = pN - n;
-						Move.resetMove(totalMove,3);
-					}
-					
-					tMove = pN-n;
-				} else {
-					child2.setLastPlayedMove(new Move(totalMove));
-					children.add(child2);
-				}
-
-				Move.resetMove(totalMove,2);
-				
-			}
-			sMove = pN-n;
-			Move.resetMove(totalMove,1);
 		}
-		
-		if(!dice.isDouble()){
-			System.out.println("NOT DOUBLE");
-			fMove = pN - n; //fMove -> first move
-			sMove = pN - n; //sMove -> second move
-
-			Move.resetMove(totalMove,0);
-			//******************************* reverse child *******
-		
-			for(int i=0; i < 6; ++i){
-			
-				fMove += n;
-				child = new Board(this);
-				
-				if(!breed(child, fMove, move[1], player, totalMove, 0)) continue;
-				
-				if(child.isTerminal()){
-					child.setLastPlayedMove(new Move(totalMove));
-					children.add(child);
-					continue; //pianei an einai mesa sto if????
-				}
-				
-				for(int j=0; j < 6; ++j){
-					
-					sMove += n;
-					child2 = new Board(this);
-					
-					if(!breed(child, sMove, move[0], player, totalMove, 1)) continue;
-					
-					child2.setLastPlayedMove(new Move(totalMove));
-					children.add(child2);
-				}
-
-				Move.resetMove(totalMove,1);
-				sMove = pN - n;
-			}
-	
-		}
-
-		
-		
 	}
 	
-	
-	
+		
 	/**
 	 * Initializes the board for a Doors game
 	 */
@@ -462,28 +273,15 @@ public class Board {
 		//initialization of a doors game
         //GREEN: 0->23 +integer
         //RED: 23->0 -integer
-		/*table[POS_NUM_0] = 2;
+		table[POS_NUM_0] = 2;
 		table[POS_NUM_5] = -5;
 		table[POS_NUM_7] = -3;
 		table[POS_NUM_11] = 5;
 		table[POS_NUM_12] = -5;
 		table[POS_NUM_16] = 3;
 		table[POS_NUM_18] = 5;
-		table[POS_NUM_23] = -2;*/
-		
-		//TEST CODE
-		table[1] = -5;
-		table[2] = -2;
-		table[3] = -3;
-		table[5] = -5;
-		//table[9] = -1;
-		
-		table[23] = 5;
-		table[22] = 2;
-		table[21] = 3;
-		table[19] = 4;
-		table[14] = 1;
-		
+		table[POS_NUM_23] = -2;
+				
 	}
 	
 	
@@ -527,12 +325,18 @@ public class Board {
 		return true;
 	}
 	
+	/**
+	 * Checks if a bearing off move is valid
+	 * @param pos the initial position
+	 * @param finalPos pos+the_move/the_die_value
+	 * @param player the current player
+	 * @return true if valid
+	 */
 	public boolean isValidBearOff(int pos, int finalPos, Player player){
 		
 		int move = player.getSign()*(finalPos - pos);
 
 		System.out.println("ur move is "+move);
-		int[] possibleMoves = dice.getValues();
 		
 		if(finalPos >= 24){
 			System.out.println("final position > 24 : "+finalPos);
@@ -573,7 +377,12 @@ public class Board {
 		return true;
 	}
 	
-
+	/**
+	 * Checks if the are higher neighbouring position that contain pieces
+	 * @param i initial position to search
+	 * @param player current player
+	 * @return true is there are
+	 */
 	private boolean hasPreviousNeighbours(int i, Player player) {
 		
 		if(player == Player.GREEN){
@@ -618,18 +427,16 @@ public class Board {
 		}
 	}
 	
-	/** Performs the move
+	/** Performs the move (a single jump)
 	 * @param pos current position of the piece to move
 	 * @param target the target the piece has to move
 	 * @param n n = -1 for RED, n = 1 for GREEN
 	 */
-	//****allagi ths makeMove giati pleon apla kanei mia kinisi kai telos *****//
-	
 	protected void makeMove(int pos, int target, int n){
 		//validity of the move is already checked
 		System.out.println("pos "+pos+" target "+target);
-		if((pos > -1) && (pos < 24)){
-			
+		
+		if((pos > -1) && (pos < 24)){	
 
 			System.out.println("table before pick "+table[pos]);
 			//normal move
@@ -671,7 +478,7 @@ public class Board {
 				if((n+1)/2 == 1){
 					if(target < 6)
 						piecesATdestination[1]--; //one red piece from this area got eaten
-				}else{ //-->dn to xes valei.....
+				}else{
 					if(target > 17)
 						piecesATdestination[0]--;
 				}
@@ -695,11 +502,15 @@ public class Board {
 		}
 		
 		//ne
-		isTerminal();
+		//isTerminal();
 	}
 	
-	protected void makeTotalMove(Move m, int n){ //----> 8a mporouse na einai boolean kai na epistrefei an einai termatiki i katastasi
-		//---> stn opoia pige i oxi
+	/**
+	 * Performs a total move, not just a jump
+	 * @param m the move to perform
+	 * @param n current player signum
+	 */
+	protected void makeTotalMove(Move m, int n){
 		//validity of the move is already checked
 		
 		int[][] moveToMake = m.getMove();
@@ -711,7 +522,7 @@ public class Board {
 			makeMove(moveToMake[i][0], moveToMake[i][1], n);
 		}
 		
-		isTerminal();
+		//isTerminal();
 		
 	}
 	
@@ -719,6 +530,9 @@ public class Board {
 		return Math.abs(table[pos]);
 	}
 	
+	/**
+	 * Checks if the target is valid for a move to be made
+	 */
 	public boolean isValidTarget(int moveTarget, Player player){
 		
 		if(moveTarget >= 0 && moveTarget <= 23){
@@ -729,10 +543,10 @@ public class Board {
 				return true;
 			else 
 				return false;
-		}else if (moveTarget < 0){ // o kokkinos mazeuei
+		}else if (moveTarget < 0){ // red frees
 			if(player != Player.RED) return false;
-			return _hasRedReachedDestination();
-		}else if (moveTarget > 23){ // o prasinos mazeuei
+			return hasRedReachedDestination();
+		}else if (moveTarget > 23){ // green frees
 
 			if(player != Player.GREEN){
 
@@ -740,8 +554,8 @@ public class Board {
 				return false;
 			}
 
-			System.out.println("STON PROORISMO: "+_hasGreenReachedDestination());
-			return _hasGreenReachedDestination();
+			System.out.println("STON PROORISMO: "+hasGreenReachedDestination());
+			return hasGreenReachedDestination();
 		}else{
 			return false;
 		}
@@ -772,42 +586,21 @@ public class Board {
         return table[position] > 1;
     }
     
+    /**
+     * Checks which player has pieces in that position
+     * @param pos the position
+     * @return the player
+     */
     public Player colorAt(int pos){
     	if(table[pos] < 0) return Player.RED;
     	else if (table[pos] > 0) return Player.GREEN;
     	else return Player.NONE;
     }
     
-    //DEBUG
-    public boolean _hasRedReachedDestination(){
-    	short reds = 0;
-		for(int i = 0; i < 6; ++i){
-			if(table[i] < 0)
-				reds -= table[i];
-		}
-		return (reds+freedPieces[1] == 15)? true : false;
-    }
-    
-    //DEBUG
-    public boolean _hasGreenReachedDestination(){
-    	short greens = 0;
-		for(int i = 18; i < 24; ++i){
-			if(table[i] > 0)
-				greens += table[i];
-		}
-		return (greens+freedPieces[0] == 15)? true : false;
-    }
-    
-	
     /**
      * @return true if Red has reached the final destination on the board
      */
     public boolean hasRedReachedDestination(){
-    	/*short reds = 0;
-		for(int i = 0; i < 6; ++i){
-			if(table[i] < 0)
-				reds += table[i];
-		}*/
         return piecesATdestination[1]+freedPieces[1] == 15;
     }
 
@@ -815,11 +608,6 @@ public class Board {
      * @return true if Green has reached the final destination on the board
      */
     public boolean hasGreenReachedDestination(){
-       /* short greens = 0;
-        for(int i = 18; i < 24; ++i){
-        	if(table[i] > 0)
-				greens += table[i];
-        }*/
         return piecesATdestination[0]+freedPieces[0] == 15;
     }
     
@@ -833,26 +621,12 @@ public class Board {
     
     public int getRedsLeft(){
     	return PIECE_TOTAL_NUM - eaten[0] - freedPieces[0];
-
-    	//return PIECE_TOTAL_NUM - eaten[0];
     }
     
     public int getGreensLeft(){
     	return PIECE_TOTAL_NUM - eaten[1] - freedPieces[1];
-
-    	//return PIECE_TOTAL_NUM - eaten[1];
     }
 
-	
-	protected int piecesOnBar(Player player){
-		
-		if (player == Player.GREEN && eaten[0] > 0)
-			return eaten[0];
-		else if (player == Player.RED && eaten[1] > 0)
-			return eaten[1];
-		else return 0;
-	}
-  
     public Move getLastPlayedMove(){ return lastPlayedMove; }
     
     public void setLastPlayedMove(Move move){
@@ -872,7 +646,7 @@ public class Board {
     		setWinner(Player.RED);
     		return true;
     	}else{
-    		//--> afou by default o winner einai None edw dn to vaze na kanei setWinner(Player.NONE)
+    		//--> afou by default o winner einai None edw dn to vaze na kanei setWinner(Player.NONE) //DEBUG
     		return false;
     	}
     }

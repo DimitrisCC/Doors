@@ -2,11 +2,7 @@
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.awt.event.MouseEvent;
-import java.awt.event.MouseMotionListener;
 import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
 import java.util.HashSet;
 
 import javax.swing.*;
@@ -15,9 +11,9 @@ import javax.swing.*;
  * Draws the GUI of the game: background, pieces, dice
  */
 
-public class BackgammonPanel extends JPanel implements MouseMotionListener {
+public class BackgammonPanel extends JPanel {
 
-	private static final long serialVersionUID = 1L; // --> pou xrisimopoieitai?
+	private static final long serialVersionUID = 1L;
 
 	private static final int BORDER = 30;
 	private static final int PIECE_STEP = 25;
@@ -68,7 +64,6 @@ public class BackgammonPanel extends JPanel implements MouseMotionListener {
 
 	public BackgammonPanel(Board game) {
 		this.game = game;
-		// setLayout(new FlowLayout(FlowLayout.CENTER, 5, 5));
 		this.setLayout(null);
 		setBackground(Toolkit.getDefaultToolkit().createImage("resources//background.png"));
 		setDice1(Toolkit.getDefaultToolkit().createImage("resources//dice1.png"));
@@ -86,7 +81,6 @@ public class BackgammonPanel extends JPanel implements MouseMotionListener {
 		lastPick = -1;
 		isItMyTurn = true;
 		hasPlayerRolled = false;
-		addMouseMotionListener(this);
 		drawButtons();
 		drawStatusBar();
 		children = new HashSet<Board>();
@@ -242,69 +236,7 @@ public class BackgammonPanel extends JPanel implements MouseMotionListener {
 		buttons.add(btnBearOff);
 	}
 
-	//*********************************************************************************
-	//################################################################################
-	/*class BearOffListener implements ActionListener {
-		BackgammonPanel b;
-		
-
-		BearOffListener(BackgammonPanel b) {
-			this.b = b;
-		}
-		
-		
-
-		public void actionPerformed(ActionEvent e) { 
-			
-			if(e.getSource().equals(btnBearOff)){
-						
-				/*int[] moves= b.game.dice.getValues();
-				boolean f=true;
-				int i=0;
-				int g=0;
-				while(f && i<moves.length && (b.game.colorAt(moves[i])==Player.GREEN))
-				{ 
-				   if (((!game.getDice().isDouble()) && moves[i] != doneMove) || (game.getDice().isDouble() && jumpsYet < game.getDice().getTotalJumpsFromDice()))
-				   {	//An exw toulaxiston ena prasino pouli sth thesh ths sugkekrimenhs zarias
-					  if((b.game.getNumberOfPiecesAt(24-moves[i])>0))
-					  {
-						b.game.makeMove(24-moves[i], 24, 1);//bear off checker
-						f=false;//Ayto ginetai wste na ginei to mazema mono gia th sugkekrimenh zaria
-					  }//if
-					  else{//efoson den exei poulia sthn antistoixh thesh prepei na mazeutoun poulia an uparxoun apo tis 
-						   //amesws megaluteres theseis
-						  g=maxCheckerPosition(game);
-						  b.game.makeMove(g, 24, 1);//bear off checker from the maximum position
-						  f=false;//Ayto ginetai wste na ginei mono mia  zaria
-					    }
-					  
-				  }
-				   i++; 
-				}//while
-				//btnBearOff.setEnabled(false);
-			}
-		}//endOf_method
-		
-		//epistrefei th megaluterh thesh sthn opoia yparxei estw kai ena pouli
-		private int maxCheckerPosition(Board b){
-			
-			boolean tr=true;
-			int j=18;
-			int pos=0;
-			while(tr && (j>=18 && j<=23)){
-				if(b.getNumberOfPiecesAt(j)>0){
-					
-					pos=j;
-					tr=false;
-				}
-				j++;
-			}//while
-			return pos;
-		}
-	}*/
-	//###########################################################################
-	// *************************************************************************
-
+	/** Custom ActionListener class for the roll button */
 	class RollButtonListener implements ActionListener {
 		BackgammonPanel b;
 
@@ -352,7 +284,10 @@ public class BackgammonPanel extends JPanel implements MouseMotionListener {
 			return true;
 		}
 	}
-
+	
+	/**
+	 * Initial method for drawing the pieces
+	 */
 	private void drawPieces(Graphics g) {
 		Image image;
 		for (int i = 0; i < TOTAL_POS; i++) {
@@ -387,9 +322,11 @@ public class BackgammonPanel extends JPanel implements MouseMotionListener {
 
 	public void setNumOfMoves(int i) {
 		numOfMoves = i;
-		
 	}
-
+	
+	/**
+	 * Gets the right coordinates before painting graphics
+	 */
 	private void getCoordinates(Graphics g, Image image, int pos) {
 
 		int xCoordinate = 645, yCoordinate;
@@ -427,7 +364,10 @@ public class BackgammonPanel extends JPanel implements MouseMotionListener {
 		}
 
 	}
-
+	
+	/**
+	 * Actually does the painting
+	 */
 	public void paintPieces(Graphics g, Image image, int x, int y, int pos, int num, boolean ingame) {
 		int until;
 		if (ingame)
@@ -445,6 +385,9 @@ public class BackgammonPanel extends JPanel implements MouseMotionListener {
 		}
 	}
 
+	/**
+	 * Initial drawing method of the full graphics.
+	 */
 	public void paintComponent(Graphics g) {
 		super.paintComponent(g);
 		g.drawImage(getBoardBackground(), 0, 0, null);
@@ -457,6 +400,9 @@ public class BackgammonPanel extends JPanel implements MouseMotionListener {
 		this.repaint();
 	}
 
+	/**
+	 * Draws the dices on the board
+	 */
 	private void drawDices(Graphics g, int i) {
 
 		int diceX = DICE_X + i * DICE_SIZE;
@@ -685,7 +631,11 @@ public class BackgammonPanel extends JPanel implements MouseMotionListener {
 	public boolean isMyTurn() {
 		return isItMyTurn;
 	}
-
+	
+	/**
+	 * Picks a valid piece from the specified index of the board
+	 * @param index the position to pick
+	 */
 	public void pick(int index) { // if index = -1, the pick stands for the
 									// highlighting of the eaten
 
@@ -706,7 +656,7 @@ public class BackgammonPanel extends JPanel implements MouseMotionListener {
 			
 			for (int i = 0; i < moves.length; ++i) {
 						
-				if (game._hasGreenReachedDestination() || (game.isValidTarget(index + moves[i], player))) {
+				if (game.hasGreenReachedDestination() || (game.isValidTarget(index + moves[i], player))) {
 					
 					if (((!game.getDice().isDouble()) && moves[i] != doneMove)
 							|| (game.getDice().isDouble() && jumpsYet < game.getDice().getTotalJumpsFromDice())) {
@@ -745,7 +695,12 @@ public class BackgammonPanel extends JPanel implements MouseMotionListener {
 
 		// statusBar.setStatus("Pick a correct piece, already");
 	}
-
+	
+	/**
+	 * Performs a valid jump of the picked piece to the target index.
+	 * The jump may be a normal jump, a bear off jump or an eaten's jump
+	 * @param index the target position
+	 */
 	public void jump(int index) { //index = 24 for bear off
 
 		int m = 0;
@@ -858,16 +813,6 @@ public class BackgammonPanel extends JPanel implements MouseMotionListener {
 	 */
 	public int getJumpsYet() {
 		return jumpsYet;
-	}
-
-	@Override
-	public void mouseDragged(MouseEvent e) {
-		// TODO Auto-generated method stub
-	}
-
-	@Override
-	public void mouseMoved(MouseEvent e) {
-		// TODO Auto-generated method stub
 	}
 
 	/**

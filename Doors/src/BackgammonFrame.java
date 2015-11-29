@@ -7,7 +7,6 @@ public class BackgammonFrame extends JFrame {
 	private static final long serialVersionUID = -1419452740845309834L;
 	private Board game;
 	private Player player;
-	private StatusBar statusBar;
 	private BackgammonPanel panel;
 
 	/**
@@ -44,16 +43,11 @@ public class BackgammonFrame extends JFrame {
 		panel.repaint();
 	}
 
-	public void winnerDialog() {
-		// TODO Auto-generated method stub
-		
-	}
-
 	public Board getGame() {
 		return game;
 	}
 	
-	public BackgammonPanel getGamePanel(){return panel;}
+	public BackgammonPanel getGamePanel(){ return panel; }
 	
 	public void setPlayer(Player p){
 		player = p;

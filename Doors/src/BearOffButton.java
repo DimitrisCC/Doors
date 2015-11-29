@@ -13,7 +13,7 @@ public class BearOffButton extends BgButton {
 		
 		BackgammonPanel panel = (BackgammonPanel) this.getParent();
 		
-		if(!panel.getGameboard()._hasGreenReachedDestination()){
+		if(!panel.getGameboard().hasGreenReachedDestination()){
 			panel.getStatusBar().setStatus("Hasn't reached destination yet, sir. Don't be impatient.");
 		}
 		

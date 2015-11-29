@@ -25,20 +25,13 @@ public final class MainGUI {
 		} catch (Exception e) {
 		    // If Nimbus is not available, you can set the GUI to another look and feel.
 		}
-		
-		//EventQueue.invokeLater(new Runnable() { //gamouse san threading idea, alla dimiourgei provlimata synchronization
-			//public void run() { 
-				//try {
-					currentPlayer = Player.GREEN;
-					currentGame = new Board();
-					gameFrame = new BackgammonFrame(currentGame);
-					gameFrame.setVisible(true);
-					playGame(currentGame);
-				//} catch (Exception e) {
-				//	e.printStackTrace();
-				//}
-			//}
-		//});
+	
+		currentPlayer = Player.GREEN;
+		currentGame = new Board();
+		gameFrame = new BackgammonFrame(currentGame);
+		gameFrame.setVisible(true);
+		playGame(currentGame);
+			
 	}
 	
 	private static void playGame(Board currentGame) {
@@ -70,24 +63,6 @@ public final class MainGUI {
 			}
 		}
 		
-		
-		
-		
-		/*gameFrame = new BackgammonFrame(currentGame);
-		gameFrame.setVisible(true);
-		//GameGui guiGame = new GameGui();
-		//bf = new BackgammonFrame(currentGame);
-		while (currentGame.getWinner() == Player.NONE) {
-			if (gameFrame.getGamePanel().getMyTurn()) {
-				playTurn(Player.GREEN);
-				currentPlayer = Player.RED;
-			} else {
-				playTurn(Player.RED);
-				currentPlayer = Player.GREEN;
-			}
-		}
-
-		gameFrame.winnerDialog(); */
 	}
 	
 }
