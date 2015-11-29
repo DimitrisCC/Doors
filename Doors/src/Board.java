@@ -500,8 +500,6 @@ public class Board {
 			return false;
 		}
 		
-		//int[] possibleMoves = dice.getValues();
-	
 		if(hasReachedDestination(player)){
 
 			System.out.println("are u valid bear off bro??");
@@ -509,12 +507,10 @@ public class Board {
 			
 		}
 		
-		
-		
 		return true;
 	}
 	
-public boolean isValidBearOff(int pos, int finalPos, Player player){
+	public boolean isValidBearOff(int pos, int finalPos, Player player){
 		
 		int move = player.getSign()*(finalPos - pos);
 
@@ -534,10 +530,10 @@ public boolean isValidBearOff(int pos, int finalPos, Player player){
 			if(colorAt(24 - move) == player){
 				if(pos != 24 - move) return false;
 			}else{
-				if((pos > 24 - move) && hasPreviousNeighbours(24- move, player)) return false;
+				if((pos > 24 - move) && hasPreviousNeighbours(24 - move, player)) return false;
 			}
 			
-		} else {
+		} else if (finalPos <= -1 ) {
 			//wrong bear off area
 			if(!(player == Player.RED)){
 
@@ -558,49 +554,49 @@ public boolean isValidBearOff(int pos, int finalPos, Player player){
 	}
 	
 
-private boolean hasPreviousNeighbours(int i, Player player) {
-	
-	if(player == Player.RED){
-		for(; i > 17; -- i){
-			if( colorAt(i) == player) return true;
-		}
-	}else{//green
-		for(; i < 6; ++ i){
-			if( colorAt(i) == player) return true;
-		}
-	}
-	
-	return false;
-}
-
-/**
- * Checks if you picked a correct piece
- */
-public boolean isValidPick(int pos, Player player){
-	if(pos >= 0 && pos <= 23){;
-		if(colorAt(pos) == player){
-			return true;
-		} else {
-
-			if(player == Player.GREEN) System.out.println("WTF");
-			return false;
-		}
-	}else if (pos == -1){ // start position is the bar with eaten pieces for the green player
-
-		System.out.println("green eaten wants to get in board!!! hide");
-		if(player != Player.GREEN) return false;
+	private boolean hasPreviousNeighbours(int i, Player player) {
 		
-		return (eaten[0] > 0);
-	}else if (pos == 24){ // start position is the bar with eaten pieces for the red player
-
-		System.out.println("red eaten wants to get in board!!! hide");
-		if(player != Player.RED) return false;
-		//System.out.println(pos+" "+eaten[1]);
-		return (eaten[1] > 0);
-	}else{
+		if(player == Player.RED){
+			for(; i > 17; -- i){
+				if( colorAt(i) == player) return true;
+			}
+		}else{//green
+			for(; i < 6; ++ i){
+				if( colorAt(i) == player) return true;
+			}
+		}
+		
 		return false;
 	}
-}
+	
+	/**
+	 * Checks if you picked a correct piece
+	 */
+	public boolean isValidPick(int pos, Player player){
+		if(pos >= 0 && pos <= 23){;
+			if(colorAt(pos) == player){
+				return true;
+			} else {
+	
+				if(player == Player.GREEN) System.out.println("WTF");
+				return false;
+			}
+		}else if (pos == -1){ // start position is the bar with eaten pieces for the green player
+	
+			System.out.println("green eaten wants to get in board!!! hide");
+			if(player != Player.GREEN) return false;
+			
+			return (eaten[0] > 0);
+		}else if (pos == 24){ // start position is the bar with eaten pieces for the red player
+	
+			System.out.println("red eaten wants to get in board!!! hide");
+			if(player != Player.RED) return false;
+			//System.out.println(pos+" "+eaten[1]);
+			return (eaten[1] > 0);
+		}else{
+			return false;
+		}
+	}
 	
 	/** Performs the move
 	 * @param pos current position of the piece to move
@@ -703,7 +699,7 @@ public boolean isValidPick(int pos, Player player){
 		return Math.abs(table[pos]);
 	}
 	
-public boolean isValidTarget(int moveTarget, Player player){
+	public boolean isValidTarget(int moveTarget, Player player){
 		
 		if(moveTarget >= 0 && moveTarget <= 23){
 			int n = player.getSign();
