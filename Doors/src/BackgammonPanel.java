@@ -715,10 +715,7 @@ public class BackgammonPanel extends JPanel implements MouseMotionListener {
 							buttons.get(index + moves[i]).highlight();
 						}
 						//pick for bearing off
-						if(index == 24-moves[i] ||
-								(index == maxCheckerPosition(moves[i]) && !hasHighestNeighbours(moves[i])
-								//&& 24-moves[0] < index && 24-moves[1] < index
-								))
+						if( index + moves[i] >= 24 && game.isValidBearOff(index, index + moves[i], player))
 							//--->> den eimai kai sigouros gia KATHE periptwsi
 							btnBearOff.highlight();
 
