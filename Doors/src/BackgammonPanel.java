@@ -47,6 +47,7 @@ public class BackgammonPanel extends JPanel implements MouseMotionListener {
 	private int jumpsYet;
 	private int lastPick; // to cleanse the highlight
 	private int doneMove;
+	private int toBearOff;
 
 	private ArrayList<BgButton> buttons;
 	private JButton buttonRoll;
@@ -716,12 +717,14 @@ public class BackgammonPanel extends JPanel implements MouseMotionListener {
 						}
 						System.out.println("LIGHT BEAR OFF" + maxCheckerPosition(moves[i]) + " " + hasHighestNeighbours(moves[i]));
 						//pick for bearing off
-						if( index + moves[i] >= 24 && game.isValidBearOff(index, index + moves[i], player))
-							//--->> den eimai kai sigouros gia KATHE periptwsi
+						if( index + moves[i] >= 24 && game.isValidBearOff(index, index + moves[i], player)){
 							btnBearOff.highlight();
+							this.toBearOff = moves[i];
+						}
 					}
-
+					//toBearOff = 0;
 				}
+				toBearOff = 0;
 			}
 			
 			System.out.println(getInTheGame);
@@ -748,7 +751,7 @@ public class BackgammonPanel extends JPanel implements MouseMotionListener {
 		if (picked) {
 			for (int i = 0; i < moves.length; ++i) {
 				m = moves[i];
-				if (position + m == index || index == 24) {// valid move according to number of
+				if (position + m == index || index == 24 && toBearOff == m) {// valid move according to number of
 											// left jumps and the dice
 					if (buttons.get(index).isHighlighted()) { // check the
 																// gameboard
@@ -768,6 +771,7 @@ public class BackgammonPanel extends JPanel implements MouseMotionListener {
 							doneMove = 0;
 							numOfMovesDone = 0;
 							numOfMoves = 0;
+							toBearOff = 0;
 							
 							for (int j = 0; j < moves.length; ++j) {
 								if (lastPick + moves[i] < 24 && lastPick + moves[i] > -1){
