@@ -3,9 +3,7 @@ import java.util.ArrayList;
 public class Move {
 	
 
-	private int[][] move; //-->apo8ikeuoume tn 8esi apo tn opoia pirame to pouli i (move[i][0])
-						//-->kai tin 8esi stn opoia to pigame (move[i][1])
-	//--> 8ewrw oti oi kiniseis pragmatopoiountai diadoxika kai pws mporw na kanw to poli 4 kiniseis (4 einai sts diples)
+	private int[][] move;
 	private int score;
 	
 	public Move()
@@ -13,7 +11,7 @@ public class Move {
 		move = new int[4][2];
 		for(int i=0; i<move.length; i++)
 			for(int j=0; j<move[0].length; j++) move[i][j] = -99; //invalid values when it's not used yet
-		score = 0; //prepei na skeftw ena invalide noumero gia edw px to -INF i to INF
+		score = 0;
 	}
 	
 	public Move(int[][] moves)

@@ -765,6 +765,8 @@ public class BackgammonPanel extends JPanel {
 				pick(-1);
 
 		}
+		
+		
 	}
 	
 	/**
