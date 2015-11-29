@@ -121,7 +121,24 @@ public class Board {
 	
 	public int[] getEaten() { return eaten; }
 	
-	public int[] getHomeCheckers() { return piecesATdestination; }
+	public int[] getHomeCheckers() {
+		//TEST CODE
+		//DEBUG
+		int[] p = new int[2];
+		p[0] = p[1] = 0;
+		
+		for(int i = 0; i < 6; ++i){
+			if(table[i] < 0)
+				p[1]++;
+		}
+		for(int i = 18; i < 24; ++i){
+			if(table[i] > 0)
+				p[0]++;
+		}
+		return p;
+		/////
+		//return piecesATdestination;
+	}
 	
 	public int[][] getTotalMove(){ return this.totalMove; }
 	
