@@ -2,8 +2,8 @@ public class Evaluation {
   
 	private static final int  positions= 24;
 
-	public static final int Vmax = 10000;
-	public static final int Vmin = -10000;
+	public static final int Vmax = 15000;
+	public static final int Vmin = -15000;
 	
 	/*
 	 * player->0 for green checkers 
@@ -42,9 +42,36 @@ public class Evaluation {
     	   
     	   score+= (getNumberOf_FinalBlocks(b,player)*5);
         }
-	   	score+=b.getFreedPieces()[player]*20;
+	   
+	   /* if(getNumberOf_OpponentsCheckers(b,player)==0 && getNumberOf_OpponentsCheckers(b,1-player)==0){
+	    	score+=(b.getFreedPieces()[player]*650-b.getFreedPieces()[1-player]*650);
+	    }
+	    else if(getNumberOf_OpponentsCheckers(b,player)==0 && getNumberOf_OpponentsCheckers(b,1-player)>0){
+	    	
+	    	score+=(b.getFreedPieces()[player]*650-b.getFreedPieces()[1-player]*20);
+	    }
+	    else if(getNumberOf_OpponentsCheckers(b,player)>0 && getNumberOf_OpponentsCheckers(b,1-player)==0){
+	    	score+=(b.getFreedPieces()[player]*20-b.getFreedPieces()[1-player]*650);
+	    }
+	    else
+	    {
+	    	score+=(b.getFreedPieces()[player]*20-b.getFreedPieces()[1-player]*20);
+	    }*/
+	   if(getNumberOf_OpponentsCheckers(b,player)==0)
+	   {
+		   score+=b.getFreedPieces()[player]*650;//kalyterh periptesh:23*15+(20*15)=645..exw 
+		                                         //ola ta poulia sth thesh 23 kai exw 15 poulia sth perioxh mou.Ayto vgazei 645. 
+		}                                        //To parapanw ginetai st evaluatecheckers.thelw kati megalutero wste n mazeuei para n kinei.
+	   else{//an exw poulia t antipalou sth home area kalutera na kinw apo to na mazeuw gt endexwmenws afhsw kapoio mono
+		   score+=b.getFreedPieces()[player]*20; 
+		   
+	   }
+	   
         return score;
 	 } 
+	 
+	 
+	 
     
 	 /*
 	  * This function weights your checkers more if they are closer to your home
