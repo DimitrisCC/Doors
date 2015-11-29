@@ -530,7 +530,10 @@ public class Board {
 			if(colorAt(24 - move) == player){
 				if(pos != 24 - move) return false;
 			}else{
-				if((pos > 24 - move) && hasPreviousNeighbours(24 - move, player)) return false;
+				if((pos > 24 - move) && hasPreviousNeighbours(pos-1, player)){
+					System.out.println("neighborz "+hasPreviousNeighbours(pos-1, player));
+					return false;
+				}
 			}
 			
 		} else if (finalPos <= -1 ) {
@@ -545,7 +548,7 @@ public class Board {
 			if(colorAt(move - 1) == player){
 				if(pos != move - 1) return false;
 			}else{
-				if((pos < move - 1) && hasPreviousNeighbours(move - 1, player)) return false;
+				if((pos < move - 1) && hasPreviousNeighbours(pos+1, player)) return false;
 			}
 			
 		}
@@ -556,13 +559,13 @@ public class Board {
 
 	private boolean hasPreviousNeighbours(int i, Player player) {
 		
-		if(player == Player.RED){
-			for(; i > 17; -- i){
-				if( colorAt(i) == player) return true;
+		if(player == Player.GREEN){
+			for(; i > 17; --i){
+				if(colorAt(i) == player) return true;
 			}
-		}else{//green
-			for(; i < 6; ++ i){
-				if( colorAt(i) == player) return true;
+		}else{//red
+			for(; i < 6; ++i){
+				if(colorAt(i) == player) return true;
 			}
 		}
 		
