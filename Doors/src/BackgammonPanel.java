@@ -810,6 +810,8 @@ public class BackgammonPanel extends JPanel implements MouseMotionListener {
 				pick(-1);
 
 		}
+		
+		
 	}
 	
 	/**
