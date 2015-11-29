@@ -501,20 +501,15 @@ public class Board {
 		}
 		
 		//int[] possibleMoves = dice.getValues();
-		
-		/*if(((possibleMoves[0]+possibleMoves[1])== move)&&
-				(this.getTable()[pos + possibleMoves[0]]  )&& 
-					!isValidTarget(pos + possibleMoves[0], player) ) {
-
-			System.out.println("idk bro!!!!");
-			return false;
-		}*/
-		
-		if((pos+move <= -1)||(pos+move >= 24)){
+	
+		if(hasReachedDestination(player)){
 
 			System.out.println("are u valid bear off bro??");
 			return isValidBearOff(pos, pos+move, player);
+			
 		}
+		
+		
 		
 		return true;
 	}
@@ -529,54 +524,54 @@ private boolean isValidBearOff(int pos, int finalPos, Player player){
 		if(finalPos >= 24){
 			System.out.println("final position > 24 : "+finalPos);
 			//wrong bear off area
-			if(!(player == Player.GREEN)||!_hasGreenReachedDestination()){
+			if(!(player == Player.GREEN)){
 				
+				System.out.println("wrong player/direction");
+				
+				return false;
+			}
+			
+			if(colorAt(24 - move) == player){
+				if(pos != 24 - move) return false;
+			}else{
+				if((pos > 24 - move) && hasPreviousNeighbours(24- move, player)) return false;
+			}
+			
+		} else {
+			//wrong bear off area
+			if(!(player == Player.RED)){
 
 				System.out.println("wrong player/direction");
 				
 				return false;
 			}
-			//you moved a checker exactly a number of your dice and got out of board
-			if (finalPos == 24) return true;
-			//the previous if was not true, so you moved a checker for more steps than the dice ones
-			//if other checker was before the one you chose then your move is not valid
-			for(int i = pos-1 ; i > 17; --i ){
-				if(colorAt(i) == player) {
-
-					System.out.println("other checker existed");
-					return false;
-				}
-			}
-			//however to  move the checker with the bigger distance of the bear off area is not always valid
-			//Only if you could not do other moves to move it ON the board
-			if((pos + possibleMoves[0] < 24)|| (pos + possibleMoves[1] < 24)){ 
-
-				System.out.println("other moves existed");
-				return false;
-			}
 			
-		} else {
-			//wrong bear off area
-			if(!(player == Player.RED)||!_hasRedReachedDestination()) return false;
-			
-			//you moved a checker exactly a number of your dice and got out of board
-			if ((finalPos == -1) && ((move == possibleMoves[0]) || (move == possibleMoves[1]))) return true;
-
-			//the previous if was not true, so you moved a checker for more steps than the dice ones
-			//if other checker was before the one you chose then your move is not valid
-			for(int i =  pos+1 ; i < 6; ++i ){
-				if(colorAt(i) == player) return false;
+			if(colorAt(move - 1) == player){
+				if(pos != move - 1) return false;
+			}else{
+				if((pos < move - 1) && hasPreviousNeighbours(move - 1, player)) return false;
 			}
-
-			//however to  move the checker with the bigger distance of the bear off area is not always valid
-			//Only if you could not do other moves to move it ON the board
-			if((pos - possibleMoves[0] > -1)|| (pos - possibleMoves[1] > -1)) return false;
 			
 		}
 		
 		return true;
 	}
 	
+
+private boolean hasPreviousNeighbours(int i, Player player) {
+	
+	if(player == Player.RED){
+		for(; i > 17; -- i){
+			if( colorAt(i) == player) return true;
+		}
+	}else{//green
+		for(; i < 6; ++ i){
+			if( colorAt(i) == player) return true;
+		}
+	}
+	
+	return false;
+}
 
 /**
  * Checks if you picked a correct piece
