@@ -519,7 +519,7 @@ public class Board {
 		return true;
 	}
 	
-private boolean isValidBearOff(int pos, int finalPos, Player player){
+	public boolean isValidBearOff(int pos, int finalPos, Player player){
 		
 		int move = player.getSign()*(finalPos - pos);
 

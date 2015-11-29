@@ -697,10 +697,10 @@ public class BackgammonPanel extends JPanel implements MouseMotionListener {
 			this.position = index;
 			boolean getInTheGame = false;
 			moves = game.getDice().getValues();
-			if(!game.getDice().isDouble()){
+			/*if(!game.getDice().isDouble()){
 				Arrays.sort(moves);
 				Collections.reverse(Arrays.asList(moves)); //descending order for easing the bearing off process
-			}
+			}*/
 			
 			for (int i = 0; i < moves.length; ++i) {
 						
@@ -714,14 +714,11 @@ public class BackgammonPanel extends JPanel implements MouseMotionListener {
 							if(index == -1) getInTheGame = true;
 							buttons.get(index + moves[i]).highlight();
 						}
+						System.out.println("LIGHT BEAR OFF" + maxCheckerPosition(moves[i]) + " " + hasHighestNeighbours(moves[i]));
 						//pick for bearing off
-						if(index == 24-moves[i] ||
-								(index == maxCheckerPosition(moves[i]) && !hasHighestNeighbours(moves[i])
-								//&& 24-moves[0] < index && 24-moves[1] < index
-								))
+						if( index + moves[i] >= 24 && game.isValidBearOff(index, index + moves[i], player))
 							//--->> den eimai kai sigouros gia KATHE periptwsi
 							btnBearOff.highlight();
-
 					}
 
 				}

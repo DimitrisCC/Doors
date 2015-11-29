@@ -4,7 +4,7 @@ import java.util.HashSet;
 public class Minimax {
 	
 	
-	private static int MAX_LENGTH = 2; // 3ekinaei apo to 0 (opote en teli 3 einai ta epipeda...)
+	private static int MAX_LENGTH = 1; // 3ekinaei apo to 0 (opote en teli 3 einai ta epipeda...)
 	private static int INF = 100000;
 	private static ArrayList<Dice> possibleRolls; // isws kalo na alla3ei se oura proteraiotitas me pio panw osa exoun pi8anotita 1/18 kai pio katw osa 1/36
 	private static int LastLevelChildren = 0; //DEBUG
@@ -14,7 +14,7 @@ public class Minimax {
 	//opote mesa sts sinartiseis xrisimopoiw fixed PieceEnums...parola auta epeidi to 8ema isws
 	//mporei na veltiw8ei genika to afisa stn dilwsi kai vlepoume
 	public static Move MinimaxAlgorithm(Board root, Dice d, Player player) //--> AUTO T PLAYER DN XRISIMOPOIEITAI 
-	{System.out.println("minimaxAlgo");//DEBUG
+	 {//System.out.println("minimaxAlgo");//DEBUG
 		possibleRolls = Dice.allPossibleRolls(); //initialize possibleRolls
 		Move bestMove = maxValue(root, d, 0, player, Evaluation.Vmin, Evaluation.Vmax);
 		System.out.println("CHILD USED");
@@ -27,10 +27,10 @@ public class Minimax {
 	}
 	
 	private static Move minValue(Board b, Dice d, int treeLength, Player player, int alpha, int beta){
-		System.out.println("min " + player.ordinal());//DEBUG
+		//System.out.println("min " + player.ordinal());//DEBUG
 		if(treeLength == MAX_LENGTH){
 			//epistrefei to apotelesma tis euretikis sto b
-			System.out.println("minValue Last level");
+			//System.out.println("minValue Last level");
 			return new Move(b.getLastPlayedMove().getMove(), (int)Evaluation.boardScore(b,0)); 
 		}
 		
@@ -50,7 +50,7 @@ public class Minimax {
 	private static Move maxValue(Board b, Dice d, int treeLength, Player player, int alpha, int beta){
 		//System.out.println("max");//DEBUG
 		if(treeLength == MAX_LENGTH){
-			System.out.println("maxValue Last level");
+			//System.out.println("maxValue Last level");
 			//epistrefei to apotelesma tis euretikis sto b
 			LastLevelChildren++; //DEBUG
 			return new Move(b.getLastPlayedMove().getMove(), (int)Evaluation.boardScore(b,1)); 
