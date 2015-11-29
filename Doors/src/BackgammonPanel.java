@@ -808,7 +808,7 @@ public class BackgammonPanel extends JPanel implements MouseMotionListener {
 	}
 	
 	/**
-	 * Checks if the is a position on the right of die with green pieces
+	 * Checks if there is a position on the right of die with green pieces
 	 * @param die a die value that rolled
 	 * @return the first position it finds
 	 */
