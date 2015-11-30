@@ -49,6 +49,8 @@ public class Board {
         initBoard();
         eaten = new int[2];
         piecesATdestination = new int[2];
+        piecesATdestination[0] = 5;
+        piecesATdestination[1] = 5;
         freedPieces = new int[2];
         lastPlayedMove = new Move();
         
