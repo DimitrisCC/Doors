@@ -441,6 +441,14 @@ public class Board {
 			System.out.println("table before pick "+table[pos]);
 			//normal move
 			table[pos] -= n; //pick that piece 
+			
+			if(n == -1){
+				if(pos < 6)
+					piecesATdestination[1]--;
+			}else{
+				if(pos > 17)
+					piecesATdestination[0]--;
+			}
 
 			System.out.println("pick "+pos+" table "+table[pos]);
 		
@@ -607,6 +615,7 @@ public class Board {
      * @return true if Green has reached the final destination on the board
      */
     public boolean hasGreenReachedDestination(){
+    	System.out.println("dest GREEN " + piecesATdestination[0]);
         return piecesATdestination[0]+freedPieces[0] == 15;
     }
     
