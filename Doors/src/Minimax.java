@@ -1,3 +1,5 @@
+
+
 /**************************************
  * MEMBERS
  * ----------------------------------
@@ -17,13 +19,17 @@ import java.util.HashSet;
 
 public final class Minimax {
 	
-	private static final int MAX_LENGTH = 1; //first level 0
+	private static final int MAX_LENGTH = 1; //first level 0 //1 means 2 levels
 	private static final boolean PRUNE = false; //use pruning or not //if true, MAX_LENGTH may be higher but be careful
 	private static final int INF = 100000;
 	private static ArrayList<Dice> possibleRolls; 
 
 	private Minimax(){}
-	
+
+	/**
+	 * Computes the best Move to be made to be made for the current game board with the given dice and the given player
+	 * Basic algorithm of the game
+	 * */
 	public static Move MinimaxAlgorithm(Board root, Dice d, Player player) 
 	{
 		possibleRolls = Dice.allPossibleRolls(); //initialize possibleRolls
@@ -32,6 +38,16 @@ public final class Minimax {
 		return bestMove;
 	}
 	
+	/**
+	 * Computes the best move MIN can make on a current game
+	 * @param b the board on which the computations will be made
+	 * @param d the current dice of the game
+	 * @param p the player (always GREEN for Min)
+	 * @param treeLength the current length of the tree
+	 * @param alpha a value for pruning
+	 * @param beta b value for pruning
+	 * @return the best Move min player can make
+	 * */
 	private static Move minValue(Board b, Dice d, int treeLength, Player player, int alpha, int beta){
 		if(treeLength == MAX_LENGTH){
 			return new Move(b.getLastPlayedMove().getMove(),  Evaluation.boardScore(b,1)-Evaluation.boardScore(b,0)); 
@@ -50,6 +66,17 @@ public final class Minimax {
 		return min;
 	}
 	
+
+	/**
+	 * Computes the best move MAX can make on a current game
+	 * @param b the board on which the computations will be made
+	 * @param d the current dice of the game
+	 * @param p the player (always RED for Max)
+	 * @param treeLength the current length of the tree
+	 * @param alpha a value for pruning
+	 * @param beta b value for pruning
+	 * @return the best Move max player can make
+	 * */
 	private static Move maxValue(Board b, Dice d, int treeLength, Player player, int alpha, int beta){
 		if(treeLength == MAX_LENGTH){
 			return new Move(b.getLastPlayedMove().getMove(), Evaluation.boardScore(b,1)-Evaluation.boardScore(b,0)); 
@@ -68,6 +95,16 @@ public final class Minimax {
 		return max;
 	} 
 	
+	/**
+	 * Computes the expected score of all the best opponent's choices for each probable value of the dice
+	 * @param b the board on which the computations will be made
+	 * @param d the current dice of the game
+	 * @param p the player for whom it computes the expected score
+	 * @param treeLength the current length of the tree
+	 * @param alpha a value for pruning
+	 * @param beta b value for pruning
+	 * @return the expected value of the score
+	 * */
 	private static int chanceValue(Board b, Dice d, Player P, int treeLength, int alpha, int beta){
 		float expectedValue = 0; 
 		float s = 0;
@@ -81,13 +118,16 @@ public final class Minimax {
 				currentP = (float) 1/(roll.isDouble()? 36:18);
 				Move max = maxValue(b, roll, treeLength+1, P, alpha, beta);
 				s += max.getScore()*currentP;
-				p += currentP;
-				expectedValue = s + (1-p)*Evaluation.Vmax;
-				roundedValue = Math.round(expectedValue); 
-				if(roundedValue < alpha) {
-					return roundedValue;
+				
+				if(PRUNE){
+					p += currentP;
+					expectedValue = s + (1-p)*Evaluation.Vmax;
+					roundedValue = Math.round(expectedValue); 
+					if(roundedValue < alpha) {
+						return roundedValue;
+					}
+					if(roundedValue > alpha) alpha = roundedValue;
 				}
-				if(roundedValue > alpha) alpha = roundedValue;
 			}
 			
 		}else if(P == Player.GREEN){
@@ -95,9 +135,9 @@ public final class Minimax {
 			for(Dice roll: possibleRolls){
 				currentP  = (float) 1/(roll.isDouble()? 36:18);
 				Move min = minValue(b, roll, treeLength+1,P, alpha, beta);
+				s += min.getScore()*currentP;
 				
 				if(PRUNE){
-					s += min.getScore()*currentP;
 					p += currentP;
 					expectedValue = s + (1-p)*Evaluation.Vmin;
 					roundedValue = Math.round(expectedValue);
@@ -107,7 +147,10 @@ public final class Minimax {
 					if(roundedValue < beta) beta = roundedValue;
 				}
 			}
+			
 		}
+		
+		if(!PRUNE) roundedValue = Math.round(s);
 		
 		return roundedValue; 
 	}
