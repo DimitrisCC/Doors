@@ -19,7 +19,7 @@ public final class Evaluation { //no need to be extended
 	 */
 	 public static float boardScore(Board b, int player)
 	 {
-	   int score=evaluateCheckers(b,player);
+	   int score=evaluateCheckers(b,player);//tha trexei se kathe board.An px mou faei ena pouli xekinaei apo thn arxh.
 	   score-=threatenedCheckers(b,player);
 	
 	   if(getNumberOf_OpponentsCheckers(b,player)>0 && b.getHomeCheckers()[player]<11)//check if player has at least one opponent's checker in his home area 
@@ -31,7 +31,7 @@ public final class Evaluation { //no need to be extended
 	   if(b.getEaten()[1-player]>0)//check if player has hit at least an opponent's checker
 	   {
     	   score-= penalisedHitting_1(b,player);
-
+    	 //*****NEW*************
     	   if(penalisedHitting_2(b,player)==0)//Check if player loses the game
     	   {
     		   score+=(b.getEaten()[1-player]*80);//Player's score increases depending on the number of eaten checkers. 
@@ -40,29 +40,26 @@ public final class Evaluation { //no need to be extended
     	   {
     		   score-=(b.getEaten()[1-player]*penalisedHitting_2(b,player));////Player's score decreases depending on the number of eaten checkers.    
     	   }
+	       //************NEW******
     	   
     	   score+= (getNumberOf_FinalBlocks(b,player)*5);
         }
 	   
-	   /* if(getNumberOf_OpponentsCheckers(b,player)==0 && getNumberOf_OpponentsCheckers(b,1-player)==0){
+	    if(getNumberOf_OpponentsCheckers(b,player)==0 && getNumberOf_OpponentsCheckers(b,1-player)==0){
 	    	score+=(b.getFreedPieces()[player]*650-b.getFreedPieces()[1-player]*650);
 	    }
 	    else if(getNumberOf_OpponentsCheckers(b,player)==0 && getNumberOf_OpponentsCheckers(b,1-player)>0){
 	    	
-	    	score+=(b.getFreedPieces()[player]*650-b.getFreedPieces()[1-player]*20);
+	    	score+=(b.getFreedPieces()[player]*650-b.getFreedPieces()[1-player]*50);
 	    }
 	    else if(getNumberOf_OpponentsCheckers(b,player)>0 && getNumberOf_OpponentsCheckers(b,1-player)==0){
-	    	score+=(b.getFreedPieces()[player]*20-b.getFreedPieces()[1-player]*650);
+	    	score+=(b.getFreedPieces()[player]*50-b.getFreedPieces()[1-player]*650);
 	    }
 	    else
 	    {
-	    	score+=(b.getFreedPieces()[player]*20-b.getFreedPieces()[1-player]*20);
-	    }*/
-	   if(getNumberOf_OpponentsCheckers(b,player)==0)
-	   {
-		   score+=b.getFreedPieces()[player]*650;
-		   score+=b.getFreedPieces()[player]*20; 
-	   }
+	    	score+=(b.getFreedPieces()[player]*50-b.getFreedPieces()[1-player]*50);
+	    }
+	
         return score;
 	 } 
 	 
@@ -82,9 +79,27 @@ public final class Evaluation { //no need to be extended
 		 for (int i=0;i<positions;i++)
 	     {
 	        if(board[i]>0)
-	           score1= score1+(1-player)*board[i]*i-player*board[i]*i;
+	        {
+	          	if(i>=(1-player)*18 && i<=(1-player)*23+player*5)
+	          	{
+	          	   score1= score1+(1-player)*board[i]*20-player*board[i]*i;
+	          	}
+	          	else
+	          	{
+	                score1= score1+(1-player)*board[i]*i-player*board[i]*i;//opws htan prin
+	          	}	          
+	         }       
 	        else
-	           score1= score1+(1-player)*board[i]*(positions-i-1)-player*board[i]*(positions-i-1);
+	        {
+	        	if(i>=(1-player)*18 && i<=(1-player)*23+player*5)
+	          	{
+	        		score1= score1+(1-player)*board[i]*(positions-i-1)-player*board[i]*(positions-3-1);
+	          	}
+	        	else
+	        	{	
+	             score1= score1+(1-player)*board[i]*(positions-i-1)-player*board[i]*(positions-i-1);//opws htan prin
+	        	}
+	        }
 	      }
 		  return score1+(20*b.getHomeCheckers()[player])-(20*b.getHomeCheckers()[1-player])-(20*b.getEaten()[player]);
 	 }
@@ -125,7 +140,7 @@ public final class Evaluation { //no need to be extended
 	     if(atLeastTwoCheckersPerPoint>inrow)
 	            inrow=atLeastTwoCheckersPerPoint;
 	     
-	     return (doors+inrow)*15;
+	     return (doors+inrow)*20;
 	 }
      
 	 /** Returns the number of threatened checkers.Threatened checkers are the checkers that can be hit by the opponent.
