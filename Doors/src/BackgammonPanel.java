@@ -845,7 +845,7 @@ public class BackgammonPanel extends JPanel {
 		replay.addActionListener(e -> /*new ActionListener(){ public void actionPerformed(ActionEvent e)*/ {
 			plsReplayMe = true;
 			replayTimes++;
-		});
+		} /*}*/);
 		if(replayTimes > 0) replay.doClick();
 	}
 	

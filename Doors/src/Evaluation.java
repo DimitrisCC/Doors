@@ -19,7 +19,7 @@ public final class Evaluation { //no need to be extended
 	 */
 	 public static float boardScore(Board b, int player)
 	 {
-	   int score=evaluateCheckers(b,player);//tha trexei se kathe board.An px mou faei ena pouli xekinaei apo thn arxh.
+	   int score=evaluateCheckers(b,player);
 	   score-=threatenedCheckers(b,player);
 	
 	   if(getNumberOf_OpponentsCheckers(b,player)>0 && b.getHomeCheckers()[player]<11)//check if player has at least one opponent's checker in his home area 
@@ -31,7 +31,7 @@ public final class Evaluation { //no need to be extended
 	   if(b.getEaten()[1-player]>0)//check if player has hit at least an opponent's checker
 	   {
     	   score-= penalisedHitting_1(b,player);
-    	 //*****NEW*************
+
     	   if(penalisedHitting_2(b,player)==0)//Check if player loses the game
     	   {
     		   score+=(b.getEaten()[1-player]*80);//Player's score increases depending on the number of eaten checkers. 
@@ -40,7 +40,6 @@ public final class Evaluation { //no need to be extended
     	   {
     		   score-=(b.getEaten()[1-player]*penalisedHitting_2(b,player));////Player's score decreases depending on the number of eaten checkers.    
     	   }
-	       //************NEW******
     	   
     	   score+= (getNumberOf_FinalBlocks(b,player)*5);
         }
