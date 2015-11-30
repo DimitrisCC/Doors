@@ -1,3 +1,12 @@
+/**************************************
+ * MEMBERS
+ * ----------------------------------
+ * Dimaki Georgia 3130052
+ * Kolokathi Fotini 3090088
+ * Papatheodorou Dimitrios 3130162
+ * ************************************
+ */
+
 import java.util.ArrayList;
 import java.util.HashSet;
 
@@ -11,7 +20,6 @@ public final class Minimax {
 	private static final int MAX_LENGTH = 1; //first level 0
 	private static final int INF = 100000;
 	private static ArrayList<Dice> possibleRolls; 
-	private static int LastLevelChildren = 0; //DEBUG
 	
 	private Minimax(){}
 	
@@ -20,17 +28,11 @@ public final class Minimax {
 		possibleRolls = Dice.allPossibleRolls(); //initialize possibleRolls
 		Move bestMove = maxValue(root, d, 0, player, Evaluation.Vmin, Evaluation.Vmax);
 
-		for(int i=0; i<4; i++){
-			System.out.println("from "+bestMove.getMove()[i][0]+" to "+bestMove.getMove()[i][1]); //DEBUG
-		}
-		System.out.println("******* MINIMAX CHILDREN: " + LastLevelChildren); //DEBUG
-		LastLevelChildren = 0; //DEBUG
 		return bestMove;
 	}
 	
 	private static Move minValue(Board b, Dice d, int treeLength, Player player, int alpha, int beta){
 		if(treeLength == MAX_LENGTH){
-			LastLevelChildren++; //DEBUG
 			return new Move(b.getLastPlayedMove().getMove(),  Evaluation.boardScore(b,1)-Evaluation.boardScore(b,0)); 
 		}
 		
@@ -49,7 +51,6 @@ public final class Minimax {
 	
 	private static Move maxValue(Board b, Dice d, int treeLength, Player player, int alpha, int beta){
 		if(treeLength == MAX_LENGTH){
-			LastLevelChildren++; //DEBUG
 			return new Move(b.getLastPlayedMove().getMove(), Evaluation.boardScore(b,1)-Evaluation.boardScore(b,0)); 
 		}
 		

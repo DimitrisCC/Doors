@@ -1,3 +1,13 @@
+/**************************************
+ * MEMBERS
+ * ----------------------------------
+ * Dimaki Georgia 3130052
+ * Kolokathi Fotini 3090088
+ * Papatheodorou Dimitrios 3130162
+ * ************************************
+ */
+
+
 /**
  * A "static" class that evaluates a Board state using evaluative heuristic methods.
  * It is used in the minimax algorithm
@@ -212,9 +222,12 @@ public final class Evaluation { //no need to be extended
     	  
     	  if(home[player]>home[1-player])//check If player has more checkers than his/her opponent in his/her home area 
     	  {
-    		  penalty=80;
+    		 if(numberOfcheckers(b,player)>numberOfcheckers(b,1-player))
+    			 {
+    				 penalty=80;
+    			 }
     	  }
-    	   return penalty;
+    	  return penalty;
       }
       
       /**
