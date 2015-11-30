@@ -1,8 +1,14 @@
 import java.awt.Color;
+
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
 import javax.swing.JButton;
+
+/**
+ * Button of a specific position on the board.
+ * Click the button to get a piece of to make a jump there.
+ */
 
 public class BgButton extends JButton implements ActionListener {
 	

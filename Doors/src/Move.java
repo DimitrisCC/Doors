@@ -1,7 +1,9 @@
-import java.util.ArrayList;
+
+/**
+ * Represents a conceptually total move
+ */
 
 public class Move {
-	
 
 	private int[][] move;
 	private int score;

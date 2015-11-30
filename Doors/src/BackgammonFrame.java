@@ -2,6 +2,10 @@ import javax.swing.JFrame;
 import java.awt.BorderLayout;
 import java.awt.Container;
 
+/**
+ * Builds the window frame of the game.
+ */
+
 public class BackgammonFrame extends JFrame {
 
 	private static final long serialVersionUID = -124755586989834L;

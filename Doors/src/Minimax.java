@@ -8,8 +8,8 @@ import java.util.HashSet;
 
 public final class Minimax {
 	
-	private static int MAX_LENGTH = 1; //first level 0
-	private static int INF = 100000;
+	private static final int MAX_LENGTH = 1; //first level 0
+	private static final int INF = 100000;
 	private static ArrayList<Dice> possibleRolls; 
 	private static int LastLevelChildren = 0; //DEBUG
 	

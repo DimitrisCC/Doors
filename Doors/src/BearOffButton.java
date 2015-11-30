@@ -1,5 +1,9 @@
 import java.awt.event.ActionEvent;
 
+/**
+ * A button for bearing of pieces.
+ */
+
 public class BearOffButton extends BgButton {
 
 	private static final long serialVersionUID = 2664337448358920058L;
