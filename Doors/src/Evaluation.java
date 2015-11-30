@@ -59,7 +59,7 @@ public final class Evaluation { //no need to be extended
 	    {
 	    	score+=(b.getFreedPieces()[player]*50-b.getFreedPieces()[1-player]*50);
 	    }
-	
+	    score+=100*getNumberOfBlocks(b,player);
         return score;
 	 } 
 	 
@@ -244,6 +244,28 @@ public final class Evaluation { //no need to be extended
     	  }
     	  return blocks;
        }
+      
+      //Returns all the blocks of player in the board
+      private static int getNumberOfBlocks(Board b,int player)
+      {
+    	  int blocks=0;
+    	  int [] board = b.getTable();
+    		  for(int i=0;i<board.length;i++)
+    		  {
+    			  if((player*board[i]+1-player)<(-player+(1-player)*board[i]))
+    			  {
+    				  blocks++;
+    			  }//if
+    			  
+    		   }//for  
+    	  
+    	  return blocks;
+       }
+      
+      
+      
+      
+      
       
        /** It returns the number of opponent's checkers 
            from the home area of player */ 
