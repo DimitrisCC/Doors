@@ -32,7 +32,7 @@ public final class Minimax {
 		if(treeLength == MAX_LENGTH){
 			//epistrefei to apotelesma tis euretikis sto b
 			LastLevelChildren++; //DEBUG
-			return new Move(b.getLastPlayedMove().getMove(), (int)Evaluation.boardScore(b,0)); 
+			return new Move(b.getLastPlayedMove().getMove(),  Evaluation.boardScore(b,1)-Evaluation.boardScore(b,0)); 
 		}
 		
 		Move min = new Move(INF);
@@ -52,7 +52,7 @@ public final class Minimax {
 		if(treeLength == MAX_LENGTH){
 			//epistrefei to apotelesma tis euretikis sto b
 			LastLevelChildren++; //DEBUG
-			return new Move(b.getLastPlayedMove().getMove(), (int)Evaluation.boardScore(b,1)); 
+			return new Move(b.getLastPlayedMove().getMove(), Evaluation.boardScore(b,1)-Evaluation.boardScore(b,0)); 
 		}
 		
 		Move max = new Move(-INF);

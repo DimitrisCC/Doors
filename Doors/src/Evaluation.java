@@ -17,7 +17,7 @@ public final class Evaluation { //no need to be extended
 	 * player->0 for green checkers 
      *       ->1 for red checkers 
 	 */
-	 public static float boardScore(Board b, int player)
+	 public static int boardScore(Board b, int player)
 	 {
 	   int score=evaluateCheckers(b,player);//tha trexei se kathe board.An px mou faei ena pouli xekinaei apo thn arxh.
 	   score-=threatenedCheckers(b,player);
