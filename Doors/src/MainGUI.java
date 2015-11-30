@@ -65,7 +65,7 @@ public final class MainGUI {
 				panel.getStatusBar().clearDice();
 			}
 			
-			if(true){ //gameFrame.getGame().isTerminal();
+			if(gameFrame.getGame().isTerminal()){ //set as if(true) for replay debug
 				panel.getStatusBar().setStatus("END OF GAME!!! "+gameFrame.getGame().getWinner()+" is the WINNER!!!");
 				panel.getStatusBar().clearDice();
 				
