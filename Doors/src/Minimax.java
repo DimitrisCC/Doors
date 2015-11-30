@@ -18,9 +18,10 @@ import java.util.HashSet;
 public final class Minimax {
 	
 	private static final int MAX_LENGTH = 1; //first level 0
+	private static final boolean PRUNE = false; //use pruning or not //if true, MAX_LENGTH may be higher but be careful
 	private static final int INF = 100000;
 	private static ArrayList<Dice> possibleRolls; 
-	
+
 	private Minimax(){}
 	
 	public static Move MinimaxAlgorithm(Board root, Dice d, Player player) 
@@ -77,27 +78,34 @@ public final class Minimax {
 		if(P == Player.RED){ 
 			
 			for(Dice roll: possibleRolls){
-				currentP  = 1/(roll.isDouble()? 36:18);
+				currentP = (float) 1/(roll.isDouble()? 36:18);
 				Move max = maxValue(b, roll, treeLength+1, P, alpha, beta);
 				s += max.getScore()*currentP;
 				p += currentP;
-				expectedValue = s + (1-currentP)*Evaluation.Vmax;
+				expectedValue = s + (1-p)*Evaluation.Vmax;
 				roundedValue = Math.round(expectedValue); 
-				if(roundedValue < alpha) return roundedValue; 
+				if(roundedValue < alpha) {
+					return roundedValue;
+				}
 				if(roundedValue > alpha) alpha = roundedValue;
 			}
 			
 		}else if(P == Player.GREEN){
 			
 			for(Dice roll: possibleRolls){
-				currentP  = 1/(roll.isDouble()? 36:18);
+				currentP  = (float) 1/(roll.isDouble()? 36:18);
 				Move min = minValue(b, roll, treeLength+1,P, alpha, beta);
-				s += min.getScore()*currentP;
-				p += currentP;
-				expectedValue = s + (1-currentP)*Evaluation.Vmin;
-				roundedValue = Math.round(expectedValue);
-				if(roundedValue > beta) return roundedValue;
-				if(roundedValue < beta) beta = roundedValue;
+				
+				if(PRUNE){
+					s += min.getScore()*currentP;
+					p += currentP;
+					expectedValue = s + (1-p)*Evaluation.Vmin;
+					roundedValue = Math.round(expectedValue);
+					if(roundedValue > beta) {
+						return roundedValue;
+					}
+					if(roundedValue < beta) beta = roundedValue;
+				}
 			}
 		}
 		
