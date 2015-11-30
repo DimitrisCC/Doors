@@ -678,28 +678,26 @@ public class BackgammonPanel extends JPanel {
 			this.toBearOff = 0;
 			moves = game.getDice().getValues();
 			
-			boolean flag_dest = game.hasGreenReachedDestination();;
-			boolean flag_target;
-			
 			for (int i = 0; i < moves.length; ++i) {
 			
-				flag_target = game.isValidTarget(index + moves[i], player);
 				
-				if (flag_dest || flag_target) {
+				if (game.isValidTarget(index + moves[i], player)) {
 					
 					if (((!game.getDice().isDouble()) && moves[i] != doneMove)
 							|| (game.getDice().isDouble() && jumpsYet < game.getDice().getTotalJumpsFromDice())) {
 						
 						//pick for normal move
-						if (index + moves[i] < 24 && index + moves[i] > -1 && flag_target){
+						if (index + moves[i] < 24 && index + moves[i] > -1 ){
 							if(index == -1) getInTheGame = true;
 							buttons.get(index + moves[i]).highlight();
 						}
 					
-						//pick for bearing off
-						if( index + moves[i] >= 24 && game.isValidBearOff(index, index + moves[i], player) && flag_dest){
-							btnBearOff.highlight();
-							this.toBearOff = moves[i];
+						if(game.hasGreenReachedDestination()){
+							//pick for bearing off
+							if( index + moves[i] >= 24 && game.isValidBearOff(index, index + moves[i], player) ){
+								btnBearOff.highlight();
+								this.toBearOff = moves[i];
+							}
 						}
 					}
 					
