@@ -15,10 +15,12 @@ public class BearOffButton extends BgButton {
 		
 		if(!panel.getGameboard().hasGreenReachedDestination()){
 			panel.getStatusBar().setStatus("Hasn't reached destination yet, sir. Don't be impatient.");
+			panel.getStatusBar().clearDice();
 		}
 		
 		if(!panel.hasPlayerRolled()){
 			panel.getStatusBar().setStatus("Please, roll the dice first.");
+			panel.getStatusBar().clearDice();
 			return;
 		}
 		

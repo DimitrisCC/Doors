@@ -42,6 +42,7 @@ public class BgButton extends JButton implements ActionListener {
 		
 		if(!panel.hasPlayerRolled()){
 			panel.getStatusBar().setStatus("Please, roll the dice first.");
+			panel.getStatusBar().clearDice();
 			return;
 		}
 		

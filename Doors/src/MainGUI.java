@@ -10,6 +10,9 @@ public final class MainGUI {
 	private static Player currentPlayer;
 	private static Board currentGame;
 	private static BackgammonFrame gameFrame;
+	
+	private static int scoreR;
+	private static int scoreG;
 
 	private MainGUI() { }
 
@@ -36,6 +39,7 @@ public final class MainGUI {
 		if(replay){
 			currentGame = new Board();
 			gameFrame.reinitialize(currentGame);
+			currentPlayer = Player.GREEN;
 		} else {
 			currentPlayer = Player.GREEN;
 			currentGame = new Board();
@@ -66,7 +70,9 @@ public final class MainGUI {
 			}
 			
 			if(gameFrame.getGame().isTerminal()){ //set as if(true) for replay debug
-				panel.getStatusBar().setStatus("END OF GAME!!! "+gameFrame.getGame().getWinner()+" is the WINNER!!!");
+				if(gameFrame.getGame().getWinner() == Player.GREEN) scoreG++;
+				else scoreR++;
+				panel.getStatusBar().setStatus("END OF GAME!!! "+gameFrame.getGame().getWinner()+" is the WINNER!!!\n Current score is: red->"+scoreR+"  green->"+scoreG);
 				panel.getStatusBar().clearDice();
 				
 				panel.enableReplayButton();
