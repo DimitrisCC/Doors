@@ -212,13 +212,10 @@ public final class Evaluation { //no need to be extended
     	  
     	  if(home[player]>home[1-player])//check If player has more checkers than his/her opponent in his/her home area 
     	  {
-    		 if(numberOfcheckers(b,player)>numberOfcheckers(b,1-player))
-    			 {
-    				 penalty=80;
-    			 }
-    	   }
+    		  penalty=80;
+    	  }
     	   return penalty;
-    	 }
+      }
       
       /**
       *
