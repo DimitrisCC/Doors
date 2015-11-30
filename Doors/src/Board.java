@@ -109,35 +109,6 @@ public class Board {
 	public int[][] getTotalMove(){ return this.totalMove; }
 	
 	/**
-	 * Breeds a new child board
-	 * @param child the child to breed from
-	 * 			the manipulation acts directly on this instance
-	 * 			if someone wants a new instance of the Board to be bred
-	 * 			he/she must call the function as breed(new Board(someChild),...)
-	 * @param pos the position of the piece
-	 * @param move the move to make
-	 * @param player the player
-	 * @param totalMove the totalMove of the player
-	 * @param where what position stands for the move
-	 * @return false if the move is not valid
-	 */
-	private boolean breed(Board child, int pos, int move, Player player, int[][] totalMove, int where){
-		int n = player.getSign();
-		//System.out.println("table before pick "+table[pos]);
-		if(!child.isValidMove(pos, n*move, player)) return false; //in getChildren: if (!breed(...)) continue
-
-		//System.out.println("pick "+pos+" table "+table[pos]);
-		int target = pos + n*move; 
-		
-		child.makeMove(pos, target, n);
-		
-		child.getTotalMove()[where][0] = pos;
-		child.getTotalMove()[where][1] = target;
-		
-		return true;
-	}
-	
-	/**
 	 * Returns a set of all the states/boards/children that a bred/produced by a dice roll
 	 * @param dice the rolled dice
 	 * @param player the player that rolled
@@ -162,14 +133,11 @@ public class Board {
 			//first move
 			multiBreed(move[0], this, player, 0, level1, hasReachedDestination(player));
 			
-			System.out.println("************* LEVEL 1 " + level1.size());
-			
 			//second move
 			if(!level1.isEmpty()){
 				for(Board parent : level1){
 					multiBreed(move[1], parent, player, 1, level2, hasReachedDestination(player));
 				}
-				System.out.println("************* LEVEL 2 " + level2.size());
 			}
 			
 			if(dice.isDouble()){
@@ -178,7 +146,6 @@ public class Board {
 					for(Board parent : level2){
 						multiBreed(move[0], parent, player, 2, level3, hasReachedDestination(player));
 					}
-					System.out.println("************* LEVEL 3 " + level3.size());
 				} else { children.addAll(level1); break; }
 				
 				//fourth move
@@ -186,7 +153,6 @@ public class Board {
 					for(Board parent : level3){
 						multiBreed(move[0], parent, player, 3, level4, hasReachedDestination(player));
 					}
-					System.out.println("************* LEVEL 4 " + level4.size());
 				} else { children.addAll(level2); break; }
 				
 				if(level4.isEmpty()){ children.addAll(level3); break; }
@@ -201,14 +167,11 @@ public class Board {
 				//first move - reversed
 				multiBreed(move[1], this, player, 0, level1_r, hasReachedDestination(player));
 				
-				System.out.println("************* LEVEL 1_r " + level1_r.size());
-				
 				//second move
 				if(!level1_r.isEmpty()){
 					for(Board parent : level1_r){
 						multiBreed(move[0], parent, player, 1, level2, hasReachedDestination(player));
 					}
-					System.out.println("************* LEVEL 2_r " + level2.size());
 				}
 				
 				if(level2.isEmpty()){ children.addAll(level1); children.addAll(level1_r); break; }
@@ -218,30 +181,17 @@ public class Board {
 				break;
 			}
 		}
-		
-		System.out.println("Children num: "+children.size()); //DEBUG
 		return children;
-		
-	}
-	
-	private int getEaten(Player p) {
-		
-		return eaten[p.ordinal()];
-	}
-	
-	private boolean hasReachedDestination(Player p) {
-			
-		return (p == Player.GREEN)? hasGreenReachedDestination() : hasRedReachedDestination();
 	}
 	
 	/**
-	 * 
-	 * @param move
-	 * @param parent
-	 * @param player
-	 * @param where
-	 * @param level
-	 * @param inDestination
+	 * Breeds all the children of a specific move. Built for creating bread first tree layers of children.
+	 * @param move the move to make
+	 * @param parent the parent node/state/board/child
+	 * @param player the current player
+	 * @param where what's the position of this move in the total move queue
+	 * @param level the hash set of the layer to be created 
+	 * @param inDestination true if pieces have arrived at destination
 	 */
 	protected void multiBreed(int move, Board parent, Player player, int where, HashSet<Board> level, boolean inDestination){
 		Board child;
@@ -251,7 +201,7 @@ public class Board {
 		if(parent.getEaten(player) > 0){
 			child = new Board(parent);
 			if(!breed(child, pos, move, player, child.getTotalMove(), where)) return;
-			child.setLastPlayedMove(new Move( child.getTotalMove()));
+			child.setLastPlayedMove(new Move(child.getTotalMove()));
 			level.add(child);
 		} else {
 			int iterateUntil = inDestination? 6 : 24-move;
@@ -267,6 +217,41 @@ public class Board {
 		}
 	}
 	
+	/**
+	 * Breeds a new child board
+	 * @param child the child to breed from
+	 * 			the manipulation acts directly on this instance
+	 * 			if someone wants a new instance of the Board to be bred
+	 * 			he/she must call the function as breed(new Board(someChild),...)
+	 * @param pos the position of the piece
+	 * @param move the move to make
+	 * @param player the player
+	 * @param totalMove the totalMove of the player
+	 * @param where what position stands for the move
+	 * @return false if the move is not valid
+	 */
+	private boolean breed(Board child, int pos, int move, Player player, int[][] totalMove, int where){
+		int n = player.getSign();
+	
+		if(!child.isValidMove(pos, n*move, player)) return false;
+
+		int target = pos + n*move; 
+		
+		child.makeMove(pos, target, n);
+		
+		child.getTotalMove()[where][0] = pos;
+		child.getTotalMove()[where][1] = target;
+		
+		return true;
+	}
+	
+	private int getEaten(Player p) {
+		return eaten[p.ordinal()];
+	}
+	
+	private boolean hasReachedDestination(Player p) {		
+		return (p == Player.GREEN)? hasGreenReachedDestination() : hasRedReachedDestination();
+	}
 		
 	/**
 	 * Initializes the board for a Doors game
@@ -286,7 +271,6 @@ public class Board {
 				
 	}
 	
-	
 	/** Checks if the move is legal
 	 * @param pos current position of the piece to move
 	 * @param move step the piece has to move
@@ -299,27 +283,19 @@ public class Board {
 		// if wrong direction false
 
 		if(!checkDirection(pos, pos + move, player)) {
-
-			System.out.println("wrong direction bro?");
 			return false;
 		}
 		
 		if(!isValidPick(pos, player)){
-
-			System.out.println("not valid pick bro?");
 			return false;
 		}
 		//this position does not contain any of the player's pieces
 		
 		if(!isValidTarget(pos + move, player)){
-
-			System.out.println("wrong target bro?");
 			return false;
 		}
 		
 		if(hasReachedDestination(player)){
-
-			System.out.println("are u valid bear off bro??");
 			return isValidBearOff(pos, pos+move, player);
 			
 		}
@@ -337,16 +313,11 @@ public class Board {
 	public boolean isValidBearOff(int pos, int finalPos, Player player){
 		
 		int move = player.getSign()*(finalPos - pos);
-
-		System.out.println("ur move is "+move);
 		
 		if(finalPos >= 24){
-			System.out.println("final position > 24 : "+finalPos);
+			
 			//wrong bear off area
 			if(!(player == Player.GREEN)){
-				
-				System.out.println("wrong player/direction");
-				
 				return false;
 			}
 			
@@ -354,7 +325,6 @@ public class Board {
 				if(pos != 24 - move) return false;
 			}else{
 				if((pos > 24 - move) && hasPreviousNeighbours(pos-1, player)){
-					System.out.println("neighborz "+hasPreviousNeighbours(pos-1, player));
 					return false;
 				}
 			}
@@ -362,9 +332,6 @@ public class Board {
 		} else if (finalPos <= -1 ) {
 			//wrong bear off area
 			if(!(player == Player.RED)){
-
-				System.out.println("wrong player/direction");
-				
 				return false;
 			}
 			
@@ -404,26 +371,23 @@ public class Board {
 	 * Checks if you picked a correct piece
 	 */
 	public boolean isValidPick(int pos, Player player){
-		if(pos >= 0 && pos <= 23){;
+		if(pos >= 0 && pos <= 23){
 			if(colorAt(pos) == player){
 				return true;
 			} else {
-	
-				if(player == Player.GREEN) System.out.println("WTF");
 				return false;
 			}
+			
 		}else if (pos == -1){ // start position is the bar with eaten pieces for the green player
 	
-			System.out.println("green eaten wants to get in board!!! hide");
 			if(player != Player.GREEN) return false;
-			
 			return (eaten[0] > 0);
+			
 		}else if (pos == 24){ // start position is the bar with eaten pieces for the red player
 	
-			System.out.println("red eaten wants to get in board!!! hide");
 			if(player != Player.RED) return false;
-			//System.out.println(pos+" "+eaten[1]);
-			return (eaten[1] > 0);
+			
+			return (eaten[1] > 0);		
 		}else{
 			return false;
 		}
@@ -436,11 +400,8 @@ public class Board {
 	 */
 	protected void makeMove(int pos, int target, int n){
 		//validity of the move is already checked
-		System.out.println("pos "+pos+" target "+target);
-		
+	
 		if((pos > -1) && (pos < 24)){	
-
-			System.out.println("table before pick "+table[pos]);
 			//normal move
 			table[pos] -= n; //pick that piece 
 			
@@ -451,23 +412,20 @@ public class Board {
 				if(pos > 17)
 					piecesATdestination[0]--;
 			}
-
-			System.out.println("pick "+pos+" table "+table[pos]);
 		
 		} else if (pos < -1) {
 			return; //no other moves //possibly it's a single move by the player
 		} else { 
+			
 			if(n == 1){//GREEN-PLAYER
 				if(pos == -1){
 					eaten[0]--;
-					System.out.println("eaten gotten. green eatens left: "+ eaten[0]);
 				}
 					//else no move happens...positions wrong
 				//but the validity is checked already...
 			}else{//n == -1 RED-CPU
 				if(pos == 24){
 					eaten[1]--;
-					System.out.println("eaten gotten. reds eatens left: "+ eaten[1]);
 				}
 				//else no move happens...positions wrong
 				//but the validity is checked already...
@@ -477,14 +435,12 @@ public class Board {
 		if((target > -1) && (target < 24)){
 			
 			table[target] += n; //move that piece here
-			System.out.println("target "+target+" table "+table[target]);
+
 			if(table[target] == 0){//because of the checked validity this means one of the opponents piece was hit
 				table[target] += n;
 
-				System.out.println(" table now "+table[target]);
 				eaten[(n+1)/2]++; //eating time
 
-				System.out.println("eaten!!! player eaten: "+(n+1)/2+" his eatens now: "+eaten[(n+1)/2]);
 				if((n+1)/2 == 1){
 					if(target < 6)
 						piecesATdestination[1]--; //one red piece from this area got eaten
@@ -558,12 +514,8 @@ public class Board {
 		}else if (moveTarget > 23){ // green frees
 
 			if(player != Player.GREEN){
-
-				System.out.println("la8os paiktis");
 				return false;
 			}
-
-			System.out.println("STON PROORISMO: "+hasGreenReachedDestination());
 			return hasGreenReachedDestination();
 		}else{
 			return false;
@@ -575,7 +527,6 @@ public class Board {
 	 */
 	protected boolean checkDirection(int pos, int target, Player player) {
 		if ((player == Player.RED && target >= pos) || (player == Player.GREEN && target <= pos)) {
-			//setStatus("You're going in the wrong direction!");
 			return false;
 		}
 		return true;
@@ -617,7 +568,6 @@ public class Board {
      * @return true if Green has reached the final destination on the board
      */
     public boolean hasGreenReachedDestination(){
-    	System.out.println("dest GREEN " + piecesATdestination[0]);
         return piecesATdestination[0]+freedPieces[0] == 15;
     }
     
@@ -656,7 +606,6 @@ public class Board {
     		setWinner(Player.RED);
     		return true;
     	}else{
-    		//--> afou by default o winner einai None edw dn to vaze na kanei setWinner(Player.NONE) //DEBUG
     		return false;
     	}
     }

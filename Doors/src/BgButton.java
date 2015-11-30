@@ -32,7 +32,6 @@ public class BgButton extends JButton implements ActionListener {
 	
 	public void cleanse(){
 		this.setBackground(null);
-		System.out.println("fuck yeah***********************************************");
 		highlighted = false;
 	}
 

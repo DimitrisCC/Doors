@@ -34,7 +34,7 @@ public class Dice {
 		  System.arraycopy(v, 0, values, 0, v.length);
 		}
 		catch(Exception ex) {
-			System.out.println(ex.getMessage());
+			System.err.println(ex.getMessage());
 		}
     }
 

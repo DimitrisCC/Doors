@@ -4,9 +4,9 @@ import java.awt.Container;
 
 public class BackgammonFrame extends JFrame {
 
-	private static final long serialVersionUID = -1419452740845309834L;
+	private static final long serialVersionUID = -124755586989834L;
+	private Container container;
 	private Board game;
-	private Player player;
 	private BackgammonPanel panel;
 
 	/**
@@ -15,7 +15,6 @@ public class BackgammonFrame extends JFrame {
 	public BackgammonFrame(Board game) {
 		super("Backgammon Doors");
 		this.game = game;
-		this.player = Player.NONE;
 		initialize();
 	}
 
@@ -23,8 +22,6 @@ public class BackgammonFrame extends JFrame {
 	 * Initialize the contents of the 
 	 */
 	private void initialize() {
-		Container container;
-
 		setDefaultCloseOperation(EXIT_ON_CLOSE);
 		setSize(800, 690);
 		setResizable(false);
@@ -36,11 +33,16 @@ public class BackgammonFrame extends JFrame {
 		
 		setVisible(true);
 		repaint();
-		//update();
 	}
-
-	public void repaintAndUpdate(String status){
-		panel.repaint();
+	
+	protected void reinitialize(Board game){
+		this.game = game;
+		container.remove(panel);
+		panel = new BackgammonPanel(game);
+		container.add(panel);
+		revalidate();
+		panel.setVisible(true);
+		repaint();
 	}
 
 	public Board getGame() {
@@ -49,12 +51,4 @@ public class BackgammonFrame extends JFrame {
 	
 	public BackgammonPanel getGamePanel(){ return panel; }
 	
-	public void setPlayer(Player p){
-		player = p;
-		panel.setPlayer(player);
-	}
-	
-	public Player getPlayer(){
-		return player;
-	}
 }

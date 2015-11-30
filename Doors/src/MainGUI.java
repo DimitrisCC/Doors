@@ -25,49 +25,58 @@ public final class MainGUI {
 		} catch (Exception e) {
 		    // If Nimbus is not available, you can set the GUI to another look and feel.
 		}
-	
-		currentPlayer = Player.GREEN;
-		currentGame = new Board();
-		gameFrame = new BackgammonFrame(currentGame);
-		gameFrame.setVisible(true);
-		playGame(currentGame);
-			
+		
+		playGame(false);
 	}
 	
-	private static void playGame(Board currentGame) {
-		
+	/**
+	 * Let's play the f*cking game!!!!
+	 */
+	protected static void playGame(boolean replay) {
+		if(replay){
+			currentGame = new Board();
+			gameFrame.reinitialize(currentGame);
+		} else {
+			currentPlayer = Player.GREEN;
+			currentGame = new Board();
+			gameFrame = new BackgammonFrame(currentGame);
+		}
+	
+		BackgammonPanel panel = gameFrame.getGamePanel();
 		
 		while(currentGame.getWinner() == Player.NONE){
+					
 			if(currentPlayer == Player.GREEN){
-				gameFrame.getGamePanel().setRoll(true);
-				gameFrame.setPlayer(currentPlayer);
-				//if(gameFrame.getGamePanel().getGameboard().getEaten()[0]){
-					//gameFrame.getGamePanel().
-				//}
-				while(gameFrame.getGamePanel().isMyTurn()) System.out.print("");
+				panel.setRoll(true);
+				while(panel.isMyTurn()) System.out.print("");
 				currentPlayer = Player.RED;
 			}else{
-				gameFrame.getGamePanel().setRoll(false);
-				gameFrame.setPlayer(currentPlayer);
+				panel.setRoll(false);
 				int n = currentPlayer.getSign();
 				currentGame.getDice().roll();
 				gameFrame.getContentPane().repaint();
-				System.out.println("HEARE");
-				gameFrame.getGame().makeTotalMove(Minimax.MinimaxAlgorithm(gameFrame.getGame(), currentGame.getDice(), Player.RED), n);
+				gameFrame.getGame()
+					.makeTotalMove(Minimax.MinimaxAlgorithm(gameFrame.getGame(), currentGame.getDice(), Player.RED), n);
 				gameFrame.getContentPane().repaint();
-				gameFrame.getGamePanel().setMyTurn(true);
-				gameFrame.getGamePanel().setPlayerRolled(false);
+				panel.setMyTurn(true);
+				panel.setPlayerRolled(false);
 				currentPlayer = Player.GREEN;
-				gameFrame.getGamePanel().getStatusBar().setStatus("Your turn, man. Opponent's done.");
-				gameFrame.getGamePanel().getStatusBar().clearDice();
+				panel.getStatusBar().setStatus("Your turn, man. Opponent's done.");
+				panel.getStatusBar().clearDice();
 			}
 			
-			if(gameFrame.getGame().isTerminal()){
-				gameFrame.getGamePanel().getStatusBar().setStatus("END OF GAME!!! "+gameFrame.getGame().getWinner()+" is the WINNER!!!");
-				gameFrame.getGamePanel().getStatusBar().clearDice();
+			if(true){ //gameFrame.getGame().isTerminal();
+				panel.getStatusBar().setStatus("END OF GAME!!! "+gameFrame.getGame().getWinner()+" is the WINNER!!!");
+				panel.getStatusBar().clearDice();
+				
+				panel.enableReplayButton();
+				while(!panel.plsReplayMe()) System.out.print("");
+				playGame(true);
 			}
+			
 		}
-
+		
+		
 	}
 	
 }

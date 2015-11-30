@@ -26,6 +26,8 @@ public class BackgammonPanel extends JPanel {
 	private static final int DICE_X = 480;
 	private static final int DICE_Y = 295;
 	private static final int DICE_SIZE = 60;
+	
+	private static int replayTimes = 0;
 
 	private Image dice1;
 	private Image dice2;
@@ -47,12 +49,11 @@ public class BackgammonPanel extends JPanel {
 
 	private ArrayList<BgButton> buttons;
 	private JButton buttonRoll;
+	private JButton replay;
 	
 	private BearOffButton btnBearOff;
 		
 	private StatusBar statusBar;
-	
-	private HashSet<Board> children;
 
 	private boolean picked;
 	private boolean hasPlayerRolled;
@@ -62,6 +63,8 @@ public class BackgammonPanel extends JPanel {
 	private int numOfMoves = 0;
 	private int numOfMovesDone = 0;
 
+	private boolean plsReplayMe;
+	
 	public BackgammonPanel(Board game) {
 		this.game = game;
 		this.setLayout(null);
@@ -72,18 +75,19 @@ public class BackgammonPanel extends JPanel {
 		setDice4(Toolkit.getDefaultToolkit().createImage("resources//dice4.png"));
 		setDice5(Toolkit.getDefaultToolkit().createImage("resources//dice5.png"));
 		setDice6(Toolkit.getDefaultToolkit().createImage("resources//dice6.png"));
-		setGreenPiece(Toolkit.getDefaultToolkit().createImage("resources//green.png"));// -->
-																						// GreenPeace....
-		setRedPiece(Toolkit.getDefaultToolkit().createImage("resources//red.png"));
+		setGreenPiece(Toolkit.getDefaultToolkit().createImage("resources//green.png")); //GreenPeace lol
 
+		setRedPiece(Toolkit.getDefaultToolkit().createImage("resources//red.png"));
+		
+		plsReplayMe = false;
 		buttons = new ArrayList<BgButton>();
 		picked = false;
 		lastPick = -1;
 		isItMyTurn = true;
 		hasPlayerRolled = false;
+		player = Player.GREEN;
 		drawButtons();
 		drawStatusBar();
-		children = new HashSet<Board>();
 	}
 
 	private void drawStatusBar() {
@@ -230,12 +234,20 @@ public class BackgammonPanel extends JPanel {
 		add(buttonRoll);
 
 		btnBearOff = new BearOffButton("Bear off");
-		btnBearOff.setBounds(720, 308, 75, 50);
+		btnBearOff.setBounds(720, 294, 75, 50);
 		add(btnBearOff);
 		
 		buttons.add(btnBearOff);
+		
+		replay = new JButton("");
+		replay.setBounds(285, 270, 150, 100);
+		replay.setVerticalAlignment(SwingConstants.CENTER);
+		replay.setFont(new Font("Serif", Font.BOLD, 14));
+		replay.setVisible(false);
+		replay.setEnabled(false);
+		add(replay);
 	}
-
+	
 	/** Custom ActionListener class for the roll button */
 	class RollButtonListener implements ActionListener {
 		BackgammonPanel b;
@@ -246,42 +258,54 @@ public class BackgammonPanel extends JPanel {
 
 		public void actionPerformed(ActionEvent e) {
 			if (e.getSource().equals(buttonRoll)) {
+				
+				replayTimes = 0;
+				
 				b.getGameboard().getDice().roll();
-				b.getGameboard().getDice();
+				b.setRoll(false);
+				b.setPlayerRolled(true);
+				
+				Dice d = b.getGameboard().getDice();
+				moves = b.getGameboard().getDice().getValues();
+				
 				buttonRoll.setOpaque(false);
 				buttonRoll.setContentAreaFilled(false);
 				buttonRoll.setBorderPainted(false);
 				buttonRoll.setVerticalAlignment(SwingConstants.BOTTOM);
 				buttonRoll.setForeground(Color.WHITE);
 				
-				children = b.getGameboard().getChildren(b.getGameboard().getDice(), Player.GREEN);
-				checkAvailableMoves(null);
+				b.repaint();		
 				
-				b.repaint();
-				b.setRoll(false);
-				b.setPlayerRolled(true);
+				if(hasAvailableMoves(moves[0])){ 
+					getStatusBar().setMoveValues(game.getDice().getDiceMoves());
+					setNumOfMoves(d.isDouble()? 4 : 2);
+				} else if (!d.isDouble()){
+					if(hasAvailableMoves(moves[1])){
+						getStatusBar().setMoveValues(game.getDice().getDiceMoves());
+						setNumOfMoves(2);
+					}
+				} else {
+					pauseForNoMoves();
+					setMyTurn(false);
+				}
+				
 			}
 		}
 	}
 	
-	private boolean checkAvailableMoves(Board minus){
-		if(minus != null){
-			if(children.contains(minus)) children.remove(minus);
-		}
-		
-		if(children.isEmpty()){
-			statusBar.setStatus("You have no moves to make. You loose your turn. Opponet plays!");
-			try {
-				Thread.sleep(2000);
-			} catch (InterruptedException e1) {
-				e1.printStackTrace();
-			}
-			setMyTurn(false);
-			return false;
-		}else{
-			getStatusBar().setMoveValues(game.getDice().getDiceMoves());
-			setNumOfMoves(game.getDice().isDouble()? 4 : 2);
-			return true;
+	private boolean hasAvailableMoves(int move){
+		HashSet<Board> children = new HashSet<Board>();
+		game.multiBreed(move, game, Player.GREEN, 0, children, game.hasGreenReachedDestination());
+	
+		return (children.isEmpty())? false : true;
+	}
+	
+	private void pauseForNoMoves(){
+		statusBar.setStatus("Sorry, bro. No moves available. Your turn's skipped.");
+		try {
+			Thread.sleep(3000);
+		} catch (InterruptedException e1) {
+			e1.printStackTrace();
 		}
 	}
 	
@@ -437,7 +461,7 @@ public class BackgammonPanel extends JPanel {
 				break;
 			}
 		} catch (Exception e) {
-			System.out
+			System.err
 					.println("BackgammonPanel:drawDices, something's not ok. You are totally noob at Doors sorry! :/ ");
 		}
 	}
@@ -649,10 +673,6 @@ public class BackgammonPanel extends JPanel {
 			boolean getInTheGame = false;
 			this.toBearOff = 0;
 			moves = game.getDice().getValues();
-			/*if(!game.getDice().isDouble()){
-				Arrays.sort(moves);
-				Collections.reverse(Arrays.asList(moves)); //descending order for easing the bearing off process
-			}*/
 			
 			for (int i = 0; i < moves.length; ++i) {
 						
@@ -666,7 +686,7 @@ public class BackgammonPanel extends JPanel {
 							if(index == -1) getInTheGame = true;
 							buttons.get(index + moves[i]).highlight();
 						}
-						System.out.println("LIGHT BEAR OFF" + maxCheckerPosition(moves[i]) + " " + hasHighestNeighbours(moves[i]));
+					
 						//pick for bearing off
 						if( index + moves[i] >= 24 && game.isValidBearOff(index, index + moves[i], player)){
 							btnBearOff.highlight();
@@ -678,10 +698,8 @@ public class BackgammonPanel extends JPanel {
 
 			}
 			
-			System.out.println(getInTheGame);
-			
 			if(!getInTheGame && (index == -1)){
-				System.out.println("Sorry, bro. No moves available. Your turn's skipped.");
+				pauseForNoMoves();
 				setMyTurn(false);
 			}
 			
@@ -721,8 +739,7 @@ public class BackgammonPanel extends JPanel {
 						doneMove = m;
 						statusBar.setStatus("Wow. Nice move! ^_^");
 
-						if (((game.getDice().getTotalJumpsFromDice()) == jumpsYet) || numOfMovesDone == numOfMoves 
-								|| !checkAvailableMoves(game)) {
+						if (((game.getDice().getTotalJumpsFromDice()) == jumpsYet) || numOfMovesDone == numOfMoves) {
 							jumpsYet = 0;
 							doneMove = 0;
 							numOfMovesDone = 0;
@@ -731,12 +748,11 @@ public class BackgammonPanel extends JPanel {
 							
 							for (int j = 0; j < moves.length; ++j) {
 								if (lastPick + moves[i] < 24 && lastPick + moves[i] > -1){
-									System.out.println("jusst cleansed "+(lastPick +moves[i])+" last Pick "+lastPick);
 									buttons.get(lastPick + moves[i]).cleanse();							
 								}
 							}
-							setMyTurn(false);
 							statusBar.setStatus("Nice! You're done.");
+							setMyTurn(false);
 							// break: well the if's end, so the outer break does
 							// the work
 						}
@@ -750,7 +766,6 @@ public class BackgammonPanel extends JPanel {
 			// in any case, cleanse the highlights
 			for (int i = 0; i < moves.length; ++i) {
 				if (lastPick + moves[i] < 24 && lastPick + moves[i] > -1){
-					System.out.println("jusst cleansed "+(lastPick +moves[i])+" last Pick "+lastPick);
 					buttons.get(lastPick + moves[i]).cleanse();
 				}
 			}
@@ -760,47 +775,23 @@ public class BackgammonPanel extends JPanel {
 			// we should mention it in the manual :P //--MAKE DREAMS
 			picked = false;
 			lastPick = -99;
-
-			if (game.getGreensEaten() > 0)
-				pick(-1);
-
+			
+			//availability check after the move
+			if(doneMove != 0){ //the jump's done
+				if(!hasAvailableMoves(doneMove)){
+					pauseForNoMoves();
+					setMyTurn(false);
+				}
+				else
+					if (game.getGreensEaten() > 0)
+						pick(-1);
+			}
+			
 		}
 		
 		
 	}
 	
-	/**
-	 * Checks if there is a position on the right of die with green pieces
-	 * @param die a die value that rolled
-	 * @return the first position it finds
-	 */
-	private int maxCheckerPosition(int die){
-		int j = 25-die;
-		while(j <= 23){
-			if(game.getNumberOfPiecesAt(j) > 0){ //first highest position with pieces after max die roll
-				return j;
-			}
-			++j;
-		}
-		return -99;
-	}
-	
-	/**
-	 * Checks if there is a position on the left of the die with green pieces
-	 * @param die a die value that rolled
-	 * @return true there is at least one
-	 */
-	private boolean hasHighestNeighbours(int die){
-		int j = 18;
-		while(j < 24-die){
-			if(game.getNumberOfPiecesAt(j) > 0){ //first highest position with pieces after max die roll
-				return true;
-			}
-			++j;
-		}
-		return false;
-	}
-
 	/**
 	 * Returns if there is a picked checker or not
 	 * @return true if the player has picked a checker, otherwise false
@@ -846,5 +837,24 @@ public class BackgammonPanel extends JPanel {
 				pick(-1);
 		}
 	}
+	
+	protected void enableReplayButton(){
+		replay.setText("REPLAY!");
+		replay.setVisible(true);
+		replay.setEnabled(true);
+		replay.addActionListener(e -> /*new ActionListener(){ public void actionPerformed(ActionEvent e)*/ {
+			plsReplayMe = true;
+			replayTimes++;
+		});
+		if(replayTimes > 0) replay.doClick();
+	}
+	
+	protected JButton getReplayButton(){
+		return replay;
+	}
+	
+	protected boolean plsReplayMe(){
+		return plsReplayMe;
+	} 
 
 }

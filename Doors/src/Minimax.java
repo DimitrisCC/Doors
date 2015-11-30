@@ -16,12 +16,12 @@ public final class Minimax {
 	private Minimax(){}
 	
 	public static Move MinimaxAlgorithm(Board root, Dice d, Player player) //--> AUTO T PLAYER DN XRISIMOPOIEITAI 
-	 {//System.out.println("minimaxAlgo");//DEBUG
+	{
 		possibleRolls = Dice.allPossibleRolls(); //initialize possibleRolls
 		Move bestMove = maxValue(root, d, 0, player, Evaluation.Vmin, Evaluation.Vmax);
-		System.out.println("CHILD USED");
+
 		for(int i=0; i<4; i++){
-			System.out.println("from "+bestMove.getMove()[i][0]+" to "+bestMove.getMove()[i][1]);
+			System.out.println("from "+bestMove.getMove()[i][0]+" to "+bestMove.getMove()[i][1]); //DEBUG
 		}
 		System.out.println("******* MINIMAX CHILDREN: " + LastLevelChildren); //DEBUG
 		LastLevelChildren = 0; //DEBUG
@@ -29,10 +29,9 @@ public final class Minimax {
 	}
 	
 	private static Move minValue(Board b, Dice d, int treeLength, Player player, int alpha, int beta){
-		//System.out.println("min " + player.ordinal());//DEBUG
 		if(treeLength == MAX_LENGTH){
 			//epistrefei to apotelesma tis euretikis sto b
-			//System.out.println("minValue Last level");
+			LastLevelChildren++; //DEBUG
 			return new Move(b.getLastPlayedMove().getMove(), (int)Evaluation.boardScore(b,0)); 
 		}
 		
@@ -50,9 +49,7 @@ public final class Minimax {
 	}
 	
 	private static Move maxValue(Board b, Dice d, int treeLength, Player player, int alpha, int beta){
-		//System.out.println("max");//DEBUG
 		if(treeLength == MAX_LENGTH){
-			//System.out.println("maxValue Last level");
 			//epistrefei to apotelesma tis euretikis sto b
 			LastLevelChildren++; //DEBUG
 			return new Move(b.getLastPlayedMove().getMove(), (int)Evaluation.boardScore(b,1)); 
@@ -72,7 +69,6 @@ public final class Minimax {
 	} 
 	
 	private static int chanceValue(Board b, Dice d, Player P, int treeLength, int alpha, int beta){
-		//System.out.println("gamw tn tixi m"); //DEBUG
 		float expectedValue = 0; //PROSOXIIIIIIII!!!!! edw isws exoume provlima!!!
 		float s = 0;
 		float p = 0; //--->>> DE XRISMOPOIETAI???
