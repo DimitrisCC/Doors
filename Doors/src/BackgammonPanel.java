@@ -255,7 +255,7 @@ public class BackgammonPanel extends JPanel {
 		RollButtonListener(BackgammonPanel b) {
 			this.b = b;
 		}
-
+//DEBUG
 		public void actionPerformed(ActionEvent e) {
 			if (e.getSource().equals(buttonRoll)) {
 				
@@ -274,13 +274,16 @@ public class BackgammonPanel extends JPanel {
 				buttonRoll.setVerticalAlignment(SwingConstants.BOTTOM);
 				buttonRoll.setForeground(Color.WHITE);
 				
-				b.repaint();		
+				b.repaint();	
+				
 				
 				if(hasAvailableMoves(moves[0])){ 
+					getStatusBar().setStatus("You moves are ");
 					getStatusBar().setMoveValues(game.getDice().getDiceMoves());
 					setNumOfMoves(d.isDouble()? 4 : 2);
 				} else if (!d.isDouble()){
 					if(hasAvailableMoves(moves[1])){
+						getStatusBar().setStatus("You moves are ");
 						getStatusBar().setMoveValues(game.getDice().getDiceMoves());
 						setNumOfMoves(2);
 					}
@@ -302,6 +305,7 @@ public class BackgammonPanel extends JPanel {
 	
 	private void pauseForNoMoves(){
 		statusBar.setStatus("Sorry, bro. No moves available. Your turn's skipped.");
+		statusBar.clearDice();
 		try {
 			Thread.sleep(3000);
 		} catch (InterruptedException e1) {
@@ -666,7 +670,7 @@ public class BackgammonPanel extends JPanel {
 		picked = false; // for when you reconsider the pick
 		// maybe unnecessary
 
-		// if the player picked a valid checker then the buttons he can
+		// if the player picked a valid checker then the buttons he can click  on are highlighted
 		if (game.isValidPick(index, player)) {
 			statusBar.setStatus("Got your piece, mate!");
 			this.position = index;
@@ -711,7 +715,6 @@ public class BackgammonPanel extends JPanel {
 		else
 			statusBar.setStatus("No piece there. Are you blind or something?");
 
-		// statusBar.setStatus("Pick a correct piece, already");
 	}
 	
 	/**
@@ -751,6 +754,8 @@ public class BackgammonPanel extends JPanel {
 									buttons.get(lastPick + moves[i]).cleanse();							
 								}
 							}
+							btnBearOff.cleanse();
+							
 							statusBar.setStatus("Nice! You're done.");
 							setMyTurn(false);
 							// break: well the if's end, so the outer break does
@@ -778,7 +783,8 @@ public class BackgammonPanel extends JPanel {
 			
 			//availability check after the move
 			if(doneMove != 0){ //the jump's done
-				if(!hasAvailableMoves(doneMove)){
+				int moveToBeChecked = (!game.getDice().isDouble() && doneMove == moves[0])? moves[1] : moves[0];
+				if(!hasAvailableMoves(moveToBeChecked)){
 					pauseForNoMoves();
 					setMyTurn(false);
 				}
