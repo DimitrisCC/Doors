@@ -1,3 +1,4 @@
+package aidoors;
 
 
 
@@ -8,6 +9,8 @@ import java.util.ArrayList;
 import java.util.HashSet;
 
 import javax.swing.*;
+
+import resources.ResourceLoader;
 
 /**
  * Draws the GUI of the game: background, pieces, dice
@@ -70,16 +73,15 @@ public class BackgammonPanel extends JPanel {
 	public BackgammonPanel(Board game) {
 		this.game = game;
 		this.setLayout(null);
-		setBackground(Toolkit.getDefaultToolkit().createImage("resources//background.png"));
-		setDice1(Toolkit.getDefaultToolkit().createImage("resources//dice1.png"));
-		setDice2(Toolkit.getDefaultToolkit().createImage("resources//dice2.png"));
-		setDice3(Toolkit.getDefaultToolkit().createImage("resources//dice3.png"));
-		setDice4(Toolkit.getDefaultToolkit().createImage("resources//dice4.png"));
-		setDice5(Toolkit.getDefaultToolkit().createImage("resources//dice5.png"));
-		setDice6(Toolkit.getDefaultToolkit().createImage("resources//dice6.png"));
-		setGreenPiece(Toolkit.getDefaultToolkit().createImage("resources//green.png")); //GreenPeace lol
-
-		setRedPiece(Toolkit.getDefaultToolkit().createImage("resources//red.png"));
+		setBackground(ResourceLoader.loadImage("background.png"));
+		setDice1(ResourceLoader.loadImage("dice1.png"));
+		setDice2(ResourceLoader.loadImage("dice2.png"));
+		setDice3(ResourceLoader.loadImage("dice3.png"));
+		setDice4(ResourceLoader.loadImage("dice4.png"));
+		setDice5(ResourceLoader.loadImage("dice5.png"));
+		setDice6(ResourceLoader.loadImage("dice6.png"));
+		setGreenPiece(ResourceLoader.loadImage("green.png")); //GreenPeace lol
+		setRedPiece(ResourceLoader.loadImage("red.png"));
 		
 		plsReplayMe = false;
 		buttons = new ArrayList<BgButton>();
