@@ -1,11 +1,4 @@
-/**************************************
- * MEMBERS
- * ----------------------------------
- * Dimaki Georgia 3130052
- * Kolokathi Fotini 3090088
- * Papatheodorou Dimitrios 3130162
- * ************************************
- */
+
 
 
 import javax.swing.JFrame;
